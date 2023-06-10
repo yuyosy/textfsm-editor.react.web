@@ -5,15 +5,12 @@ import { AppFooter } from './appshell/AppShellFooter';
 import { MainPanel } from './panels/MainPanel';
 
 export const App = () => {
-
-
   // refer to : https://mantine.dev/guides/dark-theme/#save-to-localstorage-and-add-keyboard-shortcut
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'mantine-color-scheme',
     defaultValue: 'light',
     getInitialValueInEffect: true,
   });
-
 
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
@@ -23,22 +20,21 @@ export const App = () => {
         <MantineProvider
           theme={{
             colorScheme,
-            globalStyles: (_) => ({
+            globalStyles: () => ({
               main: {
-                height: '100vh'
+                height: '100vh',
               },
-            })
-          }} withGlobalStyles withNormalizeCSS withCSSVariables
+            }),
+          }}
+          withGlobalStyles
+          withNormalizeCSS
+          withCSSVariables
         >
-          <AppShell
-            padding={0}
-            header={<AppHeader />}
-            footer={<AppFooter />}
-          >
+          <AppShell padding={0} header={<AppHeader />} footer={<AppFooter />}>
             <MainPanel />
           </AppShell>
         </MantineProvider>
       </ColorSchemeProvider>
     </>
   );
-}
+};
