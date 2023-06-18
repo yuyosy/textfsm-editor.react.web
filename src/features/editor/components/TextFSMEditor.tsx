@@ -1,20 +1,19 @@
 import { Editor, OnChange } from '@monaco-editor/react';
 import { useMantineColorScheme } from '@mantine/core';
 
-export const TextFSMEditor = ({
-  defaultValue,
-  onChangeValueFunc,
-}: {
-  defaultValue: string;
-  onChangeValueFunc: OnChange;
-}) => {
+type Props = {
+  value: string;
+  onChangeFunc: OnChange;
+};
+
+export const TextFSMEditor = ({ value, onChangeFunc }: Props) => {
   const { colorScheme } = useMantineColorScheme();
   return (
     <Editor
-      value={defaultValue}
+      value={value}
       defaultLanguage="textfsm"
       theme={colorScheme === 'dark' ? 'theme-dark' : 'theme-light'}
-      onChange={onChangeValueFunc}
+      onChange={onChangeFunc}
       options={{ tabSize: 2, mouseWheelZoom: true }}
     />
   );
