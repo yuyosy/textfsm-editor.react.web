@@ -1,20 +1,24 @@
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
 import { Group, Stack, Text } from '@mantine/core';
 import { OnChange } from '@monaco-editor/react';
-import { useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { SimpleEditor } from '@/features/editor/components/SimpleEditor';
 import { TextFSMEditor } from '@/features/editor/components/TextFSMEditor';
+import { debounceSendRequest } from '@/features/request/debounce';
 
 export const MainPanel = () => {
-  const [dataEditorValue, setDataEditorValue] = useState('');
-  const [templateEditorValue, setTemplateEditorValue] = useState('');
+  const values: EditorValues = {
+    dataEditorValue: '',
+    templateEditorValue: '',
+  };
 
   const onChangeDataEditor: OnChange = (value) => {
-    setDataEditorValue(value ? value : '');
+    values.dataEditorValue = value === undefined ? '' : value;
+    debounceSendRequest(values);
   };
   const onChangeTemplateEditor: OnChange = (value) => {
-    setTemplateEditorValue(value ? value : '');
+    values.templateEditorValue = value === undefined ? '' : value;
+    debounceSendRequest(values);
   };
 
   return (
@@ -33,15 +37,15 @@ export const MainPanel = () => {
             <Panel defaultSize={42}>
               {/* <Editor value={dataEditorValue} onChange={onChangeDataEditor}></Editor> */}
               <SimpleEditor
-                defaultValue={dataEditorValue}
-                onChangeValueFunc={onChangeDataEditor}
+                value={values.dataEditorValue}
+                onChangeFunc={onChangeDataEditor}
               ></SimpleEditor>
             </Panel>
             <ResizeHandle />
             <Panel defaultSize={42}>
               <TextFSMEditor
-                defaultValue={templateEditorValue}
-                onChangeValueFunc={onChangeTemplateEditor}
+                value={values.templateEditorValue}
+                onChangeFunc={onChangeTemplateEditor}
               ></TextFSMEditor>
               {/* <Editor value={templateEditorValue} onChange={onChangeTemplateEditor}></Editor> */}
             </Panel>
