@@ -17,24 +17,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class Request(BaseModel):
-    target_data:str
-    template_data:str
 
-@app.post('/textfsm-parse')
+class Request(BaseModel):
+    target_data: str
+    template_data: str
+
+
+@app.post("/textfsm-parse")
 def textfsm_parse(request: Request):
     try:
         request_body = request.dict()
         response_body = parse(request_body)
     except Exception as e:
         response_body = {
-            'ok': False,
-            'message': type(e).__name__,
-            'message_detail': str(e),
+            "ok": False,
+            "message": type(e).__name__,
+            "message_detail": str(e),
         }
     content = jsonable_encoder(response_body)
     return JSONResponse(content=content)
 
+
 # python fastapi_server.py
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run(app)
