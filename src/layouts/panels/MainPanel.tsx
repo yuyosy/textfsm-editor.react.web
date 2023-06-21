@@ -1,14 +1,15 @@
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
-import { Alert, Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { Group, ScrollArea, Stack, Text } from '@mantine/core';
 import { OnChange } from '@monaco-editor/react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { SimpleEditor } from '@/features/editor/components/SimpleEditor';
 import { TextFSMEditor } from '@/features/editor/components/TextFSMEditor';
-import { ResultObject, sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
-import { useListState } from '@mantine/hooks';
+import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
+import { NotificationPanel } from './NotificationPanel';
+import { useRef } from 'react';
 
 export const MainPanel = () => {
-  const [responseResults, responseResultsHandlers] = useListState<ResultObject>([]);
+  const childRef = useRef<any>();
 
   const values: EditorValues = {
     dataEditorValue: '',
@@ -17,7 +18,9 @@ export const MainPanel = () => {
 
   const sendRequest = async (values: EditorValues) => {
     const result = await sendTextFSMParseRequest(values);
-    responseResultsHandlers.prepend(result);
+    if (childRef.current) {
+      childRef.current.prependResult(result);
+    }
     console.log(result);
   };
 
@@ -73,45 +76,7 @@ export const MainPanel = () => {
                   <Text fw={700}>Console</Text>
                 </Group>
                 <ScrollArea h="100%">
-                  <Stack p={10} pr={16}>
-                    {responseResults.map((resultObject: ResultObject, index: number) => {
-                      if (resultObject.ok) {
-                        return (
-                          <Alert
-                            key={index}
-                            title={
-                              <Text>
-                                {resultObject.results.message}
-                                <Text fz="xs" c="dimmed" fw={400}>
-                                  {resultObject.timestamp}
-                                </Text>
-                              </Text>
-                            }
-                            color={resultObject.results.ok ? '' : 'red'}
-                          >
-                            {resultObject.results.message_detail}
-                          </Alert>
-                        );
-                      } else {
-                        return (
-                          <Alert
-                            key={resultObject.timestamp}
-                            title={
-                              <Text>
-                                {resultObject.message}
-                                <Text fz="xs" c="dimmed" fw={400}>
-                                  {resultObject.timestamp}
-                                </Text>
-                              </Text>
-                            }
-                            color="red"
-                          >
-                            {resultObject.message_detail}
-                          </Alert>
-                        );
-                      }
-                    })}
-                  </Stack>
+                  <NotificationPanel ref={childRef}></NotificationPanel>
                 </ScrollArea>
               </Stack>
             </Panel>
