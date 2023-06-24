@@ -1,6 +1,28 @@
 # textfsm-editor.react.web
 
-test
+> ! This documentation is a work in progress. It may be incomplete or inaccurate.
+
+## Usage
+
+TODO
+
+## Development
+
+This project is built using React and Python.
+
+### Requirements
+
+#### Required Environments
+
+- Nodejs
+- Python
+
+#### Recommended Softwares
+
+Recommended softwares to run this project
+
+- Yarn (Node.js)
+- Rye (Python)
 
 ## License
 
