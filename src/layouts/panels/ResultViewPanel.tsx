@@ -1,16 +1,8 @@
-import {
-  Text,
-  Tabs,
-  Stack,
-  Group,
-  CopyButton,
-  Tooltip,
-  ActionIcon,
-  ScrollArea,
-} from '@mantine/core';
+import { CopyValueButton } from '@/components/CopyValueButton';
+import { Text, Tabs, Stack, Group, ScrollArea } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import { Prism } from '@mantine/prism';
-import { IconBorderAll, IconCheck, IconCode, IconCopy } from '@tabler/icons-react';
+import { IconBorderAll, IconCode } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { forwardRef, useImperativeHandle } from 'react';
 
@@ -21,6 +13,22 @@ type Header = {
 export const ResultViewPanel = forwardRef((_props, ref) => {
   const [resultHeaders, setResultHeaders] = useListState<Header>([]);
   const [resultData, setResultData] = useListState<any[]>([]);
+
+  const tsvDataDeliver = (): string => {
+    const headers = Object.values(resultHeaders)
+      .map((item) => item['accessor'])
+      .join('\t');
+    const rows = resultData
+      .reduce((previous, current) => {
+        return previous.concat([Object.values(current).join('\t')]);
+      }, [])
+      .join('\n');
+    return `${headers}\n${rows}`;
+  };
+
+  const jsonDataDeliver = (): string => {
+    return JSON.stringify(resultData, null, '  ');
+  };
 
   useImperativeHandle(ref, () => ({
     setResults(header: any[], data: any[]) {
@@ -43,24 +51,24 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         <Stack spacing={0} h="100%">
           <Group px={10} py={4} position="apart">
             <Text>Table View</Text>
-            <CopyButton value={JSON.stringify(resultData, null, '  ')} timeout={2000}>
-              {({ copied, copy }) => (
-                <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="bottom">
-                  <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
-                    {copied ? <IconCheck /> : <IconCopy />}
-                  </ActionIcon>
-                </Tooltip>
-              )}
-            </CopyButton>
+            <CopyValueButton getValueFunc={tsvDataDeliver}></CopyValueButton>
           </Group>
           <DataTable
             columns={resultHeaders}
             records={resultData.map((item, index) => {
-              return { ...item, $index: index };
+              const entries = Object.entries(item).map(([key, val]) => {
+                if (Array.isArray(val)) {
+                  return [key, val.join(', ')];
+                }
+                return [key, val];
+              });
+              entries.push(['$index', index]);
+              return Object.fromEntries(entries);
             })}
             idAccessor="$index"
             striped
-            // height='100%'
+            withBorder
+            withColumnBorders
           />
         </Stack>
       </Tabs.Panel>
@@ -68,15 +76,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         <Stack spacing={0} h="100%">
           <Group px={10} py={4} position="apart">
             <Text>JSON View</Text>
-            <CopyButton value={JSON.stringify(resultData, null, '  ')} timeout={2000}>
-              {({ copied, copy }) => (
-                <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="bottom">
-                  <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
-                    {copied ? <IconCheck /> : <IconCopy />}
-                  </ActionIcon>
-                </Tooltip>
-              )}
-            </CopyButton>
+            <CopyValueButton getValueFunc={jsonDataDeliver}></CopyValueButton>
           </Group>
           <ScrollArea h="100%">
             <Prism withLineNumbers noCopy language="json" h="100%">
