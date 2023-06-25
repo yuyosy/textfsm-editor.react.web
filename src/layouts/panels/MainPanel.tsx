@@ -4,13 +4,15 @@ import {
   Button,
   Divider,
   Group,
+  List,
   Menu,
   Modal,
   NumberInput,
+  Select,
+  SelectItem,
   Stack,
   Switch,
   Text,
-  TextInput,
   Tooltip,
 } from '@mantine/core';
 import { OnChange } from '@monaco-editor/react';
@@ -29,20 +31,12 @@ import {
   IconSend,
   IconSettings,
 } from '@tabler/icons-react';
-import { useInputState, useLocalStorage } from '@mantine/hooks';
+import { useLocalStorage } from '@mantine/hooks';
 import { useWrap } from '@/hooks/wrapper';
 import { ResultObject } from '@/types';
 
 export const MainPanel = () => {
-  const notificationPanelRef = useRef<any>();
-  const resultViewPanelRef = useRef<any>();
-  const editorDataValue = useRef<string>('');
-  const editorTemplateValue = useRef<string>('');
-  const resultObject = useRef<ResultObject>();
-
-  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-  const [showLoadTemplateModal, setShowLoadTemplateModal] = useState(false);
-  const [templateName, setTemplateName] = useInputState('');
+  // Local Storage
   const [editorAutoParse, setEditorAutoParse] = useLocalStorage<boolean>({
     key: 'editor-auto-parse',
     defaultValue: false,
@@ -55,6 +49,21 @@ export const MainPanel = () => {
     key: 'editor-template-list',
     defaultValue: {},
   });
+
+  // Ref State
+  const notificationPanelRef = useRef<any>();
+  const resultViewPanelRef = useRef<any>();
+  const editorDataValue = useRef<string>('');
+  const editorTemplateValue = useRef<string>('');
+  const resultObject = useRef<ResultObject>();
+
+  // Element State
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState<boolean>(false);
+  const [showLoadTemplateModal, setShowLoadTemplateModal] = useState<boolean>(false);
+  // const [templateName, setTemplateName] = useInputState<string>('');
+  const [templateSelectItems, setTemplateSelectItems] = useState<(string | SelectItem)[]>([]);
+  const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
   const sendRequest = async () => {
     if (editorTemplateValue.current === '') {
@@ -94,8 +103,12 @@ export const MainPanel = () => {
 
   const openSaveTemplateModal = useWrap(() => {
     setShowSaveTemplateModal(true);
-    setTemplateName('');
-    console.log(templateList);
+    setSelectedTemplateName(null);
+    setTemplateSelectItems(
+      Object.keys(templateList).map((key) => {
+        return { value: key, label: key };
+      })
+    );
   });
 
   const closeSaveTemplateModal = useWrap(() => {
@@ -103,13 +116,20 @@ export const MainPanel = () => {
   });
 
   const saveTemplate = useWrap(() => {
-    setTemplateList({ [templateName]: editorTemplateValue.current });
+    const newTemplate = {
+      [selectedTemplateName === null ? '' : selectedTemplateName]: editorTemplateValue.current,
+    };
+    setTemplateList({ ...templateList, ...newTemplate });
     closeSaveTemplateModal();
   });
   const openLoadTemplateModal = useWrap(() => {
     setShowLoadTemplateModal(true);
-    setTemplateName('');
-    console.log(templateList);
+    setSelectedTemplate(null);
+    setTemplateSelectItems(
+      Object.keys(templateList).map((key) => {
+        return { value: key, label: key };
+      })
+    );
   });
 
   const closeLoadTemplateModal = useWrap(() => {
@@ -117,45 +137,67 @@ export const MainPanel = () => {
   });
 
   const loadTemplate = useWrap(() => {
-    // setTemplateList({ [templateName]: editorTemplateValue.current });
+    editorTemplateValue.current = templateList[selectedTemplate === null ? '' : selectedTemplate];
     closeLoadTemplateModal();
   });
 
   return (
     <>
-      <Modal
-        opened={showSaveTemplateModal}
-        onClose={closeSaveTemplateModal}
-        title="Save Template"
-        centered
-      >
-        <TextInput
-          label="Template name"
-          placeholder="TextFSM Template"
-          value={templateName}
-          onChange={setTemplateName}
-        />
+      <Modal opened={showSaveTemplateModal} onClose={closeSaveTemplateModal} title="Save Template">
+        <Stack>
+          <List size="xs">
+            <List.Item>
+              To create a new template, enter a template name and select "Create" from the drop-down
+              menu.
+            </List.Item>
+            <List.Item>
+              To overwrite an existing template, select one from the drop-down menu.
+            </List.Item>
+          </List>
+          <Select
+            label="Template Name"
+            placeholder="Input template name or select one."
+            data={templateSelectItems}
+            value={selectedTemplateName}
+            onChange={setSelectedTemplateName}
+            getCreateLabel={(query) => `[+] Create "${query}"`}
+            onCreate={(query) => {
+              const item = { value: query, label: query };
+              setTemplateSelectItems((current) => [...current, item]);
+              return item;
+            }}
+            creatable
+            searchable
+            withinPortal
+          />
+        </Stack>
         <Group position="apart" mt="lg">
           <Button variant="default" size="xs" onClick={closeSaveTemplateModal}>
             Close
           </Button>
-          <Button size="xs" color="cyan" onClick={saveTemplate} disabled={!templateName}>
-            Save
+          <Button size="xs" color="cyan" onClick={saveTemplate} disabled={!selectedTemplateName}>
+            Save Template
           </Button>
         </Group>
       </Modal>
-      <Modal
-        opened={showLoadTemplateModal}
-        onClose={closeLoadTemplateModal}
-        title="Load Template"
-        centered
-      >
+      <Modal opened={showLoadTemplateModal} onClose={closeLoadTemplateModal} title="Load Template">
+        <Stack>
+          <Select
+            label="Template"
+            placeholder="Pick one"
+            data={templateSelectItems}
+            value={selectedTemplate}
+            onChange={setSelectedTemplate}
+            searchable
+            withinPortal
+          />
+        </Stack>
         <Group position="apart" mt="lg">
           <Button variant="default" size="xs" onClick={closeLoadTemplateModal}>
             Close
           </Button>
-          <Button size="xs" color="cyan" onClick={loadTemplate} disabled={!templateName}>
-            Save
+          <Button size="xs" color="cyan" onClick={loadTemplate} disabled={!selectedTemplate}>
+            Load Template
           </Button>
         </Group>
       </Modal>
@@ -164,7 +206,15 @@ export const MainPanel = () => {
         <Group position="apart" px={10} py={8} bg="#7c83871d">
           <Group>
             {/* Save Template */}
-            <Menu position="bottom-start" withArrow shadow="md" width={400}>
+            <Menu
+              position="bottom-start"
+              trigger="hover"
+              openDelay={100}
+              closeDelay={400}
+              withArrow
+              shadow="md"
+              width={400}
+            >
               <Menu.Target>
                 <Button
                   variant="filled"
@@ -175,7 +225,6 @@ export const MainPanel = () => {
                 </Button>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Label>Application</Menu.Label>
                 <Menu.Item icon={<IconPlus size={14} />} onClick={openSaveTemplateModal}>
                   Save Template
                 </Menu.Item>
