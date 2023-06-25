@@ -4,18 +4,18 @@ import { TextFSMEditor } from '@/features/editor/components/TextFSMEditor';
 import { CopyValueButton } from '@/components/CopyValueButton';
 
 type Props = {
-  dataDeliver: () => string;
+  valueRef: React.MutableRefObject<string>;
   onChangeFunc: (value: string | undefined, ev: editor.IModelContentChangedEvent) => void;
 };
 
-export const TextFSMEditorPanel = ({ dataDeliver, onChangeFunc }: Props) => {
+export const TextFSMEditorPanel = ({ valueRef, onChangeFunc }: Props) => {
   return (
     <Stack spacing={0} h="100%">
       <Group px={10} py={8} position="apart">
         <Text fw={700}>Template</Text>
-        <CopyValueButton getValueFunc={dataDeliver}></CopyValueButton>
+        <CopyValueButton valueRef={valueRef}></CopyValueButton>
       </Group>
-      <TextFSMEditor value={dataDeliver()} onChangeFunc={onChangeFunc}></TextFSMEditor>
+      <TextFSMEditor value={valueRef.current} onChangeFunc={onChangeFunc}></TextFSMEditor>
     </Stack>
   );
 };

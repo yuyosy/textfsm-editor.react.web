@@ -14,7 +14,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
   const [resultHeaders, setResultHeaders] = useListState<Header>([]);
   const [resultData, setResultData] = useListState<any[]>([]);
 
-  const tsvDataDeliver = (): string => {
+  const tsvDataDeliver = (): React.MutableRefObject<string> => {
     const headers = Object.values(resultHeaders)
       .map((item) => item['accessor'])
       .join('\t');
@@ -23,11 +23,11 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         return previous.concat([Object.values(current).join('\t')]);
       }, [])
       .join('\n');
-    return `${headers}\n${rows}`;
+    return { current: `${headers}\n${rows}` };
   };
 
-  const jsonDataDeliver = (): string => {
-    return JSON.stringify(resultData, null, '  ');
+  const jsonDataDeliver = (): React.MutableRefObject<string> => {
+    return { current: JSON.stringify(resultData, null, '  ') };
   };
 
   useImperativeHandle(ref, () => ({
@@ -51,7 +51,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         <Stack spacing={0} h="100%">
           <Group px={10} py={4} position="apart">
             <Text>Table View</Text>
-            <CopyValueButton getValueFunc={tsvDataDeliver}></CopyValueButton>
+            <CopyValueButton valueRef={tsvDataDeliver()}></CopyValueButton>
           </Group>
           <DataTable
             columns={resultHeaders}
@@ -76,7 +76,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         <Stack spacing={0} h="100%">
           <Group px={10} py={4} position="apart">
             <Text>JSON View</Text>
-            <CopyValueButton getValueFunc={jsonDataDeliver}></CopyValueButton>
+            <CopyValueButton valueRef={jsonDataDeliver()}></CopyValueButton>
           </Group>
           <ScrollArea h="100%">
             <Prism withLineNumbers noCopy language="json" h="100%">

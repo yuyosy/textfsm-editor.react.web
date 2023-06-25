@@ -1,21 +1,6 @@
+import { ResultObject } from '@/types';
 import { debounce } from './debounce';
 import { request } from './request';
-
-type Results = {
-  ok: boolean;
-  message: string;
-  message_detail: string;
-  headers: string[];
-  results: object[];
-};
-
-export type ResultObject = {
-  ok: boolean;
-  timestamp: string;
-  results: Results;
-  message: string;
-  message_detail: string;
-};
 
 const getResult = (ok: boolean, results: any, message = '', message_detail = ''): ResultObject => {
   return {
@@ -58,12 +43,13 @@ export const requestTextFSMParse = async (dataValue: string, templateValue: stri
   }
 };
 
-export const sendTextFSMParseRequest = async (values: EditorValues): Promise<ResultObject> => {
-  await debounce();
-  const resultObject = await requestTextFSMParse(
-    values.dataEditorValue,
-    values.templateEditorValue
-  );
+export const sendTextFSMParseRequest = async (
+  dataValue: React.MutableRefObject<string>,
+  templateValue: React.MutableRefObject<string>,
+  delay?: number
+): Promise<ResultObject> => {
+  await debounce(delay);
+  const resultObject = await requestTextFSMParse(dataValue.current, templateValue.current);
   console.log(resultObject);
   return resultObject;
 };

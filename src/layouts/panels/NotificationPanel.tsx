@@ -1,7 +1,8 @@
 import { AlertCard } from '@/components/AlertCard';
-import { ResultObject } from '@/features/request/sendTextFSMParseRequest';
-import { Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { ResultObject } from '@/types';
+import { ActionIcon, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
+import { IconClearAll } from '@tabler/icons-react';
 import { forwardRef, useImperativeHandle } from 'react';
 
 export const NotificationPanel = forwardRef((_props, ref) => {
@@ -16,6 +17,15 @@ export const NotificationPanel = forwardRef((_props, ref) => {
     <Stack spacing={0} h="100%">
       <Group px={10} py={8} position="apart">
         <Text fw={700}>Console</Text>
+        <Tooltip label="Clear" withArrow position="bottom">
+          <ActionIcon
+            onClick={() => {
+              responseResultsHandlers.setState([]);
+            }}
+          >
+            <IconClearAll />
+          </ActionIcon>
+        </Tooltip>
       </Group>
       <ScrollArea h="100%">
         <Stack p={10} pr={16}>
