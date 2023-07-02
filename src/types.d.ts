@@ -1,4 +1,4 @@
-export interface Results {
+export interface ResponseResult {
   ok: boolean;
   message: string;
   message_detail: string;
@@ -9,7 +9,7 @@ export interface Results {
 export interface ResultObject {
   ok: boolean;
   timestamp: string;
-  results: Results;
-  message: string;
-  message_detail: string;
+  response_result: ResponseResult;
+  result_message: string;
+  result_message_detail: string;
 }

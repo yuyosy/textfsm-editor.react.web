@@ -31,12 +31,14 @@ export const NotificationPanel = forwardRef((_props, ref) => {
         <Stack p={10} pr={16}>
           {responseResults.map((resultObject: ResultObject) => {
             const info = {
-              mainTitle: resultObject.results.message,
+              mainTitle: resultObject.ok
+                ? resultObject.response_result.message
+                : resultObject.result_message,
               subTitle: resultObject.timestamp,
-              color: resultObject.ok && resultObject.results?.ok ? '' : 'red',
+              color: resultObject.ok && resultObject.response_result?.ok ? '' : 'red',
               message: resultObject.ok
-                ? resultObject.results.message_detail
-                : resultObject.message_detail,
+                ? resultObject.response_result.message_detail
+                : resultObject.result_message_detail,
             };
             return <AlertCard key={resultObject.timestamp} {...info}></AlertCard>;
           })}

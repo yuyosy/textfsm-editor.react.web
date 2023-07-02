@@ -6,9 +6,9 @@ const getResult = (ok: boolean, results: any, message = '', message_detail = '')
   return {
     ok: ok,
     timestamp: new Date().toLocaleString(),
-    results: results,
-    message: message,
-    message_detail: message_detail,
+    response_result: results,
+    result_message: message,
+    result_message_detail: message_detail,
   };
 };
 

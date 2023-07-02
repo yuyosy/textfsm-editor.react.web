@@ -26,13 +26,15 @@ import { TextFSMEditorPanel } from './TextFSMEditorPanel';
 import {
   IconBookmarks,
   IconEdit,
+  IconFileExport,
+  IconFileImport,
   IconListDetails,
   IconPlus,
   IconSend,
   IconSettings,
 } from '@tabler/icons-react';
 import { useLocalStorage } from '@mantine/hooks';
-import { useWrap } from '@/hooks/wrapper';
+import { useStableCallback } from '@/hooks/useStableCallback';
 import { ResultObject } from '@/types';
 
 export const MainPanel = () => {
@@ -78,12 +80,16 @@ export const MainPanel = () => {
     if (notificationPanelRef.current) {
       notificationPanelRef.current.prependResult(resultObject.current);
     }
-    if (resultViewPanelRef.current && resultObject.current.ok && resultObject.current.results.ok) {
+    if (
+      resultViewPanelRef.current &&
+      resultObject.current.ok &&
+      resultObject.current.response_result.ok
+    ) {
       resultViewPanelRef.current.setResults(
-        resultObject.current.results.headers.map((item) => {
+        resultObject.current.response_result.headers.map((item) => {
           return { accessor: item };
         }),
-        resultObject.current.results.results
+        resultObject.current.response_result.results
       );
     }
   };
@@ -101,7 +107,7 @@ export const MainPanel = () => {
     }
   };
 
-  const openSaveTemplateModal = useWrap(() => {
+  const openSaveTemplateModal = useStableCallback(() => {
     setShowSaveTemplateModal(true);
     setSelectedTemplateName(null);
     setTemplateSelectItems(
@@ -111,18 +117,18 @@ export const MainPanel = () => {
     );
   });
 
-  const closeSaveTemplateModal = useWrap(() => {
+  const closeSaveTemplateModal = useStableCallback(() => {
     setShowSaveTemplateModal(false);
   });
 
-  const saveTemplate = useWrap(() => {
+  const saveTemplate = useStableCallback(() => {
     const newTemplate = {
       [selectedTemplateName === null ? '' : selectedTemplateName]: editorTemplateValue.current,
     };
     setTemplateList({ ...templateList, ...newTemplate });
     closeSaveTemplateModal();
   });
-  const openLoadTemplateModal = useWrap(() => {
+  const openLoadTemplateModal = useStableCallback(() => {
     setShowLoadTemplateModal(true);
     setSelectedTemplate(null);
     setTemplateSelectItems(
@@ -132,11 +138,11 @@ export const MainPanel = () => {
     );
   });
 
-  const closeLoadTemplateModal = useWrap(() => {
+  const closeLoadTemplateModal = useStableCallback(() => {
     setShowLoadTemplateModal(false);
   });
 
-  const loadTemplate = useWrap(() => {
+  const loadTemplate = useStableCallback(() => {
     editorTemplateValue.current = templateList[selectedTemplate === null ? '' : selectedTemplate];
     closeLoadTemplateModal();
   });
@@ -232,6 +238,9 @@ export const MainPanel = () => {
                   Load Template
                 </Menu.Item>
                 <Menu.Item icon={<IconEdit size={14} />}>Edit Templates</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item icon={<IconFileImport size={14} />}>Import Templates</Menu.Item>
+                <Menu.Item icon={<IconFileExport size={14} />}>Export Templates</Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>
