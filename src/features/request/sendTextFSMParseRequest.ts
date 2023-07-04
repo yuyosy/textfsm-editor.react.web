@@ -44,12 +44,12 @@ export const requestTextFSMParse = async (dataValue: string, templateValue: stri
 };
 
 export const sendTextFSMParseRequest = async (
-  dataValue: React.MutableRefObject<string>,
-  templateValue: React.MutableRefObject<string>,
+  dataValue: string,
+  templateValue: string,
   delay?: number
 ): Promise<ResultObject> => {
   await debounce(delay);
-  const resultObject = await requestTextFSMParse(dataValue.current, templateValue.current);
+  const resultObject = await requestTextFSMParse(dataValue, templateValue);
   console.log(resultObject);
   return resultObject;
 };

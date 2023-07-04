@@ -15,7 +15,6 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import { OnChange } from '@monaco-editor/react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
 import { NotificationPanel } from './NotificationPanel';
@@ -36,6 +35,8 @@ import {
 import { useLocalStorage } from '@mantine/hooks';
 import { useStableCallback } from '@/hooks/useStableCallback';
 import { ResultObject } from '@/types';
+import { setRefValue } from '@/utils/helpers';
+import { onChangeEditorWrapper } from '@/features/editor/onChange';
 
 export const MainPanel = () => {
   // Local Storage
@@ -62,7 +63,6 @@ export const MainPanel = () => {
   // Element State
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState<boolean>(false);
   const [showLoadTemplateModal, setShowLoadTemplateModal] = useState<boolean>(false);
-  // const [templateName, setTemplateName] = useInputState<string>('');
   const [templateSelectItems, setTemplateSelectItems] = useState<(string | SelectItem)[]>([]);
   const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -71,41 +71,58 @@ export const MainPanel = () => {
     if (editorTemplateValue.current === '') {
       return;
     }
-    resultObject.current = await sendTextFSMParseRequest(
-      editorDataValue,
-      editorTemplateValue,
-      inputSendDelayValue
+    setResultObject(
+      await sendTextFSMParseRequest(
+        editorDataValue.current,
+        editorTemplateValue.current,
+        inputSendDelayValue
+      )
     );
+    ParseResult();
+  };
 
-    if (notificationPanelRef.current) {
-      notificationPanelRef.current.prependResult(resultObject.current);
+  const ParseResult = () => {
+    const resultObject = getResultObject();
+    if (!resultObject) {
+      return;
     }
-    if (
-      resultViewPanelRef.current &&
-      resultObject.current.ok &&
-      resultObject.current.response_result.ok
-    ) {
+    if (notificationPanelRef.current) {
+      notificationPanelRef.current.prependResult(resultObject);
+    }
+    if (resultViewPanelRef.current && resultObject.ok && resultObject.response_result.ok) {
       resultViewPanelRef.current.setResults(
-        resultObject.current.response_result.headers.map((item) => {
+        resultObject.response_result.headers.map((item) => {
           return { accessor: item };
         }),
-        resultObject.current.response_result.results
+        resultObject.response_result.results
       );
     }
   };
 
-  const onChangeDataEditor: OnChange = (value) => {
-    editorDataValue.current = value === undefined ? '' : value;
+  const setResultObject = (obj: ResultObject) => {
+    resultObject.current = obj;
+  };
+  const getResultObject = (): ResultObject | undefined => {
+    return resultObject ? resultObject.current : undefined;
+  };
+
+  const setEditorDataValue = (value: string) => {
+    setRefValue(editorDataValue, value);
+  };
+
+  const setEditorTemplateValue = (value: string) => {
+    setRefValue(editorTemplateValue, value);
+  };
+
+  const onChangeEditor = (func: (value: string) => void) => (value: string | undefined) => {
+    func(value === undefined ? '' : value);
     if (editorAutoParse) {
       sendRequest();
     }
   };
-  const onChangeTemplateEditor: OnChange = (value) => {
-    editorTemplateValue.current = value === undefined ? '' : value;
-    if (editorAutoParse) {
-      sendRequest();
-    }
-  };
+
+  const onChangeTemplateEditor = onChangeEditorWrapper(onChangeEditor(setEditorTemplateValue));
+  const onChangeDataEditor = onChangeEditorWrapper(onChangeEditor(setEditorDataValue));
 
   const openSaveTemplateModal = useStableCallback(() => {
     setShowSaveTemplateModal(true);
