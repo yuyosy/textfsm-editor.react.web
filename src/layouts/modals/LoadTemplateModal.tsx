@@ -1,6 +1,7 @@
 import { Button, Group, Modal, Select, SelectItem, Stack } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+import { TemplateInfo } from './types';
 
 type Props = {
   opened: boolean;
@@ -10,27 +11,29 @@ type Props = {
 
 export const LoadTemplateModal = ({ opened, close, setTemplateValueFunc }: Props) => {
   // Local Storage
-  const [templateList] = useLocalStorage<{ [key: string]: string }>({
+  const [templateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
-    defaultValue: {},
+    defaultValue: [],
   });
 
   // States
   const [templateSelectItems, setTemplateSelectItems] = useState<(string | SelectItem)[]>([]);
-  const [, setSelectedTemplateName] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
 
   // Functions
   const setSelectItems = () => {
     setSelectedTemplateName(null);
     setTemplateSelectItems(
-      Object.keys(templateList).map((key) => {
-        return { value: key, label: key };
+      templateList.map((item) => {
+        return { value: item.label, label: item.label };
       })
     );
   };
   const loadTemplate = () => {
-    setTemplateValueFunc(templateList[selectedTemplate === null ? '' : selectedTemplate]);
+    const filtered = templateList.filter((item) => item.label === selectedTemplateName);
+    if (filtered.length > 0) {
+      setTemplateValueFunc(filtered[0].value);
+    }
     close();
   };
 
@@ -47,9 +50,11 @@ export const LoadTemplateModal = ({ opened, close, setTemplateValueFunc }: Props
             label="Template"
             placeholder="Pick one"
             data={templateSelectItems}
-            value={selectedTemplate}
-            onChange={setSelectedTemplate}
+            value={selectedTemplateName}
+            onChange={setSelectedTemplateName}
+            nothingFound="No templates"
             searchable
+            clearable
             withinPortal
           />
         </Stack>
@@ -57,7 +62,7 @@ export const LoadTemplateModal = ({ opened, close, setTemplateValueFunc }: Props
           <Button variant="default" size="xs" onClick={close}>
             Close
           </Button>
-          <Button size="xs" color="cyan" onClick={loadTemplate} disabled={!selectedTemplate}>
+          <Button size="xs" color="cyan" onClick={loadTemplate} disabled={!selectedTemplateName}>
             Load Template
           </Button>
         </Group>

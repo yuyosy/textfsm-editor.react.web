@@ -1,6 +1,7 @@
 import { Button, Group, List, Modal, Select, SelectItem, Stack } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+import { TemplateInfo } from './types';
 
 type Props = {
   opened: boolean;
@@ -10,9 +11,9 @@ type Props = {
 
 export const SaveTemplateModal = ({ opened, close, valueRef }: Props) => {
   // Local Storage
-  const [templateList, setTemplateList] = useLocalStorage<{ [key: string]: string }>({
+  const [templateList, setTemplateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
-    defaultValue: {},
+    defaultValue: [],
   });
 
   // States
@@ -23,17 +24,31 @@ export const SaveTemplateModal = ({ opened, close, valueRef }: Props) => {
   const setSelectItems = () => {
     setSelectedTemplateName(null);
     setTemplateSelectItems(
-      Object.keys(templateList).map((key) => {
-        return { value: key, label: key };
+      templateList.map((item) => {
+        return { value: item.label, label: item.label };
       })
     );
   };
+  const addSelectItem = (query: string): string | SelectItem | null | undefined => {
+    const item = { value: query, label: query };
+    setTemplateSelectItems((current) => [...current, item]);
+    return item;
+  };
 
   const saveTemplate = () => {
-    const newTemplate = {
-      [selectedTemplateName === null ? '' : selectedTemplateName]: valueRef.current,
-    };
-    setTemplateList({ ...templateList, ...newTemplate });
+    const findIndex = templateList.findIndex((item) => item.label === selectedTemplateName);
+    if (findIndex != -1) {
+      templateList[findIndex] = {
+        label: selectedTemplateName === null ? '' : selectedTemplateName,
+        value: valueRef.current,
+      };
+    } else {
+      templateList.push({
+        label: selectedTemplateName === null ? '' : selectedTemplateName,
+        value: valueRef.current,
+      });
+    }
+    setTemplateList(templateList);
     close();
   };
 
@@ -62,13 +77,10 @@ export const SaveTemplateModal = ({ opened, close, valueRef }: Props) => {
             value={selectedTemplateName}
             onChange={setSelectedTemplateName}
             getCreateLabel={(query) => `[+] Create "${query}"`}
-            onCreate={(query) => {
-              const item = { value: query, label: query };
-              setTemplateSelectItems((current) => [...current, item]);
-              return item;
-            }}
+            onCreate={addSelectItem}
             creatable
             searchable
+            clearable
             withinPortal
           />
         </Stack>
