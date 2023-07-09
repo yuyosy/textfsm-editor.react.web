@@ -59,7 +59,7 @@ export const SaveTemplateModal = ({ opened, close, valueRef }: Props) => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Save Template">
+      <Modal opened={opened} onClose={close} title="Save Template" size="lg">
         <Stack>
           <List size="xs">
             <List.Item>

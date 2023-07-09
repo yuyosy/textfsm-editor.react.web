@@ -12,7 +12,7 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Export Templates">
+      <Modal opened={opened} onClose={close} title="Export Templates" size="lg">
         <Stack>...</Stack>
         <Group position="apart" mt="lg">
           <Button variant="default" size="xs" onClick={close}>

@@ -44,7 +44,7 @@ export const LoadTemplateModal = ({ opened, close, setTemplateValueFunc }: Props
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Load Template">
+      <Modal opened={opened} onClose={close} title="Load Template" size="lg">
         <Stack>
           <Select
             label="Template"

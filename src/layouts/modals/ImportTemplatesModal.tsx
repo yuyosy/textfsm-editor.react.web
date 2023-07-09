@@ -12,7 +12,7 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Import Templates">
+      <Modal opened={opened} onClose={close} title="Import Templates" size="lg">
         <Stack>...</Stack>
         <Group position="apart" mt="lg">
           <Button variant="default" size="xs" onClick={close}>
