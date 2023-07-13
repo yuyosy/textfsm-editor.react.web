@@ -59,6 +59,9 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
               The changes such as sorting or deleting will not be reflected until the Apply button
               is pressed.
             </List.Item>
+            <List.Item>
+              In the future, I plan to implement a feature that allows users to rename templates.
+            </List.Item>
           </List>
           <DataTable
             records={edittingTemplateList}
@@ -115,6 +118,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
               },
             ]}
             idAccessor="label"
+            height={300}
           />
         </Stack>
         <Group position="apart" mt="lg">
