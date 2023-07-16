@@ -1,3 +1,6 @@
+backend/public/*
+!backend/public/.gitkeep
+
 
 # Logs
 logs
