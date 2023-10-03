@@ -25,7 +25,9 @@ export const requestTextFSMParse = async (dataValue: string, templateValue: stri
       import.meta.env.VITE_HEADER_API_KEY_VALUE;
   }
 
-  const requestUrl = import.meta.env.VITE_API_ENTRYPOINT_TEXTFSM_PARSE;
+  const requestUrl = import.meta.env.VITE_API_ENTRYPOINT_TEXTFSM_PARSE
+    ? import.meta.env.VITE_API_ENTRYPOINT_TEXTFSM_PARSE
+    : '/textfsm-parse';
   const requestBody = {
     method: 'POST',
     headers: headers_obj,
