@@ -1,4 +1,4 @@
-# backend
+# Backend
 
 ## Usage
 
@@ -11,10 +11,6 @@ For Rye user guides, please refer to the official documentation.
 ```
 rye run python src/fastapi/fastapi_server.py
 ```
-
-### Run in AWS Lambda
-
-TODO
 
 ## License
 

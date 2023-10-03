@@ -14,7 +14,7 @@ This project is built using React and Python.
 
 #### Required Environments
 
-- Nodejs
+- Node.js
 - Python
 
 #### Recommended Softwares
