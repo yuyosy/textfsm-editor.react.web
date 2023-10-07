@@ -42,6 +42,21 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
   const prevStep = () => setActiveStep((current) => (current > 0 ? current - 1 : current));
   const [transferListData, setTransferListData] = useState<TransferListData>([[], []]);
 
+  const normalize = (results: TemplateInfo[][]): TemplateInfo[][] => {
+    if (!Array.isArray(results)) {
+      return [];
+    }
+    return results.map((item) => {
+      if (!Array.isArray(item) || item === null) {
+        console.warn('invalid file', item);
+        return [];
+      }
+      return item.filter((data) => {
+        return data !== null && typeof data == 'object' && 'label' in data && 'value' in data;
+      });
+    });
+  };
+
   const loadJsonFiles = async () => {
     const promises: Promise<TemplateInfo[]>[] = importTargetFiles.map(async (item) => {
       try {
@@ -55,8 +70,7 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
 
     const results = await Promise.all(promises);
     const namesInTemplateList = new Set(templateList.map((item) => item.label));
-    const filtered = results
-      .filter((result) => result !== null)
+    const filtered = normalize(results)
       .flat()
       .filter((item) => !namesInTemplateList.has(item.label));
     setTransferListData([[], filtered]);
@@ -155,12 +169,16 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
                       );
                     })}
                     {rejectedFiles.map((item, index) => {
-                      const errors = item.errors.map((err) => {
-                        return <Text size="sm">{err.message}</Text>;
+                      const errors = item.errors.map((err, index) => {
+                        return (
+                          <Text size="sm" key={`errormsg_${item.file.name}_${index}`}>
+                            {err.message}
+                          </Text>
+                        );
                       });
                       return (
                         <Notification
-                          key={'error' + item.file.name}
+                          key={'error_' + item.file.name}
                           title={item.file.name}
                           color="red"
                           onClose={() => deleteRejectedFilesItem(index)}
