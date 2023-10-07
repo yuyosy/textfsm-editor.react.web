@@ -18,10 +18,13 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
   });
 
   const [edittingTemplateList, setEdittingTemplateList] = useState<TemplateInfo[]>([]);
+  const [changesOrder, setChangesOrder] = useState<boolean>(false);
+  const [changesDelete, setChangesDelete] = useState<number>(0);
 
   // Hook
   useEffect(() => {
     setEdittingTemplateList([...templateList]);
+    resetState();
   }, [opened]);
 
   const moveUpArrayIndex = (index: number) => {
@@ -29,6 +32,9 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
     const newArr = [...edittingTemplateList];
     [newArr[index], newArr[index - 1]] = [newArr[index - 1], newArr[index]];
     setEdittingTemplateList(newArr);
+    if (!changesOrder) {
+      setChangesOrder(true);
+    }
   };
 
   const moveDownArrayIndex = (index: number) => {
@@ -36,22 +42,40 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
     const newArr = [...edittingTemplateList];
     [newArr[index], newArr[index + 1]] = [newArr[index + 1], newArr[index]];
     setEdittingTemplateList(newArr);
+    if (!changesOrder) {
+      setChangesOrder(true);
+    }
   };
 
   const deleteItem = (index: number) => {
     if (edittingTemplateList.length === 0) return;
     setEdittingTemplateList(edittingTemplateList.filter((_, i) => i !== index));
+    setChangesDelete(changesDelete + 1);
   };
 
   const applyChanges = () => {
     setTemplateList(edittingTemplateList);
+    resetState();
+  };
+
+  const changesText = (): string => {
+    return changesOrder || changesDelete > 0
+      ? (changesOrder ? 'Change order' : '') +
+          (changesOrder && changesDelete > 0 ? ' & ' : '') +
+          (changesDelete > 0 ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}` : '')
+      : 'No changes.';
+  };
+
+  const resetState = () => {
+    setChangesOrder(false);
+    setChangesDelete(0);
   };
 
   return (
     <>
       <Modal opened={opened} onClose={close} title="Edit Templates" size="lg">
         <Stack>
-          <List size="xs">
+          <List size="sm">
             <List.Item>
               To change the order, click the arrow button in the direction you want to move.
             </List.Item>
@@ -125,9 +149,14 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
           <Button variant="default" size="xs" onClick={close}>
             Close
           </Button>
-          <Button size="xs" color="cyan" onClick={applyChanges}>
-            Apply
-          </Button>
+          <Group>
+            <Text size="sm" c="dimmed">
+              {changesText()}
+            </Text>
+            <Button size="xs" color="cyan" onClick={applyChanges}>
+              Apply
+            </Button>
+          </Group>
         </Group>
       </Modal>
     </>

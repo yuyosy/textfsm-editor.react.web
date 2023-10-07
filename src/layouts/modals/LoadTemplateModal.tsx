@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Select, SelectItem, Stack } from '@mantine/core';
+import { Button, Group, List, Modal, Select, SelectItem, Stack } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
@@ -46,6 +46,12 @@ export const LoadTemplateModal = ({ opened, close, setTemplateValueFunc }: Props
     <>
       <Modal opened={opened} onClose={close} title="Load Template" size="lg">
         <Stack>
+          <List size="sm">
+            <List.Item>
+              Loads the template, note that it will overwrite the values entered in the Template
+              area.
+            </List.Item>
+          </List>
           <Select
             label="Template"
             placeholder="Pick one"

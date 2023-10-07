@@ -34,11 +34,15 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
   const textInputRef = useRef<HTMLInputElement>(null);
   const [handleSave] = useFileSave();
   const [activeStep, setActiveStep] = useState(0);
-  const nextStep = () => setActiveStep((current) => (current < 2 ? current + 1 : current));
+  const [defaultFileName, setDefaultFileName] = useState('');
+  const nextStep = () => {
+    setDefaultFileName(getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json'));
+    setActiveStep((current) => (current < 2 ? current + 1 : current));
+  };
   const prevStep = () => setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const exportTemplates = () => {
-    const defaultFileName = getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json');
+    // const defaultFileName = getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json');
     const fileName = textInputRef.current?.value ? textInputRef.current?.value : defaultFileName;
     const targetIndices = transferListData[1].map((item) => item.value);
     const data = JSON.stringify(
@@ -106,7 +110,7 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
                 </List>
                 <TextInput
                   ref={textInputRef}
-                  placeholder="export-file-name.json"
+                  placeholder={defaultFileName}
                   label="Export file name"
                 />
               </Stack>

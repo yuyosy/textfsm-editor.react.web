@@ -7,7 +7,7 @@ export const AppHeader = () => {
     <>
       <Header height={40}>
         <Group sx={{ height: '100%' }} px={10} position="apart">
-          <Text fw={700}>Test</Text>
+          <Text fw={700}>TextFSM-Editor</Text>
           <Group>
             <Tooltip
               label={colorScheme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}

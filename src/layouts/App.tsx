@@ -21,6 +21,7 @@ export const App = () => {
         <MantineProvider
           theme={{
             colorScheme,
+            black: '#334445',
             globalStyles: () => ({
               main: {
                 height: '100vh',

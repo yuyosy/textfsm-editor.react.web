@@ -61,13 +61,17 @@ export const SaveTemplateModal = ({ opened, close, valueRef }: Props) => {
     <>
       <Modal opened={opened} onClose={close} title="Save Template" size="lg">
         <Stack>
-          <List size="xs">
+          <List size="sm">
             <List.Item>
               To create a new template, enter a template name and select "Create" from the drop-down
               menu.
             </List.Item>
             <List.Item>
               To overwrite an existing template, select one from the drop-down menu.
+            </List.Item>
+            <List.Item>
+              Template data is stored in LocalStorage. When the page cache is deleted, those stored
+              data are also deleted.
             </List.Item>
           </List>
           <Select
