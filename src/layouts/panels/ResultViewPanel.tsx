@@ -2,7 +2,7 @@ import { CopyValueButton } from '@/components/CopyValueButton';
 import { Text, Tabs, Stack, Group, ScrollArea } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import { Prism } from '@mantine/prism';
-import { IconBorderAll, IconCode } from '@tabler/icons-react';
+import { IconBorderAll, IconBraces } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { forwardRef, useImperativeHandle } from 'react';
 
@@ -43,7 +43,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
         <Tabs.Tab value="table" icon={<IconBorderAll size="0.8rem" />}>
           Table
         </Tabs.Tab>
-        <Tabs.Tab value="json" icon={<IconCode size="0.8rem" />}>
+        <Tabs.Tab value="json" icon={<IconBraces size="0.8rem" />}>
           JSON
         </Tabs.Tab>
       </Tabs.List>

@@ -59,11 +59,16 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
   };
 
   const changesText = (): string => {
-    return changesOrder || changesDelete > 0
-      ? (changesOrder ? 'Change order' : '') +
-          (changesOrder && changesDelete > 0 ? ' & ' : '') +
-          (changesDelete > 0 ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}` : '')
-      : 'No changes.';
+    if (changesOrder || changesDelete > 0) {
+      return (
+        (changesOrder ? 'Change order' : '') +
+        (changesOrder && changesDelete > 0 ? ' & ' : '') +
+        (changesDelete > 0 ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}` : '') +
+        '.'
+      );
+    } else {
+      return 'No changes.';
+    }
   };
 
   const resetState = () => {
