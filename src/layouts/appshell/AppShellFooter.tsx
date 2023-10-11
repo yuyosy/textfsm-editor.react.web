@@ -5,7 +5,15 @@ export const AppFooter = () => {
     <>
       <Footer height={25} px={10}>
         <Group position="apart">
-          <Group></Group>
+          <Group>
+            {import.meta.env.VITE_APP_VERSION ? (
+              <Text size="sm" c="dimmed">
+                ver.{import.meta.env.VITE_APP_VERSION}
+              </Text>
+            ) : (
+              ''
+            )}
+          </Group>
           <Group>
             <Text size="sm" c="dimmed">
               Made by yuyosy
