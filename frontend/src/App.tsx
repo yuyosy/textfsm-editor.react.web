@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from './assets/vite.svg';
 import './App.css';
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { api } from './features/api';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -13,13 +10,15 @@ function App() {
   const [hello, setHello] = useState(null);
 
   useEffect(() => {
-      fetch('http://localhost:8000', {method: 'GET'})
-      .then(res => res.json())
+    api
+      .get('/')
       .then(data => {
-          setHello(data)
-          console.log(data)
+        setHello(data);
+        console.log('data:', data);
       })
-  },[])
+      .catch(error => {
+        console.error('Error fetching teams:', error);
+      });
   }, []);
 
   return (
