@@ -1,0 +1,27 @@
+services:
+  frontend:
+    container_name: textfsm-editor-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - 5173:5173
+    stdin_open: true
+    volumes:
+      - ./frontend:/usr/app
+      - /usr/app/node_modules
+    restart: always
+    depends_on:
+      - backend
+  backend:
+    container_name: textfsm-editor-backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/usr/app
+    restart: always
