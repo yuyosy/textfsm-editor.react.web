@@ -1,0 +1,13 @@
+{
+    "editor.tabSize": 2,
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 89, // == prettier:printWidth
+    "editor.formatOnSave": true,
+    "[markdown]": {
+        "editor.formatOnSave": false,
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+    },
+    "files.insertFinalNewline": true,
+}
