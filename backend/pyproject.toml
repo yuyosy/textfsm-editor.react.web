@@ -5,20 +5,9 @@ description = "Add a short description here"
 authors = [
     { name = "yuyosy", email = "y-ysss@outlook.com" }
 ]
-dependencies = [
-    "textfsm>=1.1.3",
-    "fastapi>=0.97.0",
-    "uvicorn[standard]>=0.22.0",
-]
 readme = "README.md"
-requires-python = ">= 3.8"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-
-[tool.hatch.metadata]
-allow-direct-references = true
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115.0",
+    "textfsm>=1.1.3",
+]
