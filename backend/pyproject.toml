@@ -1,5 +1,5 @@
 [project]
-name = "backend"
+name = "textfsm-editor-backend"
 version = "0.1.0"
 description = "Add a short description here"
 authors = [

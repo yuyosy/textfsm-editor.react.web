@@ -2,7 +2,7 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS development
 
 # Install the project into `/app`
-WORKDIR /usr/app
+WORKDIR /app
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
@@ -17,16 +17,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --no-dev
 
 # Then, add the rest of the project source code and install it
-# Installing separately from its dependencies allows optimal layer caching
-COPY ./src /usr/app/src
-COPY ./pyproject.toml /usr/app/pyproject.toml
-COPY ./uv.lock /usr/app/uv.lock
-
+COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 # Place executables in the environment at the front of the path
-ENV PATH="/usr/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
@@ -34,4 +30,4 @@ ENTRYPOINT []
 # Run the FastAPI application by default
 # Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs
 # Uses `--host 0.0.0.0` to allow access from outside the container
-CMD ["fastapi", "dev", "--host", "0.0.0.0", "src"]
+CMD ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

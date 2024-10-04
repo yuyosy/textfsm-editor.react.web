@@ -23,5 +23,4 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/usr/app/src
-    restart: always
+      - ./backend/src:/app/src
