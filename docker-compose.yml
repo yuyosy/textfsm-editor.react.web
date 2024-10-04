@@ -9,8 +9,8 @@ services:
       - 5173:5173
     stdin_open: true
     volumes:
-      - ./frontend:/usr/app
-      - /usr/app/node_modules
+      - ./frontend:/app
+      - /app/node_modules
     restart: always
     depends_on:
       - backend

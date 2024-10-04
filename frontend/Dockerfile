@@ -1,13 +1,13 @@
 FROM node:lts-buster-slim AS development
  
-WORKDIR /usr/app
+WORKDIR /app
  
-COPY package.json /usr/app
-COPY package-lock.json /usr/app
+COPY package.json /app
+COPY package-lock.json /app
 
 RUN npm ci
  
-COPY . /usr/app
+COPY . /app
 
 EXPOSE 5173
  
