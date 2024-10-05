@@ -1,26 +1,21 @@
 import { useStableCallback } from '@/hooks/useStableCallback';
 import { Button, Menu } from '@mantine/core';
 import { useSetState } from '@mantine/hooks';
-import {
-  IconBookmarks,
-  IconEdit,
-  IconFileExport,
-  IconFileImport,
-  IconListDetails,
-  IconPlus,
-} from '@tabler/icons-react';
-import { SaveTemplateModal } from '../modals/SaveTemplateModal';
-import { LoadTemplateModal } from '../modals/LoadTemplateModal';
+import { Edit, FileDown, FileUp, LayoutList, LibraryBig, Plus } from 'lucide-react';
+import type { editor } from 'monaco-editor';
 import { EditTemplatesModal } from '../modals/EditTemplatesModal';
-import { ImportTemplatesModal } from '../modals/ImportTemplatesModal';
 import { ExportTemplatesModal } from '../modals/ExportTemplatesModal';
+import { ImportTemplatesModal } from '../modals/ImportTemplatesModal';
+import { LoadTemplateModal } from '../modals/LoadTemplateModal';
+import { SaveTemplateModal } from '../modals/SaveTemplateModal';
 
 type Props = {
-  valueRef: React.MutableRefObject<string>;
-  setTemplateValue: (value: string) => void;
+  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  // valueRef: React.MutableRefObject<string>;
+  // setTemplateValue: (value: string) => void;
 };
 
-export const TemplateManagerToolBarItem = ({ valueRef, setTemplateValue }: Props) => {
+export const TemplateManagerToolBarItem = ({ editorRef }: Props) => {
   // Element State
   const [modalState, setModalState] = useSetState<Record<string, boolean>>({
     save: false,
@@ -54,14 +49,19 @@ export const TemplateManagerToolBarItem = ({ valueRef, setTemplateValue }: Props
       <SaveTemplateModal
         opened={modalState['save']}
         close={closeSaveModal}
-        valueRef={valueRef}
+        // valueRef={valueRef}
+        editorRef={editorRef}
       ></SaveTemplateModal>
       <LoadTemplateModal
         opened={modalState['load']}
         close={closeLoadModal}
-        setTemplateValueFunc={setTemplateValue}
+        // setTemplateValueFunc={setTemplateValue}
+        editorRef={editorRef}
       ></LoadTemplateModal>
-      <EditTemplatesModal opened={modalState['edit']} close={closeEditModal}></EditTemplatesModal>
+      <EditTemplatesModal
+        opened={modalState['edit']}
+        close={closeEditModal}
+      ></EditTemplatesModal>
       <ImportTemplatesModal
         opened={modalState['import']}
         close={closeImportModal}
@@ -85,26 +85,26 @@ export const TemplateManagerToolBarItem = ({ valueRef, setTemplateValue }: Props
           <Button
             variant="filled"
             size="xs"
-            leftIcon={<IconListDetails size={18} strokeWidth={1.5} />}
+            leftSection={<LayoutList size={18} strokeWidth={1.5} />}
           >
             Templates
           </Button>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item icon={<IconPlus size={14} />} onClick={openSaveModal}>
+          <Menu.Item leftSection={<Plus size={14} />} onClick={openSaveModal}>
             Save Template
           </Menu.Item>
-          <Menu.Item icon={<IconBookmarks size={14} />} onClick={openLoadModal}>
+          <Menu.Item leftSection={<LibraryBig size={14} />} onClick={openLoadModal}>
             Load Template
           </Menu.Item>
-          <Menu.Item icon={<IconEdit size={14} />} onClick={openEditModal}>
+          <Menu.Item leftSection={<Edit size={14} />} onClick={openEditModal}>
             Edit Templates
           </Menu.Item>
           <Menu.Divider />
-          <Menu.Item icon={<IconFileImport size={14} />} onClick={openImportModal}>
+          <Menu.Item leftSection={<FileDown size={14} />} onClick={openImportModal}>
             Import Templates
           </Menu.Item>
-          <Menu.Item icon={<IconFileExport size={14} />} onClick={openExportModal}>
+          <Menu.Item leftSection={<FileUp size={14} />} onClick={openExportModal}>
             Export Templates
           </Menu.Item>
         </Menu.Dropdown>

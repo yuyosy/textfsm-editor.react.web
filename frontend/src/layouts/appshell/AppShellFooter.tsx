@@ -1,10 +1,10 @@
-import { Anchor, Footer, Group, Text } from '@mantine/core';
+import { Anchor, AppShell, Group, Text } from '@mantine/core';
 
 export const AppFooter = () => {
   return (
     <>
-      <Footer height={25} px={10}>
-        <Group position="apart">
+    <AppShell.Footer h={25} px={10}>
+      <Group justify="space-between">
           <Group>
             {import.meta.env.VITE_APP_VERSION ? (
               <Text size="sm" c="dimmed">
@@ -23,7 +23,7 @@ export const AppFooter = () => {
             </Anchor>
           </Group>
         </Group>
-      </Footer>
+      </AppShell.Footer>
     </>
   );
 };

@@ -1,19 +1,29 @@
+import { CopyValueButton } from '@/components/CopyValueButton';
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
-import { ActionIcon, Divider, Group, Stack, Switch, Text, Tooltip } from '@mantine/core';
-import { Panel, PanelGroup } from 'react-resizable-panels';
+import { Editor } from '@/features/editor/Editor';
 import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
-import { NotificationPanel } from './NotificationPanel';
-import { useRef } from 'react';
-import { ResultViewPanel } from './ResultViewPanel';
-import { SimpleEditorPanel } from './SimpleEditorPanel';
-import { TextFSMEditorPanel } from './TextFSMEditorPanel';
-import { IconSend } from '@tabler/icons-react';
-import { useForceUpdate, useLocalStorage } from '@mantine/hooks';
 import { ResultObject } from '@/types';
-import { setRefValue } from '@/utils/helpers';
-import { onChangeEditorWrapper } from '@/features/editor/onChange';
-import { TemplateManagerToolBarItem } from './TemplateManagerToolBarItem';
+import {
+  ActionIcon,
+  AppShell,
+  Divider,
+  Group,
+  Stack,
+  Switch,
+  Text,
+  Tooltip,
+  useMantineColorScheme,
+} from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
+import type { OnChange, OnMount } from '@monaco-editor/react';
+import { Send } from 'lucide-react';
+import type { editor } from 'monaco-editor';
+import { useRef } from 'react';
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import { NotificationPanel } from './NotificationPanel';
 import { OptionToolBarItem } from './OptionToolBarItem';
+import { ResultViewPanel } from './ResultViewPanel';
+import { TemplateManagerToolBarItem } from './TemplateManagerToolBarItem';
 
 export const MainPanel = () => {
   // Local Storage
@@ -26,24 +36,48 @@ export const MainPanel = () => {
     defaultValue: 1000,
   });
 
+  // TODO editor theme switch
+  const { colorScheme } = useMantineColorScheme();
+
   // Ref State
   const notificationPanelRef = useRef<any>();
   const resultViewPanelRef = useRef<any>();
-  const editorDataValue = useRef<string>('');
-  const editorTemplateValue = useRef<string>('');
   const resultObject = useRef<ResultObject>();
+
+  const rawTextEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const templateEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  const handleRawTextEditorDidMount: OnMount = editor => {
+    rawTextEditorRef.current = editor;
+  };
+  const handleTemplateEditorDidMount: OnMount = editor => {
+    templateEditorRef.current = editor;
+  };
+  const handleRawTextEditorChange: OnChange = value => {
+    console.debug(value);
+  };
+  const handleTemplateEditorChange: OnChange = value => {
+    console.debug(value);
+  };
+
+  const getRawTextValue: () => string = () => {
+    return rawTextEditorRef.current ? rawTextEditorRef.current.getValue() : '';
+  };
+  const getTemplateValue: () => string = () => {
+    return templateEditorRef.current ? templateEditorRef.current.getValue() : '';
+  };
 
   // Functions
   const sendRequest = async () => {
-    if (editorTemplateValue.current === '') {
+    if (templateEditorRef.current?.getValue() === '') {
       return;
     }
+    const rawText = rawTextEditorRef.current ? rawTextEditorRef.current.getValue() : '';
+    const template = templateEditorRef.current
+      ? templateEditorRef.current.getValue()
+      : '';
     setResultObject(
-      await sendTextFSMParseRequest(
-        editorDataValue.current,
-        editorTemplateValue.current,
-        inputSendDelayValue
-      )
+      await sendTextFSMParseRequest(rawText, template, inputSendDelayValue)
     );
     ParseResult();
   };
@@ -56,9 +90,13 @@ export const MainPanel = () => {
     if (notificationPanelRef.current) {
       notificationPanelRef.current.prependResult(resultObject);
     }
-    if (resultViewPanelRef.current && resultObject.ok && resultObject.response_result.ok) {
+    if (
+      resultViewPanelRef.current &&
+      resultObject.ok &&
+      resultObject.response_result.ok
+    ) {
       resultViewPanelRef.current.setResults(
-        resultObject.response_result.headers.map((item) => {
+        resultObject.response_result.headers.map(item => {
           return { accessor: item };
         }),
         resultObject.response_result.results
@@ -73,40 +111,14 @@ export const MainPanel = () => {
     return resultObject ? resultObject.current : undefined;
   };
 
-  const setEditorDataValue = (value: string) => {
-    setRefValue(editorDataValue, value);
-  };
-
-  const setEditorTemplateValue = (value: string) => {
-    setRefValue(editorTemplateValue, value);
-  };
-
-  const onChangeEditor = (func: (value: string) => void) => (value: string | undefined) => {
-    func(value === undefined ? '' : value);
-    if (editorAutoParse) {
-      sendRequest();
-    }
-  };
-
-  const forceUpdate = useForceUpdate();
-
-  const loadTemplateAndRefresh = (value: string) => {
-    setEditorTemplateValue(value);
-    forceUpdate(); // Is there a better way?
-  };
-
-  const onChangeTemplateEditor = onChangeEditorWrapper(onChangeEditor(setEditorTemplateValue));
-  const onChangeDataEditor = onChangeEditorWrapper(onChangeEditor(setEditorDataValue));
-
   return (
-    <>
-      <Stack spacing={0} h="100%">
+    <AppShell.Main>
+      <Stack gap={0} pt={40} pb={25} style={{ height: '100dvh' }}>
         {/* ToolBar */}
-        <Group position="apart" px={10} py={8} bg="#7c83871d">
+        <Group justify="space-between" px={10} py={8} bg="#7c83871d">
           <Group>
             <TemplateManagerToolBarItem
-              valueRef={editorTemplateValue}
-              setTemplateValue={loadTemplateAndRefresh}
+              editorRef={templateEditorRef}
             ></TemplateManagerToolBarItem>
           </Group>
           <Group>
@@ -119,7 +131,7 @@ export const MainPanel = () => {
                   sendRequest();
                 }}
               >
-                <IconSend size="1.125rem" />
+                <Send size="1.125rem" />
               </ActionIcon>
             </Tooltip>
             <Divider orientation="vertical" />
@@ -129,7 +141,7 @@ export const MainPanel = () => {
               onLabel="ON"
               offLabel="OFF"
               checked={editorAutoParse}
-              onChange={(event) => setEditorAutoParse(event.currentTarget.checked)}
+              onChange={event => setEditorAutoParse(event.currentTarget.checked)}
             />
             <Divider orientation="vertical" />
             {/* Options */}
@@ -141,17 +153,33 @@ export const MainPanel = () => {
           <Panel defaultSize={70}>
             <PanelGroup direction="horizontal" autoSaveId="persistence">
               <Panel defaultSize={42}>
-                <SimpleEditorPanel
-                  valueRef={editorDataValue}
-                  onChangeFunc={onChangeDataEditor}
-                ></SimpleEditorPanel>
+                <Stack gap={0} h="100%">
+                  <Group px={10} py={8} justify="space-between">
+                    <Text fw={700}>Data</Text>
+                    <CopyValueButton value={getRawTextValue()}></CopyValueButton>
+                  </Group>
+                  <Editor
+                    defaultLanguage="plain"
+                    theme={colorScheme === 'dark' ? 'theme-dark' : 'theme-light'}
+                    onMount={handleRawTextEditorDidMount}
+                    onChange={handleRawTextEditorChange}
+                  />
+                </Stack>
               </Panel>
               <ResizeHandle />
               <Panel defaultSize={42}>
-                <TextFSMEditorPanel
-                  valueRef={editorTemplateValue}
-                  onChangeFunc={onChangeTemplateEditor}
-                ></TextFSMEditorPanel>
+                <Stack gap={0} h="100%">
+                  <Group px={10} py={8} justify="space-between">
+                    <Text fw={700}>Template</Text>
+                    <CopyValueButton value={getTemplateValue()}></CopyValueButton>
+                  </Group>
+                  <Editor
+                    defaultLanguage="textfsm"
+                    theme={colorScheme === 'dark' ? 'theme-dark' : 'theme-light'}
+                    onMount={handleTemplateEditorDidMount}
+                    onChange={handleTemplateEditorChange}
+                  />
+                </Stack>
               </Panel>
               <ResizeHandle />
               <Panel defaultSize={16} collapsible>
@@ -165,6 +193,6 @@ export const MainPanel = () => {
           </Panel>
         </PanelGroup>
       </Stack>
-    </>
+    </AppShell.Main>
   );
 };

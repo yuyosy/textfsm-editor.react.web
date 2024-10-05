@@ -1,10 +1,12 @@
 import { CopyValueButton } from '@/components/CopyValueButton';
-import { Text, Tabs, Stack, Group, ScrollArea } from '@mantine/core';
+import { CodeHighlight } from '@mantine/code-highlight';
+import { Group, ScrollArea, Stack, Tabs, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
-import { Prism } from '@mantine/prism';
-import { IconBorderAll, IconBraces } from '@tabler/icons-react';
+import { Braces, Table } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 import { forwardRef, useImperativeHandle } from 'react';
+
+import '@mantine/code-highlight/styles.css';
 
 type Header = {
   accessor: string;
@@ -14,20 +16,20 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
   const [resultHeaders, setResultHeaders] = useListState<Header>([]);
   const [resultData, setResultData] = useListState<any[]>([]);
 
-  const tsvDataDeliver = (): React.MutableRefObject<string> => {
+  const tsvDataDeliver = (): string => {
     const headers = Object.values(resultHeaders)
-      .map((item) => item['accessor'])
+      .map(item => item['accessor'])
       .join('\t');
     const rows = resultData
       .reduce((previous, current) => {
         return previous.concat([Object.values(current).join('\t')]);
       }, [])
       .join('\n');
-    return { current: `${headers}\n${rows}` };
+    return `${headers}\n${rows}`;
   };
 
-  const jsonDataDeliver = (): React.MutableRefObject<string> => {
-    return { current: JSON.stringify(resultData, null, '  ') };
+  const jsonDataDeliver = (): string => {
+    return JSON.stringify(resultData, null, '  ');
   };
 
   useImperativeHandle(ref, () => ({
@@ -38,20 +40,26 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
   }));
 
   return (
-    <Tabs variant="pills" radius={0} defaultValue="table" orientation="vertical" h="100%">
+    <Tabs
+      variant="pills"
+      radius={0}
+      defaultValue="table"
+      orientation="vertical"
+      h="100%"
+    >
       <Tabs.List>
-        <Tabs.Tab value="table" icon={<IconBorderAll size="0.8rem" />}>
+        <Tabs.Tab value="table" leftSection={<Table size="0.8rem" />}>
           Table
         </Tabs.Tab>
-        <Tabs.Tab value="json" icon={<IconBraces size="0.8rem" />}>
+        <Tabs.Tab value="json" leftSection={<Braces size="0.8rem" />}>
           JSON
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="table">
-        <Stack spacing={0} h="100%">
-          <Group px={10} py={4} position="apart">
+        <Stack gap={0} h="100%">
+          <Group px={10} py={4} justify="space-between">
             <Text>Table View</Text>
-            <CopyValueButton valueRef={tsvDataDeliver()}></CopyValueButton>
+            <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
           </Group>
           <DataTable
             columns={resultHeaders}
@@ -67,21 +75,24 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
             })}
             idAccessor="$index"
             striped
-            withBorder
+            withTableBorder
             withColumnBorders
           />
         </Stack>
       </Tabs.Panel>
       <Tabs.Panel value="json">
-        <Stack spacing={0} h="100%">
-          <Group px={10} py={4} position="apart">
+        <Stack gap={0} h="100%">
+          <Group px={10} py={4} justify="space-between">
             <Text>JSON View</Text>
-            <CopyValueButton valueRef={jsonDataDeliver()}></CopyValueButton>
+            <CopyValueButton value={jsonDataDeliver()}></CopyValueButton>
           </Group>
           <ScrollArea h="100%">
-            <Prism withLineNumbers noCopy language="json" h="100%">
-              {JSON.stringify(resultData, null, '  ')}
-            </Prism>
+            <CodeHighlight
+              code={JSON.stringify(resultData, null, '  ')}
+              language="json"
+              h="100%"
+              withCopyButton={false}
+            />
           </ScrollArea>
         </Stack>
       </Tabs.Panel>

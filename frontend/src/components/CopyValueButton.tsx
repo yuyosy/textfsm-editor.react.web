@@ -1,20 +1,20 @@
 import { Tooltip, ActionIcon } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
-import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { Check, Copy } from 'lucide-react';
 
 type Props = {
-  valueRef: React.MutableRefObject<string>;
+  value: string;
 };
 
-export const CopyValueButton = ({ valueRef }: Props) => {
+export const CopyValueButton = ({ value }: Props) => {
   const clipboard = useClipboard({ timeout: 1000 });
   return (
     <Tooltip label={clipboard.copied ? 'Copied' : 'Copy'} withArrow position="bottom">
       <ActionIcon
         color={clipboard.copied ? 'teal' : 'gray'}
-        onClick={() => clipboard.copy(valueRef.current)}
+        onClick={() => clipboard.copy(value)}
       >
-        {clipboard.copied ? <IconCheck /> : <IconCopy />}
+        {clipboard.copied ? <Check /> : <Copy />}
       </ActionIcon>
     </Tooltip>
   );

@@ -10,12 +10,10 @@ import {
   Stack,
   Stepper,
   Text,
-  TransferList,
-  TransferListData,
 } from '@mantine/core';
 import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconFileCode, IconUpload, IconX } from '@tabler/icons-react';
+import { FileCode, Upload, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
@@ -23,6 +21,11 @@ type Props = {
   opened: boolean;
   close: () => void;
 };
+
+type TransferListData = [
+  { value: string; label: string }[],
+  { value: string; label: string }[],
+];
 
 export const ImportTemplatesModal = ({ opened, close }: Props) => {
   // Local Storage
@@ -36,29 +39,31 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
   const [activeStep, setActiveStep] = useState(0);
   const nextStep = () => {
-    setActiveStep((current) => (current < 2 ? current + 1 : current));
+    setActiveStep(current => (current < 2 ? current + 1 : current));
     loadJsonFiles();
   };
-  const prevStep = () => setActiveStep((current) => (current > 0 ? current - 1 : current));
+  const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
   const [transferListData, setTransferListData] = useState<TransferListData>([[], []]);
 
   const normalize = (results: TemplateInfo[][]): TemplateInfo[][] => {
     if (!Array.isArray(results)) {
       return [];
     }
-    return results.map((item) => {
+    return results.map(item => {
       if (!Array.isArray(item) || item === null) {
         console.warn('invalid file', item);
         return [];
       }
-      return item.filter((data) => {
-        return data !== null && typeof data == 'object' && 'label' in data && 'value' in data;
+      return item.filter(data => {
+        return (
+          data !== null && typeof data == 'object' && 'label' in data && 'value' in data
+        );
       });
     });
   };
 
   const loadJsonFiles = async () => {
-    const promises: Promise<TemplateInfo[]>[] = importTargetFiles.map(async (item) => {
+    const promises: Promise<TemplateInfo[]>[] = importTargetFiles.map(async item => {
       try {
         const text = await item.text();
         return JSON.parse(text);
@@ -69,10 +74,10 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
     });
 
     const results = await Promise.all(promises);
-    const namesInTemplateList = new Set(templateList.map((item) => item.label));
+    const namesInTemplateList = new Set(templateList.map(item => item.label));
     const filtered = normalize(results)
       .flat()
-      .filter((item) => !namesInTemplateList.has(item.label));
+      .filter(item => !namesInTemplateList.has(item.label));
     setTransferListData([[], filtered]);
   };
 
@@ -84,18 +89,18 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
   };
 
   const dropFiles = (files: FileWithPath[]) => {
-    const namesInAlreadyFiles = new Set(importTargetFiles.map((item) => item.name));
+    const namesInAlreadyFiles = new Set(importTargetFiles.map(item => item.name));
     setImportTargetFiles([
       ...importTargetFiles,
-      ...files.filter((item) => !namesInAlreadyFiles.has(item.name)),
+      ...files.filter(item => !namesInAlreadyFiles.has(item.name)),
     ]);
   };
 
   const rejectFiles = (files: FileRejection[]) => {
-    const namesInAlreadyFiles = new Set(rejectedFiles.map((item) => item.file.name));
+    const namesInAlreadyFiles = new Set(rejectedFiles.map(item => item.file.name));
     setRejectedFiles([
       ...rejectedFiles,
-      ...files.filter((item) => !namesInAlreadyFiles.has(item.file.name)),
+      ...files.filter(item => !namesInAlreadyFiles.has(item.file.name)),
     ]);
   };
 
@@ -127,7 +132,7 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
           <Stepper
             active={activeStep}
             onStepClick={setActiveStep}
-            breakpoint="sm"
+            size="sm"
             allowNextStepsSelect={false}
           >
             <Stepper.Step label="Step 1" description="Load templates JSON">
@@ -140,22 +145,26 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
                   accept={['application/json']}
                   multiple
                 >
-                  <Group position="center" spacing="xl">
+                  <Group justify="center" gap="xl">
                     <Dropzone.Accept>
-                      <IconUpload size={32} stroke={1.2} />
+                      <Upload size={32} strokeWidth={1.2} />
                     </Dropzone.Accept>
                     <Dropzone.Reject>
-                      <IconX size={32} stroke={1.2} />
+                      <X size={32} strokeWidth={1.2} />
                     </Dropzone.Reject>
                     <Dropzone.Idle>
-                      <IconFileCode size={32} stroke={1.2} />
+                      <FileCode size={32} strokeWidth={1.2} />
                     </Dropzone.Idle>
                     <Box>
                       <Text inline>Drag JSON files here or click to select files</Text>
                     </Box>
                   </Group>
                 </Dropzone>
-                <Divider label="Selected Files" labelPosition="center" variant="dashed" />
+                <Divider
+                  label="Selected Files"
+                  labelPosition="center"
+                  variant="dashed"
+                />
                 <ScrollArea h={250}>
                   <Stack>
                     {importTargetFiles.map((item: File, index) => {
@@ -191,11 +200,15 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
                   </Stack>
                 </ScrollArea>
               </Stack>
-              <Group position="apart" mt="lg">
+              <Group justify="space-between" mt="lg">
                 <Button variant="default" size="xs" onClick={close}>
                   Close
                 </Button>
-                <Button size="xs" onClick={nextStep} disabled={!importTargetFiles.length}>
+                <Button
+                  size="xs"
+                  onClick={nextStep}
+                  disabled={!importTargetFiles.length}
+                >
                   Next step
                 </Button>
               </Group>
@@ -205,11 +218,11 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
                 <Divider my="sm" />
                 <List size="xs">
                   <List.Item>
-                    Templates with the same name as those already saved cannot be imported and will
-                    be excluded from the list.
+                    Templates with the same name as those already saved cannot be
+                    imported and will be excluded from the list.
                   </List.Item>
                 </List>
-                <TransferList
+                {/* <TransferList
                   value={transferListData}
                   onChange={setTransferListData}
                   searchPlaceholder="Search..."
@@ -217,9 +230,9 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
                   titles={['Unselected', 'Selected']}
                   breakpoint="sm"
                   transferAllMatchingFilter
-                ></TransferList>
+                ></TransferList> */}
               </Stack>
-              <Group position="apart" mt="lg">
+              <Group justify="space-between" mt="lg">
                 <Button variant="default" size="xs" onClick={close}>
                   Close
                 </Button>

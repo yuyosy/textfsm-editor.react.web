@@ -1,3 +1,5 @@
+import { useFileSave } from '@/hooks/useFileSave';
+import { getCurrentDateTimeString } from '@/utils/datetime';
 import {
   Button,
   Divider,
@@ -8,19 +10,20 @@ import {
   Stepper,
   Text,
   TextInput,
-  TransferList,
-  TransferListData,
 } from '@mantine/core';
-import { TemplateInfo } from './types';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useRef, useState } from 'react';
-import { useFileSave } from '@/hooks/useFileSave';
-import { getCurrentDateTimeString } from '@/utils/datetime';
+import { TemplateInfo } from './types';
 
 type Props = {
   opened: boolean;
   close: () => void;
 };
+
+type TransferListData = [
+  { value: string; label: string }[],
+  { value: string; label: string }[],
+];
 
 export const ExportTemplatesModal = ({ opened, close }: Props) => {
   // Local Storage
@@ -36,15 +39,19 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
   const [activeStep, setActiveStep] = useState(0);
   const [defaultFileName, setDefaultFileName] = useState('');
   const nextStep = () => {
-    setDefaultFileName(getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json'));
-    setActiveStep((current) => (current < 2 ? current + 1 : current));
+    setDefaultFileName(
+      getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json')
+    );
+    setActiveStep(current => (current < 2 ? current + 1 : current));
   };
-  const prevStep = () => setActiveStep((current) => (current > 0 ? current - 1 : current));
+  const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
 
   const exportTemplates = () => {
     // const defaultFileName = getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json');
-    const fileName = textInputRef.current?.value ? textInputRef.current?.value : defaultFileName;
-    const targetIndices = transferListData[1].map((item) => item.value);
+    const fileName = textInputRef.current?.value
+      ? textInputRef.current?.value
+      : defaultFileName;
+    const targetIndices = transferListData[1].map(item => item.value);
     const data = JSON.stringify(
       templateList.filter((_, index) => targetIndices.includes(index.toString()))
     );
@@ -73,13 +80,13 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
           <Stepper
             active={activeStep}
             onStepClick={setActiveStep}
-            breakpoint="sm"
+            size="sm"
             allowNextStepsSelect={false}
           >
             <Stepper.Step label="Step 1" description="Select templates">
               <Stack>
                 <Divider my="sm" />
-                <TransferList
+                {/* <TransferList
                   value={transferListData}
                   onChange={setTransferListData}
                   searchPlaceholder="Search..."
@@ -87,13 +94,17 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
                   titles={['Unselected', 'Selected']}
                   breakpoint="sm"
                   transferAllMatchingFilter
-                ></TransferList>
+                ></TransferList> */}
               </Stack>
-              <Group position="apart" mt="lg">
+              <Group justify="space-between" mt="lg">
                 <Button variant="default" size="xs" onClick={close}>
                   Close
                 </Button>
-                <Button size="xs" onClick={nextStep} disabled={!transferListData[1].length}>
+                <Button
+                  size="xs"
+                  onClick={nextStep}
+                  disabled={!transferListData[1].length}
+                >
                   Next step
                 </Button>
               </Group>
@@ -103,10 +114,12 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
                 <Divider my="sm" />
                 <List size="xs">
                   <List.Item>
-                    If the file name is not specified, it will be exported with the default file
-                    name.
+                    If the file name is not specified, it will be exported with the
+                    default file name.
                   </List.Item>
-                  <List.Item>Default file name : `export-templates_yyyymmdd-hhmmss.json`</List.Item>
+                  <List.Item>
+                    Default file name : `export-templates_yyyymmdd-hhmmss.json`
+                  </List.Item>
                 </List>
                 <TextInput
                   ref={textInputRef}
@@ -114,7 +127,7 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
                   label="Export file name"
                 />
               </Stack>
-              <Group position="apart" mt="lg">
+              <Group justify="space-between" mt="lg">
                 <Button variant="default" size="xs" onClick={close}>
                   Close
                 </Button>

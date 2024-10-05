@@ -2,7 +2,7 @@ import { AlertCard } from '@/components/AlertCard';
 import { ResultObject } from '@/types';
 import { ActionIcon, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
-import { IconClearAll } from '@tabler/icons-react';
+import { Eraser } from 'lucide-react';
 import { forwardRef, useImperativeHandle } from 'react';
 
 export const NotificationPanel = forwardRef((_props, ref) => {
@@ -14,8 +14,8 @@ export const NotificationPanel = forwardRef((_props, ref) => {
     },
   }));
   return (
-    <Stack spacing={0} h="100%">
-      <Group px={10} py={8} position="apart">
+    <Stack gap={0} h="100%">
+      <Group px={10} py={8} justify="space-between">
         <Text fw={700}>Console</Text>
         <Tooltip label="Clear" withArrow position="bottom">
           <ActionIcon
@@ -23,7 +23,7 @@ export const NotificationPanel = forwardRef((_props, ref) => {
               responseResultsHandlers.setState([]);
             }}
           >
-            <IconClearAll />
+            <Eraser  />
           </ActionIcon>
         </Tooltip>
       </Group>

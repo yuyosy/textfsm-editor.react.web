@@ -1,4 +1,4 @@
-import { Alert, Text } from '@mantine/core';
+import { Alert, Box, Text } from '@mantine/core';
 
 type Props = {
   mainTitle: string;
@@ -11,12 +11,12 @@ export const AlertCard = ({ mainTitle, subTitle, color, message }: Props) => {
   return (
     <Alert
       title={
-        <Text>
-          {mainTitle}
+        <Box>
+          <Text>{mainTitle}</Text>
           <Text fz="xs" c="dimmed" fw={400}>
             {subTitle}
           </Text>
-        </Text>
+        </Box>
       }
       color={color}
     >

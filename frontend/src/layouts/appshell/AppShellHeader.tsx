@@ -1,12 +1,19 @@
-import { ActionIcon, Group, Header, Text, Tooltip, useMantineColorScheme } from '@mantine/core';
-import { IconMoonStars, IconSun } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  AppShell,
+  Group,
+  Text,
+  Tooltip,
+  useMantineColorScheme,
+} from '@mantine/core';
+import { Moon, Sun } from 'lucide-react';
 
 export const AppHeader = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   return (
     <>
-      <Header height={40}>
-        <Group sx={{ height: '100%' }} px={10} position="apart">
+      <AppShell.Header h={40}>
+        <Group h="100%" px={10} justify="space-between">
           <Text fw={700}>TextFSM-Editor</Text>
           <Group>
             <Tooltip
@@ -15,12 +22,12 @@ export const AppHeader = () => {
               position="bottom"
             >
               <ActionIcon onClick={() => toggleColorScheme()}>
-                {colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
+                {colorScheme === 'dark' ? <Sun /> : <Moon />}
               </ActionIcon>
             </Tooltip>
           </Group>
         </Group>
-      </Header>
+      </AppShell.Header>
     </>
   );
 };

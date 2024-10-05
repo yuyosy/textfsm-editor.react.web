@@ -1,9 +1,9 @@
 import { ActionIcon, Box, Button, Group, List, Modal, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { TemplateInfo } from './types';
-import { useEffect, useState } from 'react';
+import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { IconArrowDown, IconArrowUp, IconArrowsUpDown, IconTrash } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { TemplateInfo } from './types';
 
 type Props = {
   opened: boolean;
@@ -63,7 +63,9 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
       return (
         (changesOrder ? 'Change order' : '') +
         (changesOrder && changesDelete > 0 ? ' & ' : '') +
-        (changesDelete > 0 ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}` : '') +
+        (changesDelete > 0
+          ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}`
+          : '') +
         '.'
       );
     } else {
@@ -82,14 +84,16 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
         <Stack>
           <List size="sm">
             <List.Item>
-              To change the order, click the arrow button in the direction you want to move.
+              To change the order, click the arrow button in the direction you want to
+              move.
             </List.Item>
             <List.Item>
-              The changes such as sorting or deleting will not be reflected until the Apply button
-              is pressed.
+              The changes such as sorting or deleting will not be reflected until the
+              Apply button is pressed.
             </List.Item>
             <List.Item>
-              In the future, I plan to implement a feature that allows users to rename templates.
+              In the future, I plan to implement a feature that allows users to rename
+              templates.
             </List.Item>
           </List>
           <DataTable
@@ -99,7 +103,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
                 accessor: 'move',
                 title: (
                   <Group>
-                    <IconArrowsUpDown size={14} />
+                    <ArrowDownUp size={14} />
                     <Text>Sort</Text>
                   </Group>
                 ),
@@ -111,7 +115,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
                       disabled={index === 0}
                       onClick={() => moveUpArrayIndex(index)}
                     >
-                      <IconArrowUp size={18} />
+                      <ArrowUp size={18} />
                     </ActionIcon>
                     <ActionIcon
                       variant="transparent"
@@ -119,7 +123,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
                       disabled={index === edittingTemplateList.length - 1}
                       onClick={() => moveDownArrayIndex(index)}
                     >
-                      <IconArrowDown size={18} />
+                      <ArrowDown size={18} />
                     </ActionIcon>
                   </Box>
                 ),
@@ -131,16 +135,16 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
               {
                 accessor: 'actions',
                 title: <Text mr="xs">Row actions</Text>,
-                textAlignment: 'right',
+                textAlign: 'right',
                 render: (_item, index) => (
-                  <Group spacing={4} position="right" noWrap>
+                  <Group gap={4} justify="end">
                     <ActionIcon
                       variant="light"
                       color="red"
                       size="sm"
                       onClick={() => deleteItem(index)}
                     >
-                      <IconTrash size={16} />
+                      <Trash size={16} />
                     </ActionIcon>
                   </Group>
                 ),
@@ -150,7 +154,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
             height={300}
           />
         </Stack>
-        <Group position="apart" mt="lg">
+        <Group justify="space-between" mt="lg">
           <Button variant="default" size="xs" onClick={close}>
             Close
           </Button>

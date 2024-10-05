@@ -1,6 +1,6 @@
 import { Button, Group, Menu, NumberInput, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconSettings } from '@tabler/icons-react';
+import { Settings } from 'lucide-react';
 
 export const OptionToolBarItem = () => {
   const [inputSendDelayValue, setInputSendDelayValue] = useLocalStorage<number>({
@@ -10,24 +10,28 @@ export const OptionToolBarItem = () => {
 
   return (
     <>
-      <Menu position="bottom-end" withArrow shadow="md" width={400} closeOnItemClick={false}>
+      <Menu
+        position="bottom-end"
+        withArrow
+        shadow="md"
+        width={400}
+        closeOnItemClick={false}
+      >
         <Menu.Target>
           <Button
             variant="default"
             size="xs"
-            leftIcon={<IconSettings size={18} strokeWidth={1.5} />}
+            leftSection={<Settings size={18} strokeWidth={1.5} />}
           >
             Options
           </Button>
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label fw={600}>Editor Options</Menu.Label>
-          <Group p={10} position="apart">
-            <Text fz="sm">
-              Input send delay
-              <Text fz="xs" c="dimmed">
-                Only when AutoParse is active (ON).
-              </Text>
+          <Group p={10} justify="space-between">
+            <Text fz="sm">Input send delay</Text>
+            <Text fz="xs" c="dimmed">
+              Only when AutoParse is active (ON).
             </Text>
             <NumberInput
               step={500}
@@ -35,9 +39,10 @@ export const OptionToolBarItem = () => {
               max={5000}
               size="xs"
               value={inputSendDelayValue}
-              onChange={(value) => setInputSendDelayValue(value === '' ? 1000 : value)}
-              parser={(value) => value.replace(/\sms/g, '')}
-              formatter={(value) => (!Number.isNaN(parseFloat(value)) ? `${value} ms` : '')}
+              onChange={value =>
+                setInputSendDelayValue(value === '' ? 1000 : Number(value))
+              }
+              suffix="ms"
             />
           </Group>
         </Menu.Dropdown>
