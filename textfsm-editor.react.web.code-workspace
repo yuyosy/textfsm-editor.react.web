@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "Backend",
+			"path": "./backend"
+		},
+		{
+			"name": "Frontend",
+			"path": "./frontend"
+		},
+		{
+			"name": "Workspace",
+			"path": "./"
+		}
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"editor.wordWrap": "bounded",
+		"files.insertFinalNewline": true,
+	}
+}
