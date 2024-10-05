@@ -1,10 +1,7 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
+import ReactDOM from 'react-dom/client';
+import { App } from '@/layouts/App.tsx';
+import { initializeEditor } from '@/features/editor/initialize';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+initializeEditor();
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App />);
