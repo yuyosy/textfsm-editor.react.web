@@ -1,11 +1,27 @@
-import { AppShell, MantineProvider, createTheme } from '@mantine/core';
-import { AppHeader } from './appshell/AppShellHeader';
-import { AppFooter } from './appshell/AppShellFooter';
-import { MainPanel } from './panels/MainPanel';
+import {
+  AppShell,
+  MantineProvider,
+  colorsTuple,
+  createTheme,
+  virtualColor,
+} from '@mantine/core';
 import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
+import { AppHeader } from './AppHeader';
+import { AppMain } from './AppMain';
+import { AppNavbar } from './AppNav';
+import { useDisclosure } from '@mantine/hooks';
 
 const theme = createTheme({
-  /** Your theme override here */
+  black: '#484951',
+  colors: {
+    'base-dark': colorsTuple('#343637'),
+    'base-light': colorsTuple('#e1e4e6'),
+    'base-background': virtualColor({
+      name: 'base-background',
+      dark: 'base-dark',
+      light: 'base-light',
+    }),
+  },
 });
 
 export const App = () => {
@@ -17,14 +33,26 @@ export const App = () => {
   // });
 
   initializeTextFSMEditor();
+  const [opened, { toggle }] = useDisclosure();
+  const navbarWidth = opened ? 300 : 60;
 
   return (
     <>
       <MantineProvider theme={theme} defaultColorScheme="auto">
-        <AppShell>
-          <AppHeader />
-          <MainPanel />
-          <AppFooter />
+        <AppShell
+          layout="alt"
+          withBorder={false}
+          navbar={{
+            width: navbarWidth,
+            breakpoint: 'sm',
+            collapsed: { mobile: !opened },
+          }}
+          bg="base-background"
+        >
+          <AppHeader opened={opened} toggle={toggle} />
+          <AppNavbar opened={opened} toggle={toggle} />
+          <AppMain />
+          {/* <AppFooter /> */}
         </AppShell>
       </MantineProvider>
     </>
