@@ -1,3 +1,12 @@
+interface RequestData {
+  template_string: string;
+  data_string: string;
+}
+
+interface APIRequest {
+  data: RequestData;
+}
+
 export interface ParseResult {
   message: string;
   headers: string[];
@@ -11,14 +20,10 @@ export interface APIError {
   message: string;
 }
 
-export interface APIResponseData {
-  parse_result: ParseResult;
-}
-
 export interface APIResponse {
   ok: boolean;
   status: string;
   code: number;
-  data: APIResponseData;
+  data: ParseResult;
   errors: Array<APIError>;
 }
