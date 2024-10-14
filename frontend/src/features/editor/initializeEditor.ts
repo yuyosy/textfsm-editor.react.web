@@ -1,25 +1,21 @@
-import { useMonaco } from '@monaco-editor/react';
 import { textfsmThemeDark as themeDark } from '@/features/editor/themes/ThemeDark';
 import { textfsmThemeLight as themeLight } from '@/features/editor/themes/ThemeLight';
 import { languageConfiguration } from '@/features/editor/definitions/LanguageConfiguration';
 import { monarchTokensProvider } from '@/features/editor/definitions/MonarchTokensProvider';
 import { getCompletionItemProviderSuggestions } from '@/features/editor/definitions/CompletionItemProvider';
-import { useEffect } from 'react';
+import { loader } from '@monaco-editor/react';
 
 export const initializeTextFSMEditor = () => {
-  const monaco = useMonaco();
-  useEffect(() => {
-    if (monaco) {
-      monaco.editor.defineTheme('theme-dark', themeDark);
-      monaco.editor.defineTheme('theme-light', themeLight);
-      monaco.languages.register({ id: 'textfsm' });
-      monaco.languages.setLanguageConfiguration('textfsm', languageConfiguration);
-      monaco.languages.setMonarchTokensProvider('textfsm', monarchTokensProvider);
-      monaco.languages.registerCompletionItemProvider('textfsm', {
-        provideCompletionItems: (model: any, position: any) => {
-          return { suggestions: getCompletionItemProviderSuggestions(model, position) };
-        },
-      });
-    }
-  }, [monaco]);
+  loader.init().then(monaco => {
+    monaco.editor.defineTheme('theme-dark', themeDark);
+    monaco.editor.defineTheme('theme-light', themeLight);
+    monaco.languages.register({ id: 'textfsm' });
+    monaco.languages.setLanguageConfiguration('textfsm', languageConfiguration);
+    monaco.languages.setMonarchTokensProvider('textfsm', monarchTokensProvider);
+    monaco.languages.registerCompletionItemProvider('textfsm', {
+      provideCompletionItems: (model: any, position: any) => {
+        return { suggestions: getCompletionItemProviderSuggestions(model, position) };
+      },
+    });
+  });
 };

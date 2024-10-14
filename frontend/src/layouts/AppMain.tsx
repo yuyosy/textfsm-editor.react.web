@@ -1,13 +1,9 @@
 import {
-  ActionIcon,
   AppShell,
-  Divider,
   Group,
   Paper,
   Stack,
-  Switch,
   Text,
-  Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
 import { CopyValueButton } from '@/components/CopyValueButton';
@@ -19,28 +15,29 @@ import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { ResultViewPanel } from './panels/ResultViewPanel';
+import { useDisclosure, useLocalStorage, useSessionStorage } from '@mantine/hooks';
+import { PanelLayoutType, PanelRefs, ResultItem } from '@/layouts/types';
+import { setChipPanelState, setSegmentedControlPanelState } from './panelStateUtils';
+import { AppMainToolBar } from './AppMainToolBar';
+import { StatusBadge } from '@/components/StatusBadge';
 import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
-import { useDisclosure, useLocalStorage } from '@mantine/hooks';
-import { ResultObject } from '@/types';
-import { Send } from 'lucide-react';
-import { PanelSelector } from './PanelSelector';
-import { PanelToggleChip } from './PanelToggleChip';
-import { PanelLayoutType } from './types';
-import {
-  handlePanelToggle,
-  setChipPanelState,
-  setSegmentedControlPanelState,
-} from './panelStateUtils';
 
 export const AppMain = () => {
   // Local Storage
-  const [editorAutoParse, setEditorAutoParse] = useLocalStorage<boolean>({
-    key: 'editor-auto-parse',
-    defaultValue: false,
-  });
   const [inputSendDelayValue] = useLocalStorage<number>({
     key: 'editor-input-send-delay',
     defaultValue: 1000,
+  });
+
+  const [rawTextEditorValue, setRawTextEditorValue] = useSessionStorage<string>({
+    key: 'raw-text-editor-value',
+    defaultValue: '// Type your data here',
+    getInitialValueInEffect: false,
+  });
+  const [templateEditorValue, setTemplateEditorValue] = useSessionStorage<string>({
+    key: 'template-editor-value',
+    defaultValue: '# Type your template here',
+    getInitialValueInEffect: false,
   });
 
   // TODO editor theme switch
@@ -55,30 +52,40 @@ export const AppMain = () => {
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
 
   // Ref State
-  const notificationPanelRef = useRef<any>();
-  const resultViewPanelRef = useRef<any>();
-  const resultObject = useRef<ResultObject>();
+  const panelRefs: PanelRefs = {
+    data: useRef<ImperativePanelHandle>(null),
+    template: useRef<ImperativePanelHandle>(null),
+    notification: useRef<ImperativePanelHandle>(null),
+    results: useRef<ImperativePanelHandle>(null),
+  };
+
+  const notificationPanelDataRef = useRef<any>();
+  const resultViewPanelDataRef = useRef<any>();
+  const resultObject = useRef<ResultItem>();
 
   const rawTextEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const templateEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
-  const dataPanelImperativeHandleRef = useRef<ImperativePanelHandle>(null);
-  const templatePanelImperativeHandleRef = useRef<ImperativePanelHandle>(null);
-  const notificationPanelImperativeHandleRef = useRef<ImperativePanelHandle>(null);
-  const resultViewPanelImperativeHandleRef = useRef<ImperativePanelHandle>(null);
-
   // Handler
   const handleRawTextEditorDidMount: OnMount = editor => {
     rawTextEditorRef.current = editor;
+    rawTextEditorRef.current.setValue(rawTextEditorValue);
   };
   const handleTemplateEditorDidMount: OnMount = editor => {
     templateEditorRef.current = editor;
+    templateEditorRef.current.setValue(templateEditorValue);
   };
   const handleRawTextEditorChange: OnChange = value => {
     console.debug(value);
+    if (value) {
+      setRawTextEditorValue(value);
+    }
   };
   const handleTemplateEditorChange: OnChange = value => {
     console.debug(value);
+    if (value) {
+      setTemplateEditorValue(value);
+    }
   };
 
   // Functions
@@ -90,6 +97,7 @@ export const AppMain = () => {
   };
 
   // Functions
+
   const sendRequest = async () => {
     if (templateEditorRef.current?.getValue() === '') {
       return;
@@ -98,132 +106,99 @@ export const AppMain = () => {
     const template = templateEditorRef.current
       ? templateEditorRef.current.getValue()
       : '';
-    setResultObject(
-      await sendTextFSMParseRequest(rawText, template, inputSendDelayValue)
-    );
-    ParseResult();
+    try {
+      const response = await sendTextFSMParseRequest(
+        rawText,
+        template,
+        inputSendDelayValue
+      );
+      setResultObject(response);
+      ParseResult();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const ParseResult = () => {
-    const resultObject = getResultObject();
-    if (!resultObject) {
+    const resultItem = getResultObject();
+    if (!resultItem) {
       return;
     }
-    if (notificationPanelRef.current) {
-      notificationPanelRef.current.prependResult(resultObject);
+    if (notificationPanelDataRef.current) {
+      notificationPanelDataRef.current.prependResult(resultItem);
     }
-    if (
-      resultViewPanelRef.current &&
-      resultObject.ok &&
-      resultObject.response_result.ok
-    ) {
-      resultViewPanelRef.current.setResults(
-        resultObject.response_result.headers.map(item => {
-          return { accessor: item };
-        }),
-        resultObject.response_result.results
-      );
+    if (resultViewPanelDataRef.current && resultItem.ok && resultItem.data) {
+      console.log(resultItem);
+      resultViewPanelDataRef.current.setResults(resultItem.data);
     }
   };
 
-  const setResultObject = (obj: ResultObject) => {
+  const setResultObject = (obj: ResultItem) => {
     resultObject.current = obj;
   };
-  const getResultObject = (): ResultObject | undefined => {
-    return resultObject ? resultObject.current : undefined;
+  const getResultObject = (): ResultItem => {
+    return resultObject.current
+      ? resultObject.current
+      : ({
+          ok: false,
+          status: '',
+          code: 0,
+          data: undefined,
+          errors: [{ status: '', reason: '', message: '' }],
+          timestamp: new Date().toLocaleString(),
+        } as ResultItem);
+  };
+
+  const syncDataPanelSegmentedControlsOnResize = () => {
+    setSegmentedControlPanelState(
+      'template',
+      panelRefs.data,
+      mainPanelLyout,
+      setMainPanelLyout
+    );
+  };
+  const syncTemplatePanelSegmentedControlsOnResize = () => {
+    setSegmentedControlPanelState(
+      'data',
+      panelRefs.template,
+      mainPanelLyout,
+      setMainPanelLyout
+    );
+  };
+  const syncNotificationPanelStateChipOnResize = () => {
+    setChipPanelState(
+      opendNotificationPanel,
+      panelRefs.notification,
+      toggleNotificationPanel
+    );
+  };
+  const syncResultViewPanelStateChipOnResize = () => {
+    setChipPanelState(opendResultViewPanel, panelRefs.results, toggleResultViewPanel);
   };
 
   useEffect(() => {
-    setSegmentedControlPanelState(
-      'template',
-      dataPanelImperativeHandleRef,
-      mainPanelLyout,
-      setMainPanelLyout
-    );
-    setSegmentedControlPanelState(
-      'data',
-      templatePanelImperativeHandleRef,
-      mainPanelLyout,
-      setMainPanelLyout
-    );
-    setChipPanelState(
-      opendNotificationPanel,
-      notificationPanelImperativeHandleRef,
-      toggleNotificationPanel
-    );
-    setChipPanelState(
-      opendResultViewPanel,
-      resultViewPanelImperativeHandleRef,
-      toggleResultViewPanel
-    );
+    syncDataPanelSegmentedControlsOnResize();
+    syncTemplatePanelSegmentedControlsOnResize();
+    syncNotificationPanelStateChipOnResize();
+    syncResultViewPanelStateChipOnResize();
   }, []);
 
   return (
     <>
       <AppShell.Main bg="transparent">
         <Stack gap={0} pt={40} style={{ height: '100dvh' }}>
-          <Group mx={5} justify="space-between">
-            <Group gap={5}>
-              <PanelSelector
-                mainPanelLyout={mainPanelLyout}
-                setMainPanelLyout={setMainPanelLyout}
-                dataPanelImperativeHandleRef={dataPanelImperativeHandleRef}
-                templatePanelImperativeHandleRef={templatePanelImperativeHandleRef}
-              />
-              <Divider
-                orientation="vertical"
-                color="var(--mantine-color-default-border)"
-              />
-              <PanelToggleChip
-                opened={opendNotificationPanel}
-                label="NotificationPanel"
-                handlePanelToggle={(checked: boolean) => {
-                  handlePanelToggle(
-                    checked,
-                    notificationPanelImperativeHandleRef,
-                    toggleNotificationPanel
-                  );
-                }}
-              />
-              <PanelToggleChip
-                opened={opendResultViewPanel}
-                label="ResultViewPanel"
-                handlePanelToggle={(checked: boolean) => {
-                  handlePanelToggle(
-                    checked,
-                    resultViewPanelImperativeHandleRef,
-                    toggleResultViewPanel
-                  );
-                }}
-              />
-            </Group>
-            <Group>
-              {/* Actions */}
-              <Text size="sm">Send</Text>
-              <Tooltip label="Send" withArrow position="bottom">
-                <ActionIcon
-                  variant="default"
-                  onClick={() => {
-                    sendRequest();
-                  }}
-                >
-                  <Send size="1.125rem" />
-                </ActionIcon>
-              </Tooltip>
-              <Divider
-                orientation="vertical"
-                color="var(--mantine-color-default-border)"
-              />
-              <Text size="sm">AutoParse</Text>
-              <Switch
-                labelPosition="left"
-                onLabel="ON"
-                offLabel="OFF"
-                checked={editorAutoParse}
-                onChange={event => setEditorAutoParse(event.currentTarget.checked)}
-              />
-            </Group>
-          </Group>
+          <AppMainToolBar
+            {...{
+              panelRefs: panelRefs,
+              mainPanelLyout: mainPanelLyout,
+              setMainPanelLyout: setMainPanelLyout,
+              opendNotificationPanel: opendNotificationPanel,
+              toggleNotificationPanel: toggleNotificationPanel,
+              opendResultViewPanel: opendResultViewPanel,
+              toggleResultViewPanel: toggleResultViewPanel,
+              sendRequest: sendRequest,
+            }}
+          />
           <Paper h="100%" m={5} radius="md" shadow="xs" style={{ overflow: 'hidden' }}>
             <PanelGroup direction="horizontal" autoSaveId="top">
               <Panel defaultSize={80} collapsedSize={0} minSize={10} collapsible={true}>
@@ -244,15 +219,8 @@ export const AppMain = () => {
                         collapsedSize={0}
                         minSize={10}
                         collapsible={true}
-                        ref={dataPanelImperativeHandleRef}
-                        onResize={() =>
-                          setSegmentedControlPanelState(
-                            'template',
-                            dataPanelImperativeHandleRef,
-                            mainPanelLyout,
-                            setMainPanelLyout
-                          )
-                        }
+                        ref={panelRefs.data}
+                        onResize={syncDataPanelSegmentedControlsOnResize}
                       >
                         <Stack gap={0} h="100%">
                           <Group px={10} py={8} justify="space-between">
@@ -275,19 +243,19 @@ export const AppMain = () => {
                         collapsedSize={0}
                         minSize={10}
                         collapsible={true}
-                        ref={templatePanelImperativeHandleRef}
-                        onResize={() =>
-                          setSegmentedControlPanelState(
-                            'data',
-                            templatePanelImperativeHandleRef,
-                            mainPanelLyout,
-                            setMainPanelLyout
-                          )
-                        }
+                        ref={panelRefs.template}
+                        onResize={syncTemplatePanelSegmentedControlsOnResize}
                       >
                         <Stack gap={0} h="100%">
                           <Group px={10} py={8} justify="space-between">
-                            <Text fw={700}>Template</Text>
+                            <Group>
+                              <Text fw={700}>Template</Text>
+                              <StatusBadge variant="success" />
+                              <StatusBadge variant="error" />
+                              <StatusBadge variant="warning" />
+                              <StatusBadge variant="info" />
+                              <StatusBadge variant="debug" />
+                            </Group>
                             <CopyValueButton
                               value={getTemplateValue()}
                             ></CopyValueButton>
@@ -310,16 +278,10 @@ export const AppMain = () => {
                     collapsedSize={0}
                     minSize={10}
                     collapsible={true}
-                    ref={resultViewPanelImperativeHandleRef}
-                    onResize={() =>
-                      setChipPanelState(
-                        opendResultViewPanel,
-                        resultViewPanelImperativeHandleRef,
-                        toggleResultViewPanel
-                      )
-                    }
+                    ref={panelRefs.results}
+                    onResize={syncNotificationPanelStateChipOnResize}
                   >
-                    <ResultViewPanel ref={resultViewPanelRef}></ResultViewPanel>
+                    <ResultViewPanel ref={resultViewPanelDataRef}></ResultViewPanel>
                   </Panel>
                 </PanelGroup>
               </Panel>
@@ -331,16 +293,10 @@ export const AppMain = () => {
                 collapsedSize={0}
                 minSize={10}
                 collapsible={true}
-                ref={notificationPanelImperativeHandleRef}
-                onResize={() =>
-                  setChipPanelState(
-                    opendNotificationPanel,
-                    notificationPanelImperativeHandleRef,
-                    toggleNotificationPanel
-                  )
-                }
+                ref={panelRefs.notification}
+                onResize={syncResultViewPanelStateChipOnResize}
               >
-                <NotificationPanel ref={notificationPanelRef}></NotificationPanel>
+                <NotificationPanel ref={notificationPanelDataRef}></NotificationPanel>
               </Panel>
             </PanelGroup>
           </Paper>

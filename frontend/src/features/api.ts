@@ -1,15 +1,14 @@
-import { envs } from '../config/env';
+import { envs } from '@/config/env';
 
 const apiUrl = envs.API_ENTRYPOINT;
 
-export const apiFetch = async (url: string, config: RequestInit = {}) => {
+export const apiFetch = async (
+  url: string,
+  config: RequestInit = {},
+  entrypoint: string = apiUrl
+): Promise<any> => {
   try {
-    const response = await fetch(`${apiUrl}${url}`, config);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || response.statusText);
-    }
+    const response = await fetch(`${entrypoint}${url}`, config);
 
     return await response.json();
   } catch (error) {
@@ -18,26 +17,43 @@ export const apiFetch = async (url: string, config: RequestInit = {}) => {
     return Promise.reject(error);
   }
 };
-
 export const api = {
-  get: (url: string, config?: RequestInit) => {
-    return apiFetch(url, { ...config, method: 'GET' });
+  get: (url: string, config?: RequestInit, entrypoint?: string): Promise<any> => {
+    return apiFetch(url, { ...config, method: 'GET' }, entrypoint);
   },
-  post: (url: string, body: BodyInit | null, config?: RequestInit) => {
-    return apiFetch(url, {
-      ...config,
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+  post: (
+    url: string,
+    body: object | null,
+    config?: RequestInit,
+    entrypoint?: string
+  ): Promise<any> => {
+    return apiFetch(
+      url,
+      {
+        ...config,
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      entrypoint
+    );
   },
-  put: (url: string, body: BodyInit | null, config?: RequestInit) => {
-    return apiFetch(url, {
-      ...config,
-      method: 'PUT',
-      body: JSON.stringify(body),
-    });
+  put: (
+    url: string,
+    body: object | null,
+    config?: RequestInit,
+    entrypoint?: string
+  ): Promise<any> => {
+    return apiFetch(
+      url,
+      {
+        ...config,
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      entrypoint
+    );
   },
-  delete: (url: string, config?: RequestInit) => {
-    return apiFetch(url, { ...config, method: 'DELETE' });
+  delete: (url: string, config?: RequestInit, entrypoint?: string): Promise<any> => {
+    return apiFetch(url, { ...config, method: 'DELETE' }, entrypoint);
   },
 };

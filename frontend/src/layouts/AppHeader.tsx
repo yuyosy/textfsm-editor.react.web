@@ -20,7 +20,12 @@ export const AppHeader = ({ opened, toggle }: HeaderProps) => {
       <AppShell.Header h={40} bg="transparent">
         <Group h="100%" px={5} justify="space-between">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Text fw={700}>TextFSM-Editor</Text>
+          <Group align="baseline">
+            <Text fw={700}>TextFSM-Editor</Text>
+            <Text size="xs" c="dimmed">
+              ver.{__APP_VERSION__}
+            </Text>
+          </Group>
           <Tooltip
             label={colorScheme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
             withArrow

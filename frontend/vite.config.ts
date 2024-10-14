@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
+import { version } from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,6 +23,9 @@ export default defineConfig({
     alias: {
       '@/': `${__dirname}/src/`,
     },
+  },
+  define: {
+    __APP_VERSION__: JSON.stringify(version),
   },
   server: {
     host: true,

@@ -2,7 +2,6 @@ import { CopyValueButton } from '@/components/CopyValueButton';
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
 import { Editor } from '@/features/editor/Editor';
 import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
-import { ResultObject } from '@/types';
 import {
   ActionIcon,
   AppShell,
@@ -24,6 +23,7 @@ import { NotificationPanel } from './NotificationPanel';
 import { OptionToolBarItem } from './OptionToolBarItem';
 import { ResultViewPanel } from './ResultViewPanel';
 import { TemplateManagerToolBarItem } from './TemplateManagerToolBarItem';
+import { ResultItem } from '../types';
 
 export const MainPanel = () => {
   // Local Storage
@@ -42,7 +42,7 @@ export const MainPanel = () => {
   // Ref State
   const notificationPanelRef = useRef<any>();
   const resultViewPanelRef = useRef<any>();
-  const resultObject = useRef<ResultObject>();
+  const resultObject = useRef<ResultItem>();
 
   const rawTextEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const templateEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -90,24 +90,20 @@ export const MainPanel = () => {
     if (notificationPanelRef.current) {
       notificationPanelRef.current.prependResult(resultObject);
     }
-    if (
-      resultViewPanelRef.current &&
-      resultObject.ok &&
-      resultObject.response_result.ok
-    ) {
+    if (resultViewPanelRef.current && resultObject.ok && resultObject.data) {
       resultViewPanelRef.current.setResults(
-        resultObject.response_result.headers.map(item => {
+        resultObject.data.header.map(item => {
           return { accessor: item };
         }),
-        resultObject.response_result.results
+        resultObject.data.results
       );
     }
   };
 
-  const setResultObject = (obj: ResultObject) => {
+  const setResultObject = (obj: ResultItem) => {
     resultObject.current = obj;
   };
-  const getResultObject = (): ResultObject | undefined => {
+  const getResultObject = (): ResultItem | undefined => {
     return resultObject ? resultObject.current : undefined;
   };
 
@@ -150,9 +146,9 @@ export const MainPanel = () => {
         </Group>
         {/* Main */}
         <PanelGroup direction="vertical" autoSaveId="persistence">
-          <Panel defaultSize={70}>
+          <Panel defaultSize={70} collapsedSize={0} minSize={10} collapsible={true}>
             <PanelGroup direction="horizontal" autoSaveId="persistence">
-              <Panel defaultSize={42}>
+              <Panel defaultSize={42} collapsedSize={0} minSize={10} collapsible={true}>
                 <Stack gap={0} h="100%">
                   <Group px={10} py={8} justify="space-between">
                     <Text fw={700}>Data</Text>
@@ -167,7 +163,7 @@ export const MainPanel = () => {
                 </Stack>
               </Panel>
               <ResizeHandle />
-              <Panel defaultSize={42}>
+              <Panel defaultSize={42} collapsedSize={0} minSize={10} collapsible={true}>
                 <Stack gap={0} h="100%">
                   <Group px={10} py={8} justify="space-between">
                     <Text fw={700}>Template</Text>
@@ -182,13 +178,13 @@ export const MainPanel = () => {
                 </Stack>
               </Panel>
               <ResizeHandle />
-              <Panel defaultSize={16} collapsible>
+              <Panel defaultSize={16} collapsedSize={0} minSize={10} collapsible={true}>
                 <NotificationPanel ref={notificationPanelRef}></NotificationPanel>
               </Panel>
             </PanelGroup>
           </Panel>
           <ResizeHandle />
-          <Panel defaultSize={30} collapsible>
+          <Panel defaultSize={30} collapsedSize={0} minSize={10} collapsible={true}>
             <ResultViewPanel ref={resultViewPanelRef}></ResultViewPanel>
           </Panel>
         </PanelGroup>

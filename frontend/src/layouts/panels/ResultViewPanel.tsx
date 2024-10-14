@@ -7,25 +7,23 @@ import { DataTable } from 'mantine-datatable';
 import { forwardRef, useImperativeHandle } from 'react';
 
 import '@mantine/code-highlight/styles.css';
-
-type Header = {
-  accessor: string;
-};
+import { TextFSMParseResult } from '@/features/types';
 
 export const ResultViewPanel = forwardRef((_props, ref) => {
-  const [resultHeaders, setResultHeaders] = useListState<Header>([]);
-  const [resultData, setResultData] = useListState<any[]>([]);
+  const [resultHeaders, setResultHeaders] = useListState<string>([]);
+  const [resultData, setResultData] = useListState<any>([]);
 
   const tsvDataDeliver = (): string => {
-    const headers = Object.values(resultHeaders)
-      .map(item => item['accessor'])
-      .join('\t');
-    const rows = resultData
-      .reduce((previous, current) => {
-        return previous.concat([Object.values(current).join('\t')]);
-      }, [])
-      .join('\n');
-    return `${headers}\n${rows}`;
+    if (resultHeaders && resultData) {
+      const header = resultHeaders.join('\t');
+      const rows = resultData
+        .reduce((previous, current) => {
+          return previous.concat([Object.values(current).join('\t')]);
+        }, [])
+        .join('\n');
+      return `${header}\n${rows}`;
+    }
+    return '';
   };
 
   const jsonDataDeliver = (): string => {
@@ -33,9 +31,9 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    setResults(header: any[], data: any[]) {
-      setResultHeaders.setState(header);
-      setResultData.setState(data);
+    setResults(data: TextFSMParseResult) {
+      setResultHeaders.setState(data.header ? data.header : []);
+      setResultData.setState(data.results ? data.results : []);
     },
   }));
 
@@ -58,11 +56,13 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
       <Tabs.Panel value="table">
         <Stack gap={0} h="100%">
           <Group px={10} py={4} justify="space-between">
-            <Text>Table View</Text>
+            <Text fw={700}>Table View</Text>
             <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
           </Group>
           <DataTable
-            columns={resultHeaders}
+            columns={resultHeaders.map(value => {
+              return { accessor: value };
+            })}
             records={resultData.map((item, index) => {
               const entries = Object.entries(item).map(([key, val]) => {
                 if (Array.isArray(val)) {
@@ -83,7 +83,7 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
       <Tabs.Panel value="json">
         <Stack gap={0} h="100%">
           <Group px={10} py={4} justify="space-between">
-            <Text>JSON View</Text>
+            <Text fw={700}>JSON View</Text>
             <CopyValueButton value={jsonDataDeliver()}></CopyValueButton>
           </Group>
           <ScrollArea h="100%">
