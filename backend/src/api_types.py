@@ -1,29 +1,43 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, field_validator, validator
+from typing import Any, List
 from pydantic import BaseModel
 from typing import List, Optional
 
-from src.parse import ParseResult
 
-
-class RequestData(BaseModel):
+class TextFSMParseInput(BaseModel):
     template_string: str
     data_string: str
 
 
-class APIRequest(BaseModel):
-    data: RequestData
+class TextFSMParseResult(BaseModel):
+    message: str
+    header: list[str]
+    results: list[dict[str, Any]]
 
 
-class APIError(BaseModel):
+class TextFSMParseError(BaseModel):
+    reason: str
+    message: str
+
+
+class TextFSMParseRequestData(BaseModel):
+    template_string: str
+    data_string: str
+
+
+class TextFSMParseAPIRequest(BaseModel):
+    data: TextFSMParseRequestData
+
+
+class TextFSMParseAPIError(BaseModel):
     status: str
     reason: str
     message: str
 
 
-class APIResponse(BaseModel):
+class TextFSMParseAPIResponse(BaseModel):
     ok: bool
     status: str
     code: int
-    data: Optional[ParseResult] = None
-    errors: Optional[List[APIError]] = None
+    data: Optional[TextFSMParseResult] = None
+    errors: Optional[List[TextFSMParseAPIError]] = None
