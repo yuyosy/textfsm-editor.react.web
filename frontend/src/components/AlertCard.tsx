@@ -12,7 +12,7 @@ export const AlertCard = ({ mainTitle, subTitle, color, message }: Props) => {
     <Alert
       title={
         <Box>
-          <Text>{mainTitle}</Text>
+          <Text fw={700}>{mainTitle}</Text>
           <Text fz="xs" c="dimmed" fw={400}>
             {subTitle}
           </Text>

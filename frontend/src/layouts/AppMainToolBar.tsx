@@ -4,17 +4,17 @@ import { PanelToggleChip } from './PanelToggleChip';
 import { Send } from 'lucide-react';
 import { handlePanelToggle } from './panelStateUtils';
 import { useLocalStorage } from '@mantine/hooks';
-import { PanelLayoutType, PanelRefs } from './types';
+import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
 import { Dispatch, SetStateAction } from 'react';
 
 interface AppMainToolBarProps {
   panelRefs: PanelRefs;
   mainPanelLyout: PanelLayoutType;
   setMainPanelLyout: Dispatch<SetStateAction<PanelLayoutType>>;
-  opendNotificationPanel: boolean;
-  toggleNotificationPanel: () => void;
-  opendResultViewPanel: boolean;
-  toggleResultViewPanel: () => void;
+  openedNotificationPanel: boolean;
+  notificationPanelActions: DisclosureActions;
+  openedResultViewPanel: boolean;
+  resultViewPanelActions: DisclosureActions;
   sendRequest: () => void;
 }
 
@@ -22,10 +22,10 @@ export const AppMainToolBar = ({
   panelRefs,
   mainPanelLyout,
   setMainPanelLyout,
-  opendNotificationPanel,
-  toggleNotificationPanel,
-  opendResultViewPanel,
-  toggleResultViewPanel,
+  openedNotificationPanel,
+  notificationPanelActions,
+  openedResultViewPanel,
+  resultViewPanelActions,
   sendRequest,
 }: AppMainToolBarProps) => {
   // Local Storage
@@ -44,17 +44,17 @@ export const AppMainToolBar = ({
         />
         <Divider orientation="vertical" color="var(--mantine-color-default-border)" />
         <PanelToggleChip
-          opened={opendNotificationPanel}
+          opened={openedNotificationPanel}
           label="NotificationPanel"
           handlePanelToggle={(checked: boolean) => {
-            handlePanelToggle(checked, panelRefs.notification, toggleNotificationPanel);
+            handlePanelToggle(checked, panelRefs.notification, notificationPanelActions);
           }}
         />
         <PanelToggleChip
-          opened={opendResultViewPanel}
+          opened={openedResultViewPanel}
           label="ResultViewPanel"
           handlePanelToggle={(checked: boolean) => {
-            handlePanelToggle(checked, panelRefs.results, toggleResultViewPanel);
+            handlePanelToggle(checked, panelRefs.results, resultViewPanelActions);
           }}
         />
       </Group>

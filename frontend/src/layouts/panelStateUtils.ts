@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { PanelLayoutType } from './types';
+import { DisclosureActions, PanelLayoutType } from './types';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
 export const setSegmentedControlPanelState = (
@@ -23,30 +23,29 @@ export const setSegmentedControlPanelState = (
 };
 
 export const setChipPanelState = (
-  opend: boolean,
+  isOpen: boolean,
   ref: RefObject<ImperativePanelHandle>,
-  toggle: () => void
+  actions: DisclosureActions
 ) => {
-  if (opend && ref?.current?.isCollapsed()) {
-    toggle();
+  if (isOpen && ref?.current?.isCollapsed()) {
+    actions.close();
   }
-  if (!opend && ref?.current?.isExpanded()) {
-    toggle();
+  if (!isOpen && ref?.current?.isExpanded()) {
+    actions.open();
   }
 };
 
 export const handlePanelToggle = (
   toExpand: boolean,
   ref: RefObject<ImperativePanelHandle>,
-  toggle: (() => void) | null = null
+  actions: DisclosureActions
 ) => {
   const panel = ref.current;
   if (panel && toExpand) {
     panel.expand();
+    actions.open();
   } else if (panel && !toExpand) {
     panel.collapse();
-  }
-  if (toggle) {
-    toggle();
+    actions.close();
   }
 };

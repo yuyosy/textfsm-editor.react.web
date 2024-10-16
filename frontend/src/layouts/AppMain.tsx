@@ -45,9 +45,8 @@ export const AppMain = () => {
 
   // State
 
-  const [opendNotificationPanel, { toggle: toggleNotificationPanel }] =
-    useDisclosure(false);
-  const [opendResultViewPanel, { toggle: toggleResultViewPanel }] = useDisclosure(false);
+  const [openedNotificationPanel, notificationPanelActions] = useDisclosure(false);
+  const [openedResultViewPanel, resultViewPanelActions] = useDisclosure(false);
 
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
 
@@ -167,13 +166,13 @@ export const AppMain = () => {
   };
   const syncNotificationPanelStateChipOnResize = () => {
     setChipPanelState(
-      opendNotificationPanel,
+      openedNotificationPanel,
       panelRefs.notification,
-      toggleNotificationPanel
+      notificationPanelActions
     );
   };
   const syncResultViewPanelStateChipOnResize = () => {
-    setChipPanelState(opendResultViewPanel, panelRefs.results, toggleResultViewPanel);
+    setChipPanelState(openedResultViewPanel, panelRefs.results, resultViewPanelActions);
   };
 
   useEffect(() => {
@@ -192,10 +191,10 @@ export const AppMain = () => {
               panelRefs: panelRefs,
               mainPanelLyout: mainPanelLyout,
               setMainPanelLyout: setMainPanelLyout,
-              opendNotificationPanel: opendNotificationPanel,
-              toggleNotificationPanel: toggleNotificationPanel,
-              opendResultViewPanel: opendResultViewPanel,
-              toggleResultViewPanel: toggleResultViewPanel,
+              openedNotificationPanel: openedNotificationPanel,
+              notificationPanelActions: notificationPanelActions,
+              openedResultViewPanel: openedResultViewPanel,
+              resultViewPanelActions: resultViewPanelActions,
               sendRequest: sendRequest,
             }}
           />
@@ -279,7 +278,7 @@ export const AppMain = () => {
                     minSize={10}
                     collapsible={true}
                     ref={panelRefs.results}
-                    onResize={syncNotificationPanelStateChipOnResize}
+                    onResize={syncResultViewPanelStateChipOnResize}
                   >
                     <ResultViewPanel ref={resultViewPanelDataRef}></ResultViewPanel>
                   </Panel>
@@ -294,7 +293,7 @@ export const AppMain = () => {
                 minSize={10}
                 collapsible={true}
                 ref={panelRefs.notification}
-                onResize={syncResultViewPanelStateChipOnResize}
+                onResize={syncNotificationPanelStateChipOnResize}
               >
                 <NotificationPanel ref={notificationPanelDataRef}></NotificationPanel>
               </Panel>

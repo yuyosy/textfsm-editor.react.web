@@ -6,6 +6,7 @@ import { Braces, Table } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 import { forwardRef, useImperativeHandle } from 'react';
 
+import 'mantine-datatable/styles.layer.css';
 import '@mantine/code-highlight/styles.css';
 import { TextFSMParseResult } from '@/features/types';
 

@@ -14,3 +14,9 @@ interface Timestamp {
 }
 
 export interface ResultItem extends TextFSMParseAPIResponse, Timestamp {}
+
+export interface DisclosureActions {
+  readonly open: () => void;
+  readonly close: () => void;
+  readonly toggle: () => void;
+}

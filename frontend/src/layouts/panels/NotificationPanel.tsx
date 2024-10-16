@@ -16,7 +16,7 @@ export const NotificationPanel = forwardRef((_props, ref) => {
   return (
     <Stack gap={0} h="100%">
       <Group px={10} py={8} justify="space-between">
-        <Text fw={700}>Console</Text>
+        <Text fw={700}>Notifications</Text>
         <Tooltip label="Clear" withArrow position="bottom">
           <ActionIcon
             variant="subtle"
@@ -33,18 +33,25 @@ export const NotificationPanel = forwardRef((_props, ref) => {
         <Stack p={10} pr={16}>
           {responseResults.map((resultObject: ResultItem, index: number) => {
             if (resultObject.ok && resultObject.data) {
+              const recordCount = resultObject.data.results.length;
+              const message =
+                recordCount === 0
+                  ? 'There are no records.'
+                  : recordCount === 1
+                    ? 'There is 1 record.'
+                    : `There are ${recordCount} records.`;
               const info = {
                 mainTitle: resultObject.data.message,
-                subTitle: '',
+                subTitle: resultObject.timestamp,
                 color: '',
-                message: resultObject.data.message,
+                message: message,
               };
               return <AlertCard key={index} {...info}></AlertCard>;
             } else if (!resultObject.ok && resultObject.errors) {
               const info = {
                 mainTitle: resultObject.errors[0].reason,
-                subTitle: '',
-                color: '',
+                subTitle: resultObject.timestamp,
+                color: 'red',
                 message: resultObject.errors[0].message,
               };
               return <AlertCard key={index} {...info}></AlertCard>;

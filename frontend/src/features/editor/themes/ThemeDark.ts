@@ -1,4 +1,3 @@
-
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 export const textfsmThemeDark: monaco.editor.IStandaloneThemeData = {
   base: 'vs-dark',
@@ -19,4 +18,4 @@ export const textfsmThemeDark: monaco.editor.IStandaloneThemeData = {
   colors: {
     'editor.background': '#1a1b1e',
   },
-}
+};
