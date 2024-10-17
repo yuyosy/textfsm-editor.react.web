@@ -8,7 +8,7 @@ import { forwardRef, useImperativeHandle } from 'react';
 
 import 'mantine-datatable/styles.layer.css';
 import '@mantine/code-highlight/styles.css';
-import { TextFSMParseResult } from '@/features/types';
+import { ResultItem } from '../types';
 
 export const ResultViewPanel = forwardRef((_props, ref) => {
   const [resultHeaders, setResultHeaders] = useListState<string>([]);
@@ -32,9 +32,11 @@ export const ResultViewPanel = forwardRef((_props, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    setResults(data: TextFSMParseResult) {
-      setResultHeaders.setState(data.header ? data.header : []);
-      setResultData.setState(data.results ? data.results : []);
+    setResults(resultItem: ResultItem) {
+      if (resultItem && resultItem.ok && resultItem.data) {
+        setResultHeaders.setState(resultItem.data.header ? resultItem.data.header : []);
+        setResultData.setState(resultItem.data.results ? resultItem.data.results : []);
+      }
     },
   }));
 

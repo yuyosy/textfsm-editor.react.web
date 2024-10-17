@@ -20,7 +20,10 @@ import { PanelLayoutType, PanelRefs, ResultItem } from '@/layouts/types';
 import { setChipPanelState, setSegmentedControlPanelState } from './panelStateUtils';
 import { AppMainToolBar } from './AppMainToolBar';
 import { StatusBadge } from '@/components/StatusBadge';
-import { sendTextFSMParseRequest } from '@/features/request/sendTextFSMParseRequest';
+import {
+  createErrorResultItem,
+  sendTextFSMParseRequest,
+} from '@/features/request/sendTextFSMParseRequest';
 
 export const AppMain = () => {
   // Local Storage
@@ -29,6 +32,7 @@ export const AppMain = () => {
     defaultValue: 1000,
   });
 
+  // Session Storage
   const [rawTextEditorValue, setRawTextEditorValue] = useSessionStorage<string>({
     key: 'raw-text-editor-value',
     defaultValue: '// Type your data here',
@@ -40,7 +44,6 @@ export const AppMain = () => {
     getInitialValueInEffect: false,
   });
 
-  // TODO editor theme switch
   const { colorScheme } = useMantineColorScheme();
 
   // State
@@ -75,13 +78,11 @@ export const AppMain = () => {
     templateEditorRef.current.setValue(templateEditorValue);
   };
   const handleRawTextEditorChange: OnChange = value => {
-    console.debug(value);
     if (value) {
       setRawTextEditorValue(value);
     }
   };
   const handleTemplateEditorChange: OnChange = value => {
-    console.debug(value);
     if (value) {
       setTemplateEditorValue(value);
     }
@@ -95,57 +96,30 @@ export const AppMain = () => {
     return templateEditorRef.current ? templateEditorRef.current.getValue() : '';
   };
 
-  // Functions
-
   const sendRequest = async () => {
-    if (templateEditorRef.current?.getValue() === '') {
+    const rawText = getRawTextValue();
+    const template = getTemplateValue();
+    if (template === '') {
       return;
     }
-    const rawText = rawTextEditorRef.current ? rawTextEditorRef.current.getValue() : '';
-    const template = templateEditorRef.current
-      ? templateEditorRef.current.getValue()
-      : '';
     try {
       const response = await sendTextFSMParseRequest(
         rawText,
         template,
         inputSendDelayValue
       );
-      setResultObject(response);
-      ParseResult();
-    } catch (err) {
-      console.error(err);
+      resultObject.current = response;
+      if (resultObject.current) {
+        if (!resultObject.current) {
+          return;
+        }
+        notificationPanelDataRef?.current.prependResult(resultObject.current);
+        resultViewPanelDataRef?.current.setResults(resultObject.current);
+      }
+    } catch (error) {
+      notificationPanelDataRef?.current.prependResult(createErrorResultItem(error));
+      console.error(error);
     }
-  };
-
-  const ParseResult = () => {
-    const resultItem = getResultObject();
-    if (!resultItem) {
-      return;
-    }
-    if (notificationPanelDataRef.current) {
-      notificationPanelDataRef.current.prependResult(resultItem);
-    }
-    if (resultViewPanelDataRef.current && resultItem.ok && resultItem.data) {
-      console.log(resultItem);
-      resultViewPanelDataRef.current.setResults(resultItem.data);
-    }
-  };
-
-  const setResultObject = (obj: ResultItem) => {
-    resultObject.current = obj;
-  };
-  const getResultObject = (): ResultItem => {
-    return resultObject.current
-      ? resultObject.current
-      : ({
-          ok: false,
-          status: '',
-          code: 0,
-          data: undefined,
-          errors: [{ status: '', reason: '', message: '' }],
-          timestamp: new Date().toLocaleString(),
-        } as ResultItem);
   };
 
   const syncDataPanelSegmentedControlsOnResize = () => {
