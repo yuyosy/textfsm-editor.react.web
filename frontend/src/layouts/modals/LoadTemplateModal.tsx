@@ -1,17 +1,14 @@
-import { Button, ComboboxItem, Group, List, Modal, Select, Stack } from '@mantine/core';
+import { Button, ComboboxItem, Group, Modal, Select, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import type { editor } from 'monaco-editor';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
 type Props = {
   opened: boolean;
   close: () => void;
-  // setTemplateValueFunc: (value: string) => void;
-  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
 };
 
-export const LoadTemplateModal = ({ opened, close, editorRef }: Props) => {
+export const LoadTemplateModal = ({ opened, close }: Props) => {
   // Local Storage
   const [templateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
@@ -34,10 +31,10 @@ export const LoadTemplateModal = ({ opened, close, editorRef }: Props) => {
     );
   };
   const loadTemplate = () => {
-    const filtered = templateList.filter(item => item.label === selectedTemplateName);
-    if (filtered.length > 0 && editorRef.current) {
-      editorRef.current.setValue(filtered[0].value);
-    }
+    // const filtered = templateList.filter(item => item.label === selectedTemplateName);
+    // if (filtered.length > 0 && editorRef.current) {
+    //   editorRef.current.setValue(filtered[0].value);
+    // }
     close();
   };
 
@@ -50,12 +47,10 @@ export const LoadTemplateModal = ({ opened, close, editorRef }: Props) => {
     <>
       <Modal opened={opened} onClose={close} title="Load Template" size="lg">
         <Stack>
-          <List size="sm">
-            <List.Item>
-              Loads the template, note that it will overwrite the values entered in the
-              Template area.
-            </List.Item>
-          </List>
+          <Text size="sm" c="dimmed">
+            Loads the template, note that it will overwrite the values entered in the
+            Template area.
+          </Text>
           <Select
             label="Template"
             placeholder="Pick one"

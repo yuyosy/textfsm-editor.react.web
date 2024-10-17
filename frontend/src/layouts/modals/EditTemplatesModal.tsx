@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Group, List, Modal, Stack, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
@@ -82,20 +82,18 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
     <>
       <Modal opened={opened} onClose={close} title="Edit Templates" size="lg">
         <Stack>
-          <List size="sm">
-            <List.Item>
-              To change the order, click the arrow button in the direction you want to
-              move.
-            </List.Item>
-            <List.Item>
-              The changes such as sorting or deleting will not be reflected until the
-              Apply button is pressed.
-            </List.Item>
-            <List.Item>
-              In the future, I plan to implement a feature that allows users to rename
-              templates.
-            </List.Item>
-          </List>
+          <Text size="sm" c="dimmed">
+            To change the order, click the arrow button in the direction you want to
+            move.
+          </Text>
+          <Text size="sm" c="dimmed">
+            The changes such as sorting or deleting will not be reflected until the Apply
+            button is pressed.
+          </Text>
+          <Text size="sm" c="dimmed">
+            In the future, I plan to implement a feature that allows users to rename
+            templates.
+          </Text>
           <DataTable
             records={edittingTemplateList}
             columns={[
