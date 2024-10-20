@@ -3,12 +3,12 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
-type Props = {
+interface LoadTemplateModalProps {
   opened: boolean;
   close: () => void;
-};
+}
 
-export const LoadTemplateModal = ({ opened, close }: Props) => {
+export const LoadTemplateModal = ({ opened, close }: LoadTemplateModalProps) => {
   // Local Storage
   const [templateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
@@ -31,6 +31,7 @@ export const LoadTemplateModal = ({ opened, close }: Props) => {
     );
   };
   const loadTemplate = () => {
+    // ------- TODO
     // const filtered = templateList.filter(item => item.label === selectedTemplateName);
     // if (filtered.length > 0 && editorRef.current) {
     //   editorRef.current.setValue(filtered[0].value);
@@ -53,14 +54,14 @@ export const LoadTemplateModal = ({ opened, close }: Props) => {
           </Text>
           <Select
             label="Template"
-            placeholder="Pick one"
+            placeholder="Select one"
             data={templateSelectItems}
             value={selectedTemplateName}
             onChange={setSelectedTemplateName}
-            nothingFoundMessage="No templates"
+            nothingFoundMessage="No templates..."
+            maxDropdownHeight={200}
             searchable
             clearable
-            comboboxProps={{ withinPortal: false }}
           />
         </Stack>
         <Group justify="space-between" mt="lg">

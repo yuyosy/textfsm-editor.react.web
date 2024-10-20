@@ -2,6 +2,7 @@ import {
   Button,
   ComboboxItem,
   Group,
+  Input,
   Modal,
   Select,
   Stack,
@@ -10,16 +11,21 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core';
-import { readSessionStorageValue, useLocalStorage } from '@mantine/hooks';
+import {
+  readSessionStorageValue,
+  useDebouncedValue,
+  useLocalStorage,
+} from '@mantine/hooks';
+import { Replace, SquarePlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
-type Props = {
+interface SaveTemplateModalProps {
   opened: boolean;
   close: () => void;
-};
+}
 
-export const SaveTemplateModal = ({ opened, close }: Props) => {
+export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => {
   // Local Storage
   const [templateList, setTemplateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
@@ -35,6 +41,9 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
   >([]);
   const [inputTemplateName, setInputTemplateName] = useState<string>('');
   const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
+  const [isExistingTemplate, setIsExistingTemplate] = useState<boolean>(false);
+
+  const [debounced] = useDebouncedValue(inputTemplateName, 200);
 
   // Functions
   const setSelectItems = () => {
@@ -64,11 +73,13 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
       });
     }
     setTemplateList(templateList);
+    handleClose();
   };
 
-  const onClose = () => {
+  const handleClose = () => {
     setInputTemplateName('');
     setSelectedTemplateName(null);
+    setIsExistingTemplate(false);
     close();
   };
 
@@ -79,9 +90,17 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
     }
   }, [opened]);
 
+  useEffect(() => {
+    if (templateList.some(item => item.label === debounced)) {
+      setIsExistingTemplate(true);
+    } else {
+      setIsExistingTemplate(false);
+    }
+  }, [debounced]);
+
   return (
     <>
-      <Modal opened={opened} onClose={onClose} title="Save Template" size="lg">
+      <Modal opened={opened} onClose={handleClose} title="Save Template" size="lg">
         <Stack p={8} gap={2}>
           <Text size="sm" c="dimmed">
             Template data is stored in LocalStorage. This data persists even after
@@ -89,35 +108,46 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
           </Text>
           <Tabs defaultValue="new" pt={8}>
             <Tabs.List>
-              <Tabs.Tab value="new">Save as New</Tabs.Tab>
+              <Tabs.Tab value="new" leftSection={<SquarePlus size={20} />}>
+                Save as New
+              </Tabs.Tab>
               {templateList.length === 0 ? (
                 <Tooltip
                   label="There are no saved templates"
                   position="bottom"
                   withArrow
                 >
-                  <Tabs.Tab value="overwrite" disabled>
+                  <Tabs.Tab
+                    value="overwrite"
+                    leftSection={<Replace size={20} />}
+                    disabled
+                  >
                     Overwrite Existing
                   </Tabs.Tab>
                 </Tooltip>
               ) : (
-                <Tabs.Tab
-                  value="overwrite"
-                  disabled={templateList.length === 0 ? true : false}
-                >
+                <Tabs.Tab value="overwrite" leftSection={<Replace size={20} />}>
                   Overwrite Existing
                 </Tabs.Tab>
               )}
             </Tabs.List>
             <Tabs.Panel value="new" pt={8}>
               <Stack>
-                <TextInput
-                  label="Template Name"
-                  placeholder="Input template name"
-                  value={inputTemplateName}
-                  onChange={event => setInputTemplateName(event.currentTarget.value)}
-                  withAsterisk
-                />
+                <Input.Wrapper label="Template Name" withAsterisk>
+                  <TextInput
+                    value={inputTemplateName}
+                    placeholder="Input template name"
+                    withErrorStyles={false}
+                    onChange={event => setInputTemplateName(event.currentTarget.value)}
+                    rightSectionPointerEvents="none"
+                    rightSection={isExistingTemplate ? <Replace size={20} /> : ''}
+                  />
+                  <Input.Error my={4}>
+                    {isExistingTemplate
+                      ? 'The template name is already exists. Do you want to replace it? '
+                      : ''}
+                  </Input.Error>
+                </Input.Wrapper>
               </Stack>
             </Tabs.Panel>
             <Tabs.Panel value="overwrite" pt={8}>
@@ -128,6 +158,8 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
                   data={templateSelectItems}
                   value={selectedTemplateName}
                   onChange={setSelectedTemplateName}
+                  nothingFoundMessage="No templates..."
+                  maxDropdownHeight={200}
                   withAsterisk
                   searchable
                   clearable
@@ -137,7 +169,7 @@ export const SaveTemplateModal = ({ opened, close }: Props) => {
           </Tabs>
         </Stack>
         <Group justify="space-between" mt="lg">
-          <Button variant="default" size="xs" onClick={close}>
+          <Button variant="default" size="xs" onClick={handleClose}>
             Close
           </Button>
           <Button

@@ -1,86 +1,128 @@
+import { EditableText } from '@/components/EditableText';
 import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
+import { useListState, useLocalStorage } from '@mantine/hooks';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
-type Props = {
+interface ChangesState {
+  order: boolean;
+  deleteCount: number;
+  renameCount: number;
+}
+
+interface EditTemplatesModalProps {
   opened: boolean;
   close: () => void;
-};
+}
 
-export const EditTemplatesModal = ({ opened, close }: Props) => {
+export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) => {
   // Local Storage
   const [templateList, setTemplateList] = useLocalStorage<TemplateInfo[]>({
     key: 'editor-template-list',
     defaultValue: [],
   });
 
-  const [edittingTemplateList, setEdittingTemplateList] = useState<TemplateInfo[]>([]);
-  const [changesOrder, setChangesOrder] = useState<boolean>(false);
-  const [changesDelete, setChangesDelete] = useState<number>(0);
+  const [edittingList, edittingListHandlers] = useListState<TemplateInfo>([]);
 
-  // Hook
-  useEffect(() => {
-    setEdittingTemplateList([...templateList]);
+  const [changes, setChanges] = useState<ChangesState>({
+    order: false,
+    deleteCount: 0,
+    renameCount: 0,
+  });
+
+  const updateChanges = (key: keyof ChangesState, value: any) => {
+    setChanges(prevChanges => ({
+      ...prevChanges,
+      [key]: value,
+    }));
+  };
+
+  const initializeList = () => {
+    edittingListHandlers.setState(JSON.parse(JSON.stringify(templateList)));
     resetState();
-  }, [opened]);
+  };
 
   const moveUpArrayIndex = (index: number) => {
-    if (index === 0) return;
-    const newArr = [...edittingTemplateList];
-    [newArr[index], newArr[index - 1]] = [newArr[index - 1], newArr[index]];
-    setEdittingTemplateList(newArr);
-    if (!changesOrder) {
-      setChangesOrder(true);
+    if (index === 0) {
+      return;
     }
+    edittingListHandlers.swap({ from: index, to: index - 1 });
+    updateChanges('order', true);
   };
 
   const moveDownArrayIndex = (index: number) => {
-    if (index === edittingTemplateList.length - 1) return;
-    const newArr = [...edittingTemplateList];
-    [newArr[index], newArr[index + 1]] = [newArr[index + 1], newArr[index]];
-    setEdittingTemplateList(newArr);
-    if (!changesOrder) {
-      setChangesOrder(true);
+    if (index === edittingList.length - 1) {
+      return;
     }
+    edittingListHandlers.swap({ from: index, to: index + 1 });
+    updateChanges('order', true);
   };
 
+  const renameTemplate = (index: number, newName: string) => {
+    edittingListHandlers.setItemProp(index, 'label', newName);
+    updateChanges('renameCount', changes.renameCount + 1);
+  };
   const deleteItem = (index: number) => {
-    if (edittingTemplateList.length === 0) return;
-    setEdittingTemplateList(edittingTemplateList.filter((_, i) => i !== index));
-    setChangesDelete(changesDelete + 1);
+    if (edittingList.length === 0) {
+      return;
+    }
+    edittingListHandlers.remove(index);
+    updateChanges('deleteCount', changes.deleteCount + 1);
   };
 
   const applyChanges = () => {
-    setTemplateList(edittingTemplateList);
+    setTemplateList(edittingList);
     resetState();
   };
 
+  const discardChanges = () => {
+    initializeList();
+  };
+
   const changesText = (): string => {
-    if (changesOrder || changesDelete > 0) {
-      return (
-        (changesOrder ? 'Change order' : '') +
-        (changesOrder && changesDelete > 0 ? ' & ' : '') +
-        (changesDelete > 0
-          ? `Delete ${changesDelete} item${changesDelete == 1 ? '' : 's'}`
-          : '') +
-        '.'
-      );
+    if (changes.order || changes.deleteCount > 0 || changes.renameCount > 0) {
+      let message = [];
+      if (changes.order) {
+        message.push('Change order');
+      }
+      if (changes.deleteCount > 0) {
+        message.push(
+          `Delete ${changes.deleteCount} item${changes.deleteCount == 1 ? '' : 's'}`
+        );
+      }
+      if (changes.renameCount > 0) {
+        message.push(
+          `Rename ${changes.renameCount} item${changes.renameCount == 1 ? '' : 's'}`
+        );
+      }
+      return message.join(' & ') + '.';
     } else {
       return 'No changes.';
     }
   };
 
   const resetState = () => {
-    setChangesOrder(false);
-    setChangesDelete(0);
+    updateChanges('order', false);
+    updateChanges('deleteCount', 0);
+    updateChanges('renameCount', 0);
   };
+
+  const handleClose = () => {
+    edittingListHandlers.setState([]);
+    resetState();
+    close();
+  };
+
+  // Hook
+  useEffect(() => {
+    initializeList();
+  }, [opened]);
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Edit Templates" size="lg">
+      <Modal opened={opened} onClose={handleClose} title="Edit Templates" size="lg">
         <Stack>
           <Text size="sm" c="dimmed">
             To change the order, click the arrow button in the direction you want to
@@ -90,15 +132,13 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
             The changes such as sorting or deleting will not be reflected until the Apply
             button is pressed.
           </Text>
-          <Text size="sm" c="dimmed">
-            In the future, I plan to implement a feature that allows users to rename
-            templates.
-          </Text>
           <DataTable
-            records={edittingTemplateList}
+            withColumnBorders
+            records={edittingList}
             columns={[
               {
                 accessor: 'move',
+                width: 80,
                 title: (
                   <Group>
                     <ArrowDownUp size={14} />
@@ -118,7 +158,7 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
                     <ActionIcon
                       variant="transparent"
                       color="green"
-                      disabled={index === edittingTemplateList.length - 1}
+                      disabled={index === edittingList.length - 1}
                       onClick={() => moveDownArrayIndex(index)}
                     >
                       <ArrowDown size={18} />
@@ -128,14 +168,21 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
               },
               {
                 accessor: 'label',
+                render: (item, index) => (
+                  <EditableText
+                    text={item.label}
+                    setText={value => renameTemplate(index, value)}
+                  />
+                ),
               },
               // { accessor: 'value' },
               {
                 accessor: 'actions',
-                title: <Text mr="xs">Row actions</Text>,
-                textAlign: 'right',
+                width: 80,
+                title: '',
+                textAlign: 'center',
                 render: (_item, index) => (
-                  <Group gap={4} justify="end">
+                  <Group gap={4} justify="space-around">
                     <ActionIcon
                       variant="light"
                       color="red"
@@ -150,16 +197,26 @@ export const EditTemplatesModal = ({ opened, close }: Props) => {
             ]}
             idAccessor="label"
             height={300}
-          />
+          />{' '}
         </Stack>
-        <Group justify="space-between" mt="lg">
-          <Button variant="default" size="xs" onClick={close}>
+        <Group justify="end" my="sm" px={8}>
+          <Text size="sm" c="dimmed">
+            {changesText()}
+          </Text>
+        </Group>
+        <Group justify="space-between">
+          <Button variant="default" size="xs" onClick={handleClose}>
             Close
           </Button>
           <Group>
-            <Text size="sm" c="dimmed">
-              {changesText()}
-            </Text>
+            <Button
+              variant="default"
+              size="xs"
+              onClick={discardChanges}
+              disabled={!(changes.order || changes.deleteCount > 0)}
+            >
+              Discard Changes
+            </Button>
             <Button size="xs" color="cyan" onClick={applyChanges}>
               Apply
             </Button>
