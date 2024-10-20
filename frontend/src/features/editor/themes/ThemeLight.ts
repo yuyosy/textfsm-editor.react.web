@@ -16,6 +16,6 @@ export const textfsmThemeLight: monaco.editor.IStandaloneThemeData = {
     { token: 'comment', foreground: '9f9490', fontStyle: 'italic' },
   ],
   colors: {
-    'editor.foreground': '#232529',
+    'editor.foreground': '#38383f',
   },
 };

@@ -43,7 +43,7 @@ export const NotificationPanel = forwardRef((_props, ref) => {
               const info = {
                 mainTitle: resultObject.data.message,
                 subTitle: resultObject.timestamp,
-                color: '',
+                color: 'blue',
                 message: message,
               };
               return <AlertCard key={index} {...info}></AlertCard>;

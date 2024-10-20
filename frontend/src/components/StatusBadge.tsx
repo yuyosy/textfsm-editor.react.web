@@ -1,4 +1,4 @@
-import { ColorSwatch, MantineColor, Badge } from '@mantine/core';
+import { Badge, ColorSwatch, MantineColor } from '@mantine/core';
 
 export type StatusBadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'debug';
 

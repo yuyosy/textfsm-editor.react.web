@@ -1,3 +1,12 @@
+import { CopyValueButton } from '@/components/CopyValueButton';
+import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
+import { StatusBadge, StatusBadgeVariant } from '@/components/StatusBadge';
+import { Editor } from '@/features/editor/Editor';
+import {
+  createErrorResultItem,
+  sendTextFSMParseRequest,
+} from '@/features/request/sendTextFSMParseRequest';
+import { PanelLayoutType, PanelRefs, ResultItem } from '@/layouts/types';
 import {
   AppShell,
   Group,
@@ -6,24 +15,15 @@ import {
   Text,
   useMantineColorScheme,
 } from '@mantine/core';
-import { CopyValueButton } from '@/components/CopyValueButton';
-import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
-import { Editor } from '@/features/editor/Editor';
+import { useDisclosure, useLocalStorage, useSessionStorage } from '@mantine/hooks';
 import type { OnChange, OnMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
+import { AppMainToolBar } from './AppMainToolBar';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { ResultViewPanel } from './panels/ResultViewPanel';
-import { useDisclosure, useLocalStorage, useSessionStorage } from '@mantine/hooks';
-import { PanelLayoutType, PanelRefs, ResultItem } from '@/layouts/types';
 import { setChipPanelState, setSegmentedControlPanelState } from './panelStateUtils';
-import { AppMainToolBar } from './AppMainToolBar';
-import { StatusBadge } from '@/components/StatusBadge';
-import {
-  createErrorResultItem,
-  sendTextFSMParseRequest,
-} from '@/features/request/sendTextFSMParseRequest';
 
 export const AppMain = () => {
   // Local Storage
@@ -52,6 +52,7 @@ export const AppMain = () => {
   const [openedResultViewPanel, resultViewPanelActions] = useDisclosure(false);
 
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
+  const [responseState, setResponseState] = useState<StatusBadgeVariant>();
 
   // Ref State
   const panelRefs: PanelRefs = {
@@ -110,14 +111,13 @@ export const AppMain = () => {
       );
       resultObject.current = response;
       if (resultObject.current) {
-        if (!resultObject.current) {
-          return;
-        }
         notificationPanelDataRef?.current.prependResult(resultObject.current);
         resultViewPanelDataRef?.current.setResults(resultObject.current);
+        setResponseState(resultObject.current.ok ? 'success' : 'error');
       }
     } catch (error) {
       notificationPanelDataRef?.current.prependResult(createErrorResultItem(error));
+      setResponseState('error');
       console.error(error);
     }
   };
@@ -172,7 +172,7 @@ export const AppMain = () => {
               sendRequest: sendRequest,
             }}
           />
-          <Paper h="100%" m={5} radius="md" shadow="xs" style={{ overflow: 'hidden' }}>
+          <Paper h="100%" m={8} radius="md" shadow="xs" style={{ overflow: 'hidden' }}>
             <PanelGroup direction="horizontal" autoSaveId="top">
               <Panel defaultSize={80} collapsedSize={0} minSize={10} collapsible={true}>
                 <PanelGroup direction="vertical" autoSaveId="main">
@@ -223,11 +223,11 @@ export const AppMain = () => {
                           <Group px={10} py={8} justify="space-between">
                             <Group>
                               <Text fw={700}>Template</Text>
-                              <StatusBadge variant="success" />
-                              <StatusBadge variant="error" />
-                              <StatusBadge variant="warning" />
-                              <StatusBadge variant="info" />
-                              <StatusBadge variant="debug" />
+                              {responseState ? (
+                                <StatusBadge variant={responseState} />
+                              ) : (
+                                ''
+                              )}
                             </Group>
                             <CopyValueButton
                               value={getTemplateValue()}

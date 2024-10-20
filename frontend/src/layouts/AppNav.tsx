@@ -1,14 +1,14 @@
-import { AppShell, Burger, Button, Paper, Stack, Tooltip } from '@mantine/core';
+import { AppShell, Burger, Button, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import {
   ArrowLeftFromLine,
   ArrowRightFromLine,
   Edit,
-  LibraryBig,
   Package,
   PlaneLanding,
   PlaneTakeoff,
-  Plus,
   Settings,
+  SquareLibrary,
+  SquarePlus,
 } from 'lucide-react';
 import { useState } from 'react';
 import { EditTemplatesModal } from './modals/EditTemplatesModal';
@@ -42,35 +42,41 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     id: 'preset-templates',
-    label: 'Preset',
-    icon: <Package size={24} strokeWidth={1.5} />,
+    label: 'Preset (ntc-template)',
+    icon: <Package size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {
     id: 'save-template',
     label: 'Save Template',
-    icon: <Plus size={24} strokeWidth={1.5} />,
+    icon: <SquarePlus size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {
     id: 'load-template',
     label: 'Load Template',
-    icon: <LibraryBig size={24} strokeWidth={1.5} />,
+    icon: (
+      <SquareLibrary size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />
+    ),
   },
   {
     id: 'edit-templates',
     label: 'Edit Templates',
-    icon: <Edit size={24} strokeWidth={1.5} />,
+    icon: <Edit size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {
     id: 'import-templates',
     label: 'Import Templates',
-    icon: <PlaneLanding size={24} strokeWidth={1.5} />,
+    icon: <PlaneLanding size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {
     id: 'export-templates',
     label: 'Export Templates',
-    icon: <PlaneTakeoff size={24} strokeWidth={1.5} />,
+    icon: <PlaneTakeoff size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
-  { id: 'options', label: 'Options', icon: <Settings size={24} strokeWidth={1.5} /> },
+  {
+    id: 'options',
+    label: 'Options',
+    icon: <Settings size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
+  },
 ];
 
 export const AppNavbar = ({ opened, toggle }: NavbarProps) => {
@@ -110,7 +116,7 @@ export const AppNavbar = ({ opened, toggle }: NavbarProps) => {
       ></ExportTemplatesModal>
       <OptionsModal opened={openedModal === 'options'} close={closeModal}></OptionsModal>
       <AppShell.Navbar bg="transparent">
-        <Paper h="100%" m={5} radius="md" shadow="xs">
+        <Paper h="100%" my={8} ml={8} radius="md" shadow="xs">
           <Stack h="100%" p={6} justify="space-between">
             <Stack gap={6}>
               <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
@@ -125,13 +131,12 @@ export const AppNavbar = ({ opened, toggle }: NavbarProps) => {
                   <Button
                     px={6}
                     variant="subtle"
-                    color="dark"
                     justify="left"
                     fullWidth
                     leftSection={item.icon}
                     onClick={() => openModal(item.id)}
                   >
-                    {item.label}
+                    <Text c="var(--mantine-color-text)">{item.label}</Text>
                   </Button>
                 </Tooltip>
               ))}
@@ -140,19 +145,26 @@ export const AppNavbar = ({ opened, toggle }: NavbarProps) => {
               px={6}
               onClick={toggle}
               variant="subtle"
-              color="dark"
               justify="left"
               fullWidth
               visibleFrom="sm"
               leftSection={
                 opened ? (
-                  <ArrowLeftFromLine size={24} strokeWidth={1.5} />
+                  <ArrowLeftFromLine
+                    size={24}
+                    strokeWidth={1.5}
+                    color="var(--mantine-color-text)"
+                  />
                 ) : (
-                  <ArrowRightFromLine size={24} strokeWidth={1.5} />
+                  <ArrowRightFromLine
+                    size={24}
+                    strokeWidth={1.5}
+                    color="var(--mantine-color-text)"
+                  />
                 )
               }
             >
-              {opened ? 'Collapse' : 'Expand'}
+              <Text c="var(--mantine-color-text)">{opened ? 'Collapse' : 'Expand'}</Text>
             </Button>
           </Stack>
         </Paper>

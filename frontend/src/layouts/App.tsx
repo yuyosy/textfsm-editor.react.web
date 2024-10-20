@@ -1,3 +1,4 @@
+import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
 import {
   AppShell,
   MantineProvider,
@@ -5,11 +6,10 @@ import {
   createTheme,
   virtualColor,
 } from '@mantine/core';
-import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
+import { useDisclosure } from '@mantine/hooks';
 import { AppHeader } from './AppHeader';
 import { AppMain } from './AppMain';
 import { AppNavbar } from './AppNav';
-import { useDisclosure } from '@mantine/hooks';
 
 const theme = createTheme({
   black: '#484951',

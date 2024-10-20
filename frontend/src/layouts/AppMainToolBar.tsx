@@ -1,11 +1,11 @@
-import { Text, Divider, Group, ActionIcon, Tooltip, Switch } from '@mantine/core';
-import { PanelSelector } from './PanelSelector';
-import { PanelToggleChip } from './PanelToggleChip';
-import { Send } from 'lucide-react';
-import { handlePanelToggle } from './panelStateUtils';
+import { Button, Divider, Group, Switch, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
+import { Send } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
+import { PanelSelector } from './PanelSelector';
+import { handlePanelToggle } from './panelStateUtils';
+import { PanelToggleChip } from './PanelToggleChip';
+import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
 
 interface AppMainToolBarProps {
   panelRefs: PanelRefs;
@@ -34,7 +34,7 @@ export const AppMainToolBar = ({
     defaultValue: false,
   });
   return (
-    <Group mx={5} justify="space-between">
+    <Group mx={8} justify="space-between">
       <Group gap={5}>
         <PanelSelector
           mainPanelLyout={mainPanelLyout}
@@ -60,18 +60,14 @@ export const AppMainToolBar = ({
       </Group>
       <Group>
         {/* Actions */}
-        <Text size="sm">Send</Text>
-        <Tooltip label="Send" withArrow position="bottom">
-          <ActionIcon
-            variant="default"
-            onClick={() => {
-              sendRequest();
-              console.log('sendRequest');
-            }}
-          >
-            <Send size="1.125rem" />
-          </ActionIcon>
-        </Tooltip>
+        <Button
+          size="xs"
+          variant="default"
+          leftSection={<Send size="1.125rem" />}
+          onClick={sendRequest}
+        >
+          Send
+        </Button>
         <Divider orientation="vertical" color="var(--mantine-color-default-border)" />
         <Text size="sm">AutoParse</Text>
         <Switch

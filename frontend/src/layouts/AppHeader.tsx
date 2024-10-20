@@ -18,7 +18,7 @@ export const AppHeader = ({ opened, toggle }: HeaderProps) => {
   return (
     <>
       <AppShell.Header h={40} bg="transparent">
-        <Group h="100%" px={5} justify="space-between">
+        <Group h="100%" px={8} justify="space-between">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group align="baseline">
             <Text fw={700}>TextFSM-Editor</Text>
