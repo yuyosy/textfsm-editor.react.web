@@ -1,5 +1,5 @@
 import { Button, ComboboxItem, Group, Modal, Select, Stack, Text } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
+import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
 
@@ -16,6 +16,7 @@ export const LoadTemplateModal = ({ opened, close }: LoadTemplateModalProps) => 
   });
 
   // States
+  const { ref: focusRef, focused } = useFocusWithin();
   const [templateSelectItems, setTemplateSelectItems] = useState<
     (string | ComboboxItem)[]
   >([]);
@@ -46,8 +47,14 @@ export const LoadTemplateModal = ({ opened, close }: LoadTemplateModalProps) => 
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Load Template" size="lg">
-        <Stack>
+      <Modal
+        title="Load Template"
+        opened={opened}
+        onClose={close}
+        closeOnEscape={!focused}
+        size="lg"
+      >
+        <Stack ref={focusRef}>
           <Text size="sm" c="dimmed">
             Loads the template, note that it will overwrite the values entered in the
             Template area.

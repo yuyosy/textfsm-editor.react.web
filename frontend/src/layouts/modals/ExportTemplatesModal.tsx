@@ -11,7 +11,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
+import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { TemplateInfo } from './types';
 
@@ -32,6 +32,7 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
     defaultValue: [],
   });
 
+  const { ref: focusRef, focused } = useFocusWithin();
   const [transferListData, setTransferListData] = useState<TransferListData>([[], []]);
 
   const textInputRef = useRef<HTMLInputElement>(null);
@@ -74,8 +75,14 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Export Templates" size="lg">
-        <Stack>
+      <Modal
+        title="Export Templates"
+        opened={opened}
+        onClose={close}
+        closeOnEscape={!focused}
+        size="lg"
+      >
+        <Stack ref={focusRef}>
           <Text>Export saved templates as a JSON file.</Text>
           <Stepper
             active={activeStep}

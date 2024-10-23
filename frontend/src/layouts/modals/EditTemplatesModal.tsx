@@ -1,6 +1,6 @@
 import { EditableText } from '@/components/EditableText';
 import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useListState, useLocalStorage } from '@mantine/hooks';
+import { useFocusWithin, useListState, useLocalStorage } from '@mantine/hooks';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
     defaultValue: [],
   });
 
+  const { ref: focusRef, focused } = useFocusWithin();
   const [edittingList, edittingListHandlers] = useListState<TemplateInfo>([]);
 
   const [changes, setChanges] = useState<ChangesState>({
@@ -122,8 +123,14 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
 
   return (
     <>
-      <Modal opened={opened} onClose={handleClose} title="Edit Templates" size="lg">
-        <Stack>
+      <Modal
+        title="Edit Templates"
+        opened={opened}
+        onClose={handleClose}
+        closeOnEscape={!focused}
+        size="lg"
+      >
+        <Stack ref={focusRef}>
           <Text size="sm" c="dimmed">
             To change the order, click the arrow button in the direction you want to
             move.
@@ -217,7 +224,12 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
             >
               Discard Changes
             </Button>
-            <Button size="xs" color="cyan" onClick={applyChanges}>
+            <Button
+              size="xs"
+              color="cyan"
+              onClick={applyChanges}
+              disabled={!(changes.order || changes.deleteCount > 0)}
+            >
               Apply
             </Button>
           </Group>

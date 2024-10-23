@@ -14,6 +14,7 @@ import {
 import {
   readSessionStorageValue,
   useDebouncedValue,
+  useFocusWithin,
   useLocalStorage,
 } from '@mantine/hooks';
 import { Replace, SquarePlus } from 'lucide-react';
@@ -36,6 +37,7 @@ export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => 
   });
 
   // States
+  const { ref: focusRef, focused } = useFocusWithin();
   const [templateSelectItems, setTemplateSelectItems] = useState<
     (string | ComboboxItem)[]
   >([]);
@@ -100,8 +102,14 @@ export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => 
 
   return (
     <>
-      <Modal opened={opened} onClose={handleClose} title="Save Template" size="lg">
-        <Stack p={8} gap={2}>
+      <Modal
+        title="Save Template"
+        opened={opened}
+        onClose={handleClose}
+        closeOnEscape={!focused}
+        size="lg"
+      >
+        <Stack p={8} gap={2} ref={focusRef}>
           <Text size="sm" c="dimmed">
             Template data is stored in LocalStorage. This data persists even after
             closing the tab, but it will be deleted if you clear the browser's cache.

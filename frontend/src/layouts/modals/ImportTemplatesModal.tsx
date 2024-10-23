@@ -12,7 +12,7 @@ import {
   Text,
 } from '@mantine/core';
 import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
-import { useLocalStorage } from '@mantine/hooks';
+import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
 import { FileCode, Upload, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from './types';
@@ -35,6 +35,7 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
   });
 
   // States
+  const { ref: focusRef, focused } = useFocusWithin();
   const [importTargetFiles, setImportTargetFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
   const [activeStep, setActiveStep] = useState(0);
@@ -126,8 +127,14 @@ export const ImportTemplatesModal = ({ opened, close }: Props) => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Import Templates" size="lg">
-        <Stack>
+      <Modal
+        title="Import Templates"
+        opened={opened}
+        onClose={close}
+        closeOnEscape={!focused}
+        size="lg"
+      >
+        <Stack ref={focusRef}>
           <Text>Load JSON and import templates.</Text>
           <Stepper
             active={activeStep}

@@ -23,6 +23,9 @@ export const EditableText = ({ text, setText }: EditableTextProps) => {
       setIsEditing(false);
       setText(newText);
       setNewText(text);
+    } else if (event.key === 'Escape') {
+      setIsEditing(false);
+      setNewText(text);
     }
   };
 
@@ -35,9 +38,14 @@ export const EditableText = ({ text, setText }: EditableTextProps) => {
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           autoFocus
+          p={0}
+          m={0}
+          styles={{ input: { minHeight: 28, fontSize: 16 } }}
         />
       ) : (
-        <Text onClick={handleClick}>{text}</Text>
+        <Text onClick={handleClick} px={3}>
+          {text}
+        </Text>
       )}
     </>
   );
