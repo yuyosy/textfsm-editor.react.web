@@ -1,6 +1,12 @@
 import { Badge, ColorSwatch, MantineColor } from '@mantine/core';
 
-export type StatusBadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'debug';
+export type StatusBadgeVariant =
+  | 'init'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'debug';
 
 const badgeStyles: {
   [key in StatusBadgeVariant]: {
@@ -9,6 +15,7 @@ const badgeStyles: {
     label: string;
   };
 } = {
+  init: { styleColor: 'gray.9', markColor: '#adb5bd', label: 'Init' },
   success: { styleColor: 'teal.9', markColor: '#12b886', label: 'Success' },
   error: { styleColor: 'red.9', markColor: '#fa5252', label: 'Error' },
   warning: { styleColor: 'orange', markColor: '#fd7e14', label: 'Warning' },

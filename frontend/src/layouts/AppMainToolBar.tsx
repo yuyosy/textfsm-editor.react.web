@@ -1,11 +1,27 @@
-import { Button, Divider, Group, Switch, Text } from '@mantine/core';
+import { useSendRequest } from '@/hooks/useSendRequest';
+import { Button, Chip, Divider, Group, Switch, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { Send } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import { PanelSelector } from './PanelSelector';
 import { handlePanelToggle } from './panelStateUtils';
-import { PanelToggleChip } from './PanelToggleChip';
 import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
+
+const PanelToggleChip = ({
+  opened: panel,
+  label,
+  handlePanelToggle,
+}: {
+  opened: boolean;
+  label: string;
+  handlePanelToggle: (checked: boolean) => void;
+}) => {
+  return (
+    <Chip variant="outline" size="xs" checked={panel} onChange={handlePanelToggle}>
+      {label}
+    </Chip>
+  );
+};
 
 interface AppMainToolBarProps {
   panelRefs: PanelRefs;
@@ -15,7 +31,6 @@ interface AppMainToolBarProps {
   notificationPanelActions: DisclosureActions;
   openedResultViewPanel: boolean;
   resultViewPanelActions: DisclosureActions;
-  sendRequest: () => void;
 }
 
 export const AppMainToolBar = ({
@@ -26,13 +41,17 @@ export const AppMainToolBar = ({
   notificationPanelActions,
   openedResultViewPanel,
   resultViewPanelActions,
-  sendRequest,
 }: AppMainToolBarProps) => {
-  // Local Storage
   const [editorAutoParse, setEditorAutoParse] = useLocalStorage<boolean>({
     key: 'editor-auto-parse',
     defaultValue: false,
   });
+  const sendRequest = useSendRequest();
+
+  const handleClickSendRequest = () => {
+    sendRequest();
+  };
+
   return (
     <Group mx={8} justify="space-between">
       <Group gap={5}>
@@ -64,7 +83,7 @@ export const AppMainToolBar = ({
           size="xs"
           variant="default"
           leftSection={<Send size="1.125rem" />}
-          onClick={sendRequest}
+          onClick={handleClickSendRequest}
         >
           Send
         </Button>

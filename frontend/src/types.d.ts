@@ -1,3 +1,5 @@
+import { TextFSMParseAPIResponse } from '@/features/types';
+
 export interface ResponseResult {
   ok: boolean;
   message: string;
@@ -13,3 +15,9 @@ export interface ResultObject {
   result_message: string;
   result_message_detail: string;
 }
+
+interface Timestamp {
+  timestamp: string;
+}
+
+export interface ResultItem extends TextFSMParseAPIResponse, Timestamp {}
