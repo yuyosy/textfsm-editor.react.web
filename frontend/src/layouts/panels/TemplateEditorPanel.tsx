@@ -6,11 +6,16 @@ import { TemplateEditor } from './TemplateEditor';
 
 import { StatusBadge } from '@/components/StatusBadge';
 import { responseStateAtom } from '@/features/state/atoms';
+import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 import { useAtomValue } from 'jotai';
 
 const ResponseState = () => {
   const responseState = useAtomValue(responseStateAtom);
   return <StatusBadge variant={responseState} />;
+};
+const CopyButton = () => {
+  const value = useAtomValue(templateEditorValueAtom);
+  return <CopyValueButton value={value} />;
 };
 
 interface TemplateEditorPanelProps {
@@ -39,7 +44,7 @@ export const TemplateEditorPanel = ({
             <Text fw={700}>Template</Text>
             <ResponseState />
           </Group>
-          <CopyValueButton value={'getTemplateValue()'}></CopyValueButton>
+          <CopyButton />
         </Group>
         <TemplateEditor />
       </Stack>
