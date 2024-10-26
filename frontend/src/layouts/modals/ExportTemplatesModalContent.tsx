@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useRef, useState } from 'react';
 
 import {
   Button,
@@ -11,16 +11,15 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
+import { useAtomValue } from 'jotai';
 
+import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 import { useFileSave } from '@/hooks/useFileSave';
 import { getCurrentDateTimeString } from '@/utils/datetime';
 
-import { TemplateInfo } from './types';
-
-type Props = {
-  opened: boolean;
+type ModalContentProps = {
   close: () => void;
+  focusRef: MutableRefObject<HTMLDivElement>;
 };
 
 type TransferListData = [
@@ -28,15 +27,17 @@ type TransferListData = [
   { value: string; label: string }[],
 ];
 
-export const ExportTemplatesModal = ({ opened, close }: Props) => {
-  // Local Storage
-  const [templateList] = useLocalStorage<TemplateInfo[]>({
-    key: 'editor-template-list',
-    defaultValue: [],
-  });
+export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const readTemplateList = useAtomValue(savedTemplateListAtom);
 
-  const { ref: focusRef, focused } = useFocusWithin();
-  const [transferListData, setTransferListData] = useState<TransferListData>([[], []]);
+  const [transferListData] = useState<TransferListData>([
+    [
+      ...readTemplateList.map((item, index) => {
+        return { value: index.toString(), label: item.label };
+      }),
+    ],
+    [],
+  ]);
 
   const textInputRef = useRef<HTMLInputElement>(null);
   const [handleSave] = useFileSave();
@@ -57,34 +58,32 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
       : defaultFileName;
     const targetIndices = transferListData[1].map(item => item.value);
     const data = JSON.stringify(
-      templateList.filter((_, index) => targetIndices.includes(index.toString()))
+      readTemplateList.filter((_, index) => targetIndices.includes(index.toString()))
     );
     handleSave(fileName, data);
     close();
   };
 
   // // Hook
-  useEffect(() => {
-    setActiveStep(0);
-    setTransferListData([
-      [
-        ...templateList.map((item, index) => {
-          return { value: index.toString(), label: item.label };
-        }),
-      ],
-      [],
-    ]);
-  }, [opened]);
+  // useEffect(() => {
+  //   setActiveStep(0);
+  //   setTransferListData([
+  //     [
+  //       ...templateList.map((item, index) => {
+  //         return { value: index.toString(), label: item.label };
+  //       }),
+  //     ],
+  //     [],
+  //   ]);
+  // }, [opened]);
 
   return (
-    <>
-      <Modal
-        title="Export Templates"
-        opened={opened}
-        onClose={close}
-        closeOnEscape={!focused}
-        size="lg"
-      >
+    <Modal.Content>
+      <Modal.Header>
+        <Modal.Title>Export Templates</Modal.Title>
+        <Modal.CloseButton />
+      </Modal.Header>
+      <Modal.Body>
         <Stack ref={focusRef}>
           <Text>Export saved templates as a JSON file.</Text>
           <Stepper
@@ -153,7 +152,7 @@ export const ExportTemplatesModal = ({ opened, close }: Props) => {
             </Stepper.Step>
           </Stepper>
         </Stack>
-      </Modal>
-    </>
+      </Modal.Body>
+    </Modal.Content>
   );
 };

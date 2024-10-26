@@ -1,34 +1,29 @@
-import { useEffect, useState } from 'react';
+import { MutableRefObject, useState } from 'react';
 
 import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useFocusWithin, useListState, useLocalStorage } from '@mantine/hooks';
+import { useListState } from '@mantine/hooks';
+import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 
 import { EditableText } from '@/components/EditableText';
+import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 
 import { TemplateInfo } from './types';
-
 interface ChangesState {
   order: boolean;
   deleteCount: number;
   renameCount: number;
 }
 
-interface EditTemplatesModalProps {
-  opened: boolean;
+type ModalContentProps = {
   close: () => void;
-}
+  focusRef: MutableRefObject<HTMLDivElement>;
+};
 
-export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) => {
-  // Local Storage
-  const [templateList, setTemplateList] = useLocalStorage<TemplateInfo[]>({
-    key: 'editor-template-list',
-    defaultValue: [],
-  });
-
-  const { ref: focusRef, focused } = useFocusWithin();
-  const [edittingList, edittingListHandlers] = useListState<TemplateInfo>([]);
+export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
+  const [edittingList, edittingListHandlers] = useListState<TemplateInfo>(templateList);
 
   const [changes, setChanges] = useState<ChangesState>({
     order: false,
@@ -47,7 +42,7 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
   };
 
   const initializeList = () => {
-    edittingListHandlers.setState(JSON.parse(JSON.stringify(templateList)));
+    edittingListHandlers.setState(templateList);
     resetState();
   };
 
@@ -123,19 +118,17 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
   };
 
   // Hook
-  useEffect(() => {
-    initializeList();
-  }, [opened]);
+  // useEffect(() => {
+  //   initializeList();
+  // }, [opened]);
 
   return (
-    <>
-      <Modal
-        title="Edit Templates"
-        opened={opened}
-        onClose={handleClose}
-        closeOnEscape={!focused}
-        size="lg"
-      >
+    <Modal.Content>
+      <Modal.Header>
+        <Modal.Title>Edit Templates</Modal.Title>
+        <Modal.CloseButton />
+      </Modal.Header>
+      <Modal.Body>
         <Stack ref={focusRef}>
           <Text size="sm" c="dimmed">
             To change the order, click the arrow button in the direction you want to
@@ -226,7 +219,9 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
               variant="default"
               size="xs"
               onClick={discardChanges}
-              disabled={!(changes.order || changes.deleteCount > 0)}
+              disabled={
+                !(changes.order || changes.deleteCount > 0 || changes.renameCount > 0)
+              }
             >
               Discard Changes
             </Button>
@@ -234,13 +229,15 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
               size="xs"
               color="cyan"
               onClick={applyChanges}
-              disabled={!(changes.order || changes.deleteCount > 0)}
+              disabled={
+                !(changes.order || changes.deleteCount > 0 || changes.renameCount > 0)
+              }
             >
               Apply
             </Button>
           </Group>
         </Group>
-      </Modal>
-    </>
+      </Modal.Body>
+    </Modal.Content>
   );
 };

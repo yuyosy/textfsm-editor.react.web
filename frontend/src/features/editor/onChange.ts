@@ -1,7 +1,9 @@
-import { OnChange } from '@monaco-editor/react';
+// 使ってない？
 
-export const onChangeEditorWrapper =
-  (func: (...args: any) => void): OnChange =>
-  (value, event) => {
-    func(value, event);
-  };
+// import { OnChange } from '@monaco-editor/react';
+
+// export const onChangeEditorWrapper =
+//   (func: (...args: any) => void): OnChange =>
+//   (value, event) => {
+//     func(value, event);
+//   };

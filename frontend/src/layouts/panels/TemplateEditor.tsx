@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useMantineColorScheme } from '@mantine/core';
 import { useAtom } from 'jotai';
@@ -28,6 +28,14 @@ export const TemplateEditor = () => {
       saveTemplateToSessionStorage(value);
     }
   };
+
+  useEffect(() => {
+    if (templateEditorRef.current) {
+      if (templateEditorRef.current.getValue() !== templateEditorValue) {
+        templateEditorRef.current.setValue(templateEditorValue);
+      }
+    }
+  }, [templateEditorValue]);
 
   return (
     <Editor

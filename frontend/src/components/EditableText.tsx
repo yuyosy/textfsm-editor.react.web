@@ -11,22 +11,29 @@ export const EditableText = ({ text, setText }: EditableTextProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [newText, setNewText] = useState<string>(text);
 
+  const confirmText = () => {
+    setText(newText);
+    setNewText(text);
+    setIsEditing(false);
+  };
+
+  const resetText = () => {
+    setIsEditing(false);
+    setNewText(text);
+  };
+
   const handleClick = () => {
     setIsEditing(true);
   };
 
   const handleBlur = () => {
-    setIsEditing(false);
-    setNewText(text);
+    confirmText();
   };
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      setIsEditing(false);
-      setText(newText);
-      setNewText(text);
+      confirmText();
     } else if (event.key === 'Escape') {
-      setIsEditing(false);
-      setNewText(text);
+      resetText();
     }
   };
 
@@ -39,9 +46,7 @@ export const EditableText = ({ text, setText }: EditableTextProps) => {
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           autoFocus
-          p={0}
-          m={0}
-          styles={{ input: { minHeight: 28, fontSize: 16 } }}
+          styles={{ input: { height: 28, minHeight: 28, fontSize: 16, padding: 2 } }}
         />
       ) : (
         <Text onClick={handleClick} px={3}>

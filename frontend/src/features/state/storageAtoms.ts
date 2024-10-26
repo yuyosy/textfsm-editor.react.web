@@ -1,6 +1,17 @@
 import { atomWithStorage } from 'jotai/utils';
 
+import { TemplateInfo } from '@/layouts/modals/types';
+
 import { localStorage, sessionStorage } from './syncStorage';
+
+export const savedTemplateListAtom = atomWithStorage<TemplateInfo[]>(
+  'editor-template-list',
+  [],
+  localStorage(),
+  {
+    getOnInit: true,
+  }
+);
 
 export const parseRequestDelayAtom = atomWithStorage<number>(
   'options-editor-parse-request-delay',

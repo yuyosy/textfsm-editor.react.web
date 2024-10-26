@@ -10,7 +10,7 @@ export const debounce = (delay: number = 1000): Promise<string> => {
       timer = setTimeout(async () => {
         resolve('resolve');
       }, delay);
-    } catch (e) {
+    } catch {
       reject('reject');
     }
   });

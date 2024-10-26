@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 
 import {
   Button,
@@ -13,51 +13,33 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core';
-import {
-  readSessionStorageValue,
-  useDebouncedValue,
-  useFocusWithin,
-  useLocalStorage,
-} from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useAtom, useAtomValue } from 'jotai';
 import { Replace, SquarePlus } from 'lucide-react';
 
-import { TemplateInfo } from './types';
+import {
+  savedTemplateListAtom,
+  templateEditorValueAtom,
+} from '@/features/state/storageAtoms';
 
-interface SaveTemplateModalProps {
-  opened: boolean;
+type ModalContentProps = {
   close: () => void;
-}
+  focusRef: MutableRefObject<HTMLDivElement>;
+};
 
-export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => {
-  // Local Storage
-  const [templateList, setTemplateList] = useLocalStorage<TemplateInfo[]>({
-    key: 'editor-template-list',
-    defaultValue: [],
-  });
-  const templateEditorValue: string = readSessionStorageValue({
-    key: 'template-editor-value',
-  });
+export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
+  const readTemplateEditorValue = useAtomValue(templateEditorValueAtom);
 
   // States
-  const { ref: focusRef, focused } = useFocusWithin();
-  const [templateSelectItems, setTemplateSelectItems] = useState<
-    (string | ComboboxItem)[]
-  >([]);
+  const [templateSelectItems] = useState<(string | ComboboxItem)[]>(
+    templateList.map(item => ({ value: item.label, label: item.label }))
+  );
   const [inputTemplateName, setInputTemplateName] = useState<string>('');
   const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
   const [isExistingTemplate, setIsExistingTemplate] = useState<boolean>(false);
 
   const [debounced] = useDebouncedValue(inputTemplateName, 200);
-
-  // Functions
-  const setSelectItems = () => {
-    setSelectedTemplateName(null);
-    setTemplateSelectItems(
-      templateList.map(item => {
-        return { value: item.label, label: item.label };
-      })
-    );
-  };
 
   const saveTemplate = () => {
     const templateName = inputTemplateName || selectedTemplateName;
@@ -68,12 +50,12 @@ export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => 
     if (findIndex != -1) {
       templateList[findIndex] = {
         label: templateName,
-        value: templateEditorValue,
+        value: readTemplateEditorValue,
       };
     } else {
       templateList.push({
         label: templateName,
-        value: templateEditorValue,
+        value: readTemplateEditorValue,
       });
     }
     setTemplateList(templateList);
@@ -87,30 +69,21 @@ export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => 
     close();
   };
 
-  // Hook
-  useEffect(() => {
-    if (opened) {
-      setSelectItems();
-    }
-  }, [opened]);
-
   useEffect(() => {
     if (templateList.some(item => item.label === debounced)) {
       setIsExistingTemplate(true);
     } else {
       setIsExistingTemplate(false);
     }
-  }, [debounced]);
+  }, [debounced, templateList]);
 
   return (
-    <>
-      <Modal
-        title="Save Template"
-        opened={opened}
-        onClose={handleClose}
-        closeOnEscape={!focused}
-        size="lg"
-      >
+    <Modal.Content>
+      <Modal.Header>
+        <Modal.Title>Save Template</Modal.Title>
+        <Modal.CloseButton />
+      </Modal.Header>
+      <Modal.Body>
         <Stack p={8} gap={2} ref={focusRef}>
           <Text size="sm" c="dimmed">
             Template data is stored in LocalStorage. This data persists even after
@@ -191,7 +164,7 @@ export const SaveTemplateModal = ({ opened, close }: SaveTemplateModalProps) => 
             Save Template
           </Button>
         </Group>
-      </Modal>
-    </>
+      </Modal.Body>
+    </Modal.Content>
   );
 };
