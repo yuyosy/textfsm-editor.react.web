@@ -1,16 +1,18 @@
-import { CopyValueButton } from '@/components/CopyValueButton';
+import { RefObject } from 'react';
+
 import { CodeHighlight } from '@mantine/code-highlight';
 import { Group, ScrollArea, Stack, Tabs, Text } from '@mantine/core';
-import { useListState } from '@mantine/hooks';
+import { useAtomValue } from 'jotai';
 import { Braces, Table } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { RefObject, useEffect } from 'react';
-
-import { resultViewValueAtom } from '@/features/state/atoms';
-import '@mantine/code-highlight/styles.css';
-import { useAtomValue } from 'jotai';
-import 'mantine-datatable/styles.layer.css';
 import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
+
+import { CopyValueButton } from '@/components/CopyValueButton';
+import { resultViewValueAtom } from '@/features/state/atoms';
+import { Result } from '@/features/types';
+
+import '@mantine/code-highlight/styles.css';
+import 'mantine-datatable/styles.layer.css';
 
 interface ResultViewPanelProps {
   panelRef: RefObject<ImperativePanelHandle>;
@@ -18,36 +20,42 @@ interface ResultViewPanelProps {
 }
 export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelProps) => {
   const resultViewValue = useAtomValue(resultViewValueAtom);
-  const [resultHeaders, setResultHeaders] = useListState<string>([]);
-  const [resultData, setResultData] = useListState<any>([]);
+  // const [resultHeaders, setResultHeaders] = useListState<string>([]);
+  // const [resultData, setResultData] = useListState<any>([]);
 
   const tsvDataDeliver = (): string => {
-    if (resultHeaders && resultData) {
-      const header = resultHeaders.join('\t');
-      const rows = resultData
-        .reduce((previous, current) => {
-          return previous.concat([Object.values(current).join('\t')]);
-        }, [])
+    const header = getHeader();
+    const results = getResults();
+    if (header && results) {
+      const headerString = header.join('\t');
+      const rowsString = results
+        .map(row =>
+          header
+            .map(key => {
+              const value = row[key] ?? '';
+              return String(value).replace(/\t/g, ' ');
+            })
+            .join('\t')
+        )
         .join('\n');
-      return `${header}\n${rows}`;
+
+      return `${headerString}\n${rowsString}`;
     }
     return '';
   };
 
   const jsonDataDeliver = (): string => {
-    return JSON.stringify(resultData, null, '  ');
+    return JSON.stringify(getResults(), null, '  ');
   };
 
-  useEffect(() => {
-    if (resultViewValue && resultViewValue.ok && resultViewValue.data) {
-      setResultHeaders.setState(
-        resultViewValue.data.header ? resultViewValue.data.header : []
-      );
-      setResultData.setState(
-        resultViewValue.data.results ? resultViewValue.data.results : []
-      );
-    }
-  }, [resultViewValue]);
+  const getHeader = (): string[] =>
+    resultViewValue && resultViewValue.data && resultViewValue.data.header
+      ? resultViewValue.data.header
+      : [];
+  const getResults = (): Result[] =>
+    resultViewValue && resultViewValue.data && resultViewValue.data.results
+      ? resultViewValue.data.results
+      : [];
 
   return (
     <Panel
@@ -82,10 +90,10 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
               <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
             </Group>
             <DataTable
-              columns={resultHeaders.map(value => {
+              columns={getHeader().map(value => {
                 return { accessor: value };
               })}
-              records={resultData.map((item, index) => {
+              records={getResults().map((item, index) => {
                 const entries = Object.entries(item).map(([key, val]) => {
                   if (Array.isArray(val)) {
                     return [key, val.join(', ')];
@@ -110,7 +118,7 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
             </Group>
             <ScrollArea h="100%">
               <CodeHighlight
-                code={JSON.stringify(resultData, null, '  ')}
+                code={JSON.stringify(getResults(), null, '  ')}
                 language="json"
                 h="100%"
                 withCopyButton={false}

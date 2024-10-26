@@ -1,5 +1,6 @@
-import { Text, TextInput } from '@mantine/core';
 import { useState } from 'react';
+
+import { Text, TextInput } from '@mantine/core';
 
 interface EditableTextProps {
   text: string;

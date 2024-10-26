@@ -1,4 +1,5 @@
 import { atomWithStorage } from 'jotai/utils';
+
 import { localStorage, sessionStorage } from './syncStorage';
 
 export const parseRequestDelayAtom = atomWithStorage<number>(

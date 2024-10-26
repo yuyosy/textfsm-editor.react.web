@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Button,
   ComboboxItem,
@@ -18,7 +20,7 @@ import {
   useLocalStorage,
 } from '@mantine/hooks';
 import { Replace, SquarePlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
 import { TemplateInfo } from './types';
 
 interface SaveTemplateModalProps {

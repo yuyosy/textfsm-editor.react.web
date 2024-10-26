@@ -1,9 +1,10 @@
-import { textfsmThemeDark as themeDark } from '@/features/editor/themes/ThemeDark';
-import { textfsmThemeLight as themeLight } from '@/features/editor/themes/ThemeLight';
+import { loader } from '@monaco-editor/react';
+
+import { getCompletionItemProviderSuggestions } from '@/features/editor/definitions/CompletionItemProvider';
 import { languageConfiguration } from '@/features/editor/definitions/LanguageConfiguration';
 import { monarchTokensProvider } from '@/features/editor/definitions/MonarchTokensProvider';
-import { getCompletionItemProviderSuggestions } from '@/features/editor/definitions/CompletionItemProvider';
-import { loader } from '@monaco-editor/react';
+import { textfsmThemeDark as themeDark } from '@/features/editor/themes/ThemeDark';
+import { textfsmThemeLight as themeLight } from '@/features/editor/themes/ThemeLight';
 
 export const initializeTextFSMEditor = () => {
   loader.init().then(monaco => {

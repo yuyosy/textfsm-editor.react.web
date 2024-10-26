@@ -1,9 +1,12 @@
-import { CopyValueButton } from '@/components/CopyValueButton';
-import { rawTextEditorValueAtom } from '@/features/state/storageAtoms';
+import { RefObject } from 'react';
+
 import { Group, Stack, Text } from '@mantine/core';
 import { useAtomValue } from 'jotai';
-import { RefObject } from 'react';
 import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
+
+import { CopyValueButton } from '@/components/CopyValueButton';
+import { rawTextEditorValueAtom } from '@/features/state/storageAtoms';
+
 import { RawTextEditor } from './RawTextEditor';
 
 const CopyButton = () => {

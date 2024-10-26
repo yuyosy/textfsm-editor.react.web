@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Box,
   Button,
@@ -14,7 +16,7 @@ import {
 import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
 import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
 import { FileCode, Upload, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
 import { TemplateInfo } from './types';
 
 type Props = {

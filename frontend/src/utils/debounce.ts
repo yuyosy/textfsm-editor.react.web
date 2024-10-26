@@ -1,13 +1,13 @@
-export const debounce = <T extends (...args: any[]) => void>(
-  func: T,
+type Callback<T extends unknown[]> = (...args: T) => void;
+
+export const debounce = <T extends unknown[]>(
+  func: Callback<T>,
   delay: number
-): ((...args: Parameters<T>) => void) => {
+): Callback<T> => {
   let timeoutId: ReturnType<typeof setTimeout>;
 
-  return (...args: Parameters<T>) => {
+  return (...args: T) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 };

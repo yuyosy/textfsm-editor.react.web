@@ -1,8 +1,11 @@
-import { useSendRequest } from '@/hooks/useSendRequest';
+import { Dispatch, SetStateAction } from 'react';
+
 import { Button, Chip, Divider, Group, Switch, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { Send } from 'lucide-react';
-import { Dispatch, SetStateAction } from 'react';
+
+import { useSendRequest } from '@/hooks/useSendRequest';
+
 import { PanelSelector } from './PanelSelector';
 import { handlePanelToggle } from './panelStateUtils';
 import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';

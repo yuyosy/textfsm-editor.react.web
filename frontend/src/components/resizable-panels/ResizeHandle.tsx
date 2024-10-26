@@ -12,8 +12,14 @@ export default function ResizeHandle({
   id?: string;
 }) {
   return (
-    <PanelResizeHandle className={[styles.ResizeHandleOuter, className].join(' ')} id={id}>
-      <div className={styles.ResizeHandleInner} data-collapsed={collapsed || undefined}></div>
+    <PanelResizeHandle
+      className={[styles.ResizeHandleOuter, className].join(' ')}
+      id={id}
+    >
+      <div
+        className={styles.ResizeHandleInner}
+        data-collapsed={collapsed || undefined}
+      ></div>
     </PanelResizeHandle>
   );
 }

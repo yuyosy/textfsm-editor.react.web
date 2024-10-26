@@ -1,9 +1,12 @@
-import { EditableText } from '@/components/EditableText';
+import { useEffect, useState } from 'react';
+
 import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { useFocusWithin, useListState, useLocalStorage } from '@mantine/hooks';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+
+import { EditableText } from '@/components/EditableText';
+
 import { TemplateInfo } from './types';
 
 interface ChangesState {
@@ -33,7 +36,10 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
     renameCount: 0,
   });
 
-  const updateChanges = (key: keyof ChangesState, value: any) => {
+  const updateChanges = <K extends keyof ChangesState>(
+    key: K,
+    value: ChangesState[K]
+  ) => {
     setChanges(prevChanges => ({
       ...prevChanges,
       [key]: value,
@@ -84,7 +90,7 @@ export const EditTemplatesModal = ({ opened, close }: EditTemplatesModalProps) =
 
   const changesText = (): string => {
     if (changes.order || changes.deleteCount > 0 || changes.renameCount > 0) {
-      let message = [];
+      const message = [];
       if (changes.order) {
         message.push('Change order');
       }

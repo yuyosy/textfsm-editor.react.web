@@ -6,7 +6,6 @@
   align-items: center;
 }
 
-
 .ResizeHandleInner {
   background-color: #8b9094;
   padding: 0.1rem;
@@ -18,11 +17,10 @@
   background-color: #547180;
 }
 
-
-.ResizeHandleOuter[data-panel-group-direction="horizontal"] .ResizeHandleInner {
+.ResizeHandleOuter[data-panel-group-direction='horizontal'] .ResizeHandleInner {
   height: 2rem;
 }
 
-.ResizeHandleOuter[data-panel-group-direction="vertical"] .ResizeHandleInner {
+.ResizeHandleOuter[data-panel-group-direction='vertical'] .ResizeHandleInner {
   width: 2rem;
 }

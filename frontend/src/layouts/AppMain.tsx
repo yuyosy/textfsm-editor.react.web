@@ -1,9 +1,12 @@
-import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
-import { PanelLayoutType, PanelRefs } from '@/layouts/types';
+import { useRef, useState } from 'react';
+
 import { AppShell, Paper, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useRef, useState } from 'react';
 import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
+
+import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
+import { PanelLayoutType, PanelRefs } from '@/layouts/types';
+
 import { AppMainToolBar } from './AppMainToolBar';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { RawTextEditorPanel } from './panels/RawTextEditorPanel';

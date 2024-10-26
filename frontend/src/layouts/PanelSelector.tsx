@@ -1,7 +1,9 @@
-import { SegmentedControl } from '@mantine/core';
-import { PanelLayoutType } from './types';
-import { ImperativePanelHandle } from 'react-resizable-panels';
 import { RefObject } from 'react';
+
+import { SegmentedControl } from '@mantine/core';
+import { ImperativePanelHandle } from 'react-resizable-panels';
+
+import { PanelLayoutType } from './types';
 
 interface PanelSelectorProps {
   mainPanelLyout: PanelLayoutType;

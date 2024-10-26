@@ -1,4 +1,4 @@
-import { Tooltip, ActionIcon } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 import { Check, Copy } from 'lucide-react';
 

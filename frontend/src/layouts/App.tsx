@@ -1,4 +1,3 @@
-import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
 import {
   AppShell,
   MantineProvider,
@@ -7,6 +6,9 @@ import {
   virtualColor,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+
+import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
+
 import { AppHeader } from './AppHeader';
 import { AppMain } from './AppMain';
 import { AppNavbar } from './AppNav';

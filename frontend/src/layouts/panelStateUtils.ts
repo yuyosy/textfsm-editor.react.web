@@ -1,6 +1,8 @@
 import { RefObject } from 'react';
-import { DisclosureActions, PanelLayoutType } from './types';
+
 import { ImperativePanelHandle } from 'react-resizable-panels';
+
+import { DisclosureActions, PanelLayoutType } from './types';
 
 export const setSegmentedControlPanelState = (
   activatePanelName: PanelLayoutType,

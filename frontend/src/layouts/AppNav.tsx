@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { AppShell, Burger, Button, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import {
   ArrowLeftFromLine,
@@ -10,7 +12,7 @@ import {
   SquareLibrary,
   SquarePlus,
 } from 'lucide-react';
-import { useState } from 'react';
+
 import { EditTemplatesModal } from './modals/EditTemplatesModal';
 import { ExportTemplatesModal } from './modals/ExportTemplatesModal';
 import { ImportTemplatesModal } from './modals/ImportTemplatesModal';

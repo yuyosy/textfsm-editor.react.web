@@ -1,15 +1,16 @@
+import { useRef } from 'react';
+
+import { useMantineColorScheme } from '@mantine/core';
+import { useAtom } from 'jotai';
+
 import { Editor } from '@/features/editor/Editor';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 import { debounce } from '@/utils/debounce';
-import { useMantineColorScheme } from '@mantine/core';
+
 import type { OnChange, OnMount } from '@monaco-editor/react';
-import { useAtom } from 'jotai';
 import type { editor } from 'monaco-editor';
-import { useRef } from 'react';
 
-type TemplateEditorProps = {};
-
-export const TemplateEditor = ({}: TemplateEditorProps) => {
+export const TemplateEditor = () => {
   const { colorScheme } = useMantineColorScheme();
   const [templateEditorValue, setTemplateEditorValue] = useAtom(templateEditorValueAtom);
   const templateEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);

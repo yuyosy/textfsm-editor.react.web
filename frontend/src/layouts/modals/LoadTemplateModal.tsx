@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
+
 import { Button, ComboboxItem, Group, Modal, Select, Stack, Text } from '@mantine/core';
 import { useFocusWithin, useLocalStorage } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+
 import { TemplateInfo } from './types';
 
 interface LoadTemplateModalProps {

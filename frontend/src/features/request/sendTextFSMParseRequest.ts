@@ -1,7 +1,7 @@
 import { api } from '@/features/api';
 import { debounce } from '@/features/request/debounce';
 import { TextFSMParseAPIResponse } from '@/features/types';
-import { ResultItem } from '@/layouts/types';
+import { ResultItem } from '@/types';
 
 export const requestTextFSMParse = async (
   dataValue: string,

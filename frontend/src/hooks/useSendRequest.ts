@@ -1,5 +1,7 @@
-import { useAtomCallback } from 'jotai/utils';
 import { useCallback } from 'react';
+
+import { useSetAtom } from 'jotai';
+import { useAtomCallback } from 'jotai/utils';
 
 import {
   createErrorResultItem,
@@ -15,7 +17,6 @@ import {
   rawTextEditorValueAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
-import { useSetAtom } from 'jotai';
 
 export const useSendRequest = () => {
   const readRawText = useAtomCallback(

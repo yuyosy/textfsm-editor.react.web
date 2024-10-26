@@ -1,13 +1,15 @@
-import { CopyValueButton } from '@/components/CopyValueButton';
-import { Group, Stack, Text } from '@mantine/core';
 import { RefObject } from 'react';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
-import { TemplateEditor } from './TemplateEditor';
 
+import { Group, Stack, Text } from '@mantine/core';
+import { useAtomValue } from 'jotai';
+import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
+
+import { CopyValueButton } from '@/components/CopyValueButton';
 import { StatusBadge } from '@/components/StatusBadge';
 import { responseStateAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
-import { useAtomValue } from 'jotai';
+
+import { TemplateEditor } from './TemplateEditor';
 
 const ResponseState = () => {
   const responseState = useAtomValue(responseStateAtom);

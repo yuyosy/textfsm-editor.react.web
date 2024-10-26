@@ -1,10 +1,11 @@
+import { memo } from 'react';
+
 import {
   Editor as MonacoEditor,
   type EditorProps as MonacoEditorProps,
   type OnChange,
   type OnMount,
 } from '@monaco-editor/react';
-import { memo } from 'react';
 
 const monacoOptions: MonacoEditorProps['options'] = {
   scrollbar: {

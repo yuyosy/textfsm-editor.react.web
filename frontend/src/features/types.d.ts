@@ -7,10 +7,12 @@ interface TextFSMParseAPIRequest {
   data: TextFSMParseRequestData;
 }
 
+type Result = { [key: string]: unknown };
+
 export interface TextFSMParseResult {
   message: string;
   header: string[];
-  results: object[];
+  results: Result[];
 }
 
 export interface TextFSMParseAPIError {

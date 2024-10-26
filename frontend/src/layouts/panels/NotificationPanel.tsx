@@ -1,12 +1,24 @@
+import { RefObject } from 'react';
+
+import {
+  ActionIcon,
+  Box,
+  Center,
+  Flex,
+  Group,
+  ScrollArea,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import { useAtomValue } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
+import { BellOff, Eraser } from 'lucide-react';
+import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
+
 import { AlertCard } from '@/components/AlertCard';
 import { responseResultsAtom } from '@/features/state/atoms';
 import { ResultItem } from '@/types';
-import { ActionIcon, Group, ScrollArea, Stack, Text, Tooltip } from '@mantine/core';
-import { useAtomValue } from 'jotai';
-import { useResetAtom } from 'jotai/utils';
-import { Eraser } from 'lucide-react';
-import { RefObject } from 'react';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 interface NotificationPanelProps {
   panelRef: RefObject<ImperativePanelHandle>;
@@ -39,36 +51,49 @@ export const NotificationPanel = ({
             </ActionIcon>
           </Tooltip>
         </Group>
-        <ScrollArea h="100%">
-          <Stack p={10} pr={16}>
-            {responseResults.map((resultObject: ResultItem, index: number) => {
-              if (resultObject.ok && resultObject.data) {
-                const recordCount = resultObject.data.results.length;
-                const message =
-                  recordCount === 0
-                    ? 'There are no records.'
-                    : recordCount === 1
-                      ? 'There is 1 record.'
-                      : `There are ${recordCount} records.`;
-                const info = {
-                  mainTitle: resultObject.data.message,
-                  subTitle: resultObject.timestamp,
-                  color: 'blue',
-                  message: message,
-                };
-                return <AlertCard key={index} {...info}></AlertCard>;
-              } else if (!resultObject.ok && resultObject.errors) {
-                const info = {
-                  mainTitle: resultObject.errors[0].reason,
-                  subTitle: resultObject.timestamp,
-                  color: 'red',
-                  message: resultObject.errors[0].message,
-                };
-                return <AlertCard key={index} {...info}></AlertCard>;
-              }
-            })}
-          </Stack>
-        </ScrollArea>
+        {responseResults.length === 0 ? (
+          <Center w="100%" h="100%">
+            <Flex align="center" direction="column">
+              <Box className="mantine-datatable-empty-state-icon">
+                <BellOff color="#868e96" />
+              </Box>
+              <Text fz="sm" c="dimmed">
+                No notifications
+              </Text>
+            </Flex>
+          </Center>
+        ) : (
+          <ScrollArea h="100%">
+            <Stack p={10} pr={16}>
+              {responseResults.map((resultObject: ResultItem, index: number) => {
+                if (resultObject.ok && resultObject.data) {
+                  const recordCount = resultObject.data.results.length;
+                  const message =
+                    recordCount === 0
+                      ? 'There are no records.'
+                      : recordCount === 1
+                        ? 'There is 1 record.'
+                        : `There are ${recordCount} records.`;
+                  const info = {
+                    mainTitle: resultObject.data.message,
+                    subTitle: resultObject.timestamp,
+                    color: 'blue',
+                    message: message,
+                  };
+                  return <AlertCard key={index} {...info}></AlertCard>;
+                } else if (!resultObject.ok && resultObject.errors) {
+                  const info = {
+                    mainTitle: resultObject.errors[0].reason,
+                    subTitle: resultObject.timestamp,
+                    color: 'red',
+                    message: resultObject.errors[0].message,
+                  };
+                  return <AlertCard key={index} {...info}></AlertCard>;
+                }
+              })}
+            </Stack>
+          </ScrollArea>
+        )}
       </Stack>
     </Panel>
   );
