@@ -13,6 +13,7 @@ import {
 } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 
+import { TransferList } from '@/components/TransferList';
 import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 import { useFileSave } from '@/hooks/useFileSave';
 import { getCurrentDateTimeString } from '@/utils/datetime';
@@ -22,60 +23,42 @@ type ModalContentProps = {
   focusRef: MutableRefObject<HTMLDivElement>;
 };
 
-type TransferListData = [
-  { value: string; label: string }[],
-  { value: string; label: string }[],
-];
-
 export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
   const readTemplateList = useAtomValue(savedTemplateListAtom);
-
-  const [transferListData] = useState<TransferListData>([
-    [
-      ...readTemplateList.map((item, index) => {
-        return { value: index.toString(), label: item.label };
-      }),
-    ],
-    [],
-  ]);
-
   const textInputRef = useRef<HTMLInputElement>(null);
   const [handleSave] = useFileSave();
   const [activeStep, setActiveStep] = useState(0);
   const [defaultFileName, setDefaultFileName] = useState('');
+  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+
+  const initialLeftData = readTemplateList.map(template => template.label);
+  const initialRightData: string[] = [];
+
   const nextStep = () => {
     setDefaultFileName(
-      getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json')
+      getCurrentDateTimeString('textfsm-editor_exported-templates_yyyymmdd-hhmmss.json')
     );
     setActiveStep(current => (current < 2 ? current + 1 : current));
   };
   const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
 
+  const handleTransferChange = (_leftData: string[], rightData: string[]) => {
+    setSelectedTemplates(rightData);
+  };
+
   const exportTemplates = () => {
-    // const defaultFileName = getCurrentDateTimeString('export-templates_yyyymmdd-hhmmss.json');
     const fileName = textInputRef.current?.value
       ? textInputRef.current?.value
       : defaultFileName;
-    const targetIndices = transferListData[1].map(item => item.value);
-    const data = JSON.stringify(
-      readTemplateList.filter((_, index) => targetIndices.includes(index.toString()))
+
+    const selectedTemplateData = readTemplateList.filter(template =>
+      selectedTemplates.includes(template.label)
     );
+
+    const data = JSON.stringify(selectedTemplateData);
     handleSave(fileName, data);
     close();
   };
-
-  // // Hook
-  // useEffect(() => {
-  //   setActiveStep(0);
-  //   setTransferListData([
-  //     [
-  //       ...templateList.map((item, index) => {
-  //         return { value: index.toString(), label: item.label };
-  //       }),
-  //     ],
-  //     [],
-  //   ]);
-  // }, [opened]);
 
   return (
     <Modal.Content>
@@ -95,15 +78,13 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             <Stepper.Step label="Step 1" description="Select templates">
               <Stack>
                 <Divider my="sm" />
-                {/* <TransferList
-                  value={transferListData}
-                  onChange={setTransferListData}
-                  searchPlaceholder="Search..."
-                  nothingFound="Nothing here"
-                  titles={['Unselected', 'Selected']}
-                  breakpoint="sm"
-                  transferAllMatchingFilter
-                ></TransferList> */}
+                <TransferList
+                  initialLeftData={initialLeftData}
+                  initialRightData={initialRightData}
+                  leftSearchPlaceholder="Search unselected templates..."
+                  rightSearchPlaceholder="Search selected templates..."
+                  onChange={handleTransferChange}
+                />
               </Stack>
               <Group justify="space-between" mt="lg">
                 <Button variant="default" size="xs" onClick={close}>
@@ -112,7 +93,7 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 <Button
                   size="xs"
                   onClick={nextStep}
-                  disabled={!transferListData[1].length}
+                  disabled={!selectedTemplates.length}
                 >
                   Next step
                 </Button>
@@ -127,7 +108,8 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                     default file name.
                   </List.Item>
                   <List.Item>
-                    Default file name : `export-templates_yyyymmdd-hhmmss.json`
+                    Default file name :
+                    `textfsm-editor_exported-templates_yyyymmdd-hhmmss.json`
                   </List.Item>
                 </List>
                 <TextInput
