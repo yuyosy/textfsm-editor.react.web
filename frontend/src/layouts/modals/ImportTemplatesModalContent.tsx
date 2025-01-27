@@ -12,6 +12,7 @@ import {
   Stack,
   Stepper,
   Text,
+  Title,
   Tooltip,
 } from '@mantine/core';
 import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
@@ -152,7 +153,6 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
     const promises = importTargetFiles.map(async item => {
       try {
         const text = await item.text();
-        console.log(text);
         return {
           fileName: item.name,
           templateInfo: JSON.parse(text) as TemplateInfo[],
@@ -167,9 +167,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       }
     });
     const results = await Promise.all(promises);
-    console.log(results);
     const checkedData = checkLoadedJsonFiles(results);
-    console.log(checkedData);
     setLoadedJsonData(checkedData);
   };
 
@@ -210,7 +208,9 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>Import Templates</Modal.Title>
+        <Modal.Title>
+          <Title order={4}>Import Templates</Title>
+        </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>

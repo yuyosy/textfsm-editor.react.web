@@ -1,6 +1,15 @@
 import { MutableRefObject, useState } from 'react';
 
-import { Button, ComboboxItem, Group, Modal, Select, Stack, Text } from '@mantine/core';
+import {
+  Button,
+  ComboboxItem,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
@@ -36,7 +45,9 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>Load Template</Modal.Title>
+        <Modal.Title>
+          <Title order={4}>Load Template</Title>
+        </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>

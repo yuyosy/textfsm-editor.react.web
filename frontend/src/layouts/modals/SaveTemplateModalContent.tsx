@@ -11,6 +11,7 @@ import {
   Tabs,
   Text,
   TextInput,
+  Title,
   Tooltip,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -80,7 +81,9 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>Save Template</Modal.Title>
+        <Modal.Title>
+          <Title order={4}>Save Template</Title>
+        </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>

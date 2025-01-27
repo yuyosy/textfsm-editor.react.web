@@ -10,6 +10,7 @@ import {
   Stepper,
   Text,
   TextInput,
+  Title,
 } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 
@@ -63,7 +64,9 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>Export Templates</Modal.Title>
+        <Modal.Title>
+          <Title order={4}>Export Templates</Title>
+        </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>

@@ -1,6 +1,15 @@
 import { MutableRefObject, useState } from 'react';
 
-import { ActionIcon, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Flex,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
@@ -63,8 +72,10 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
   };
 
   const renameTemplate = (index: number, newName: string) => {
-    edittingListHandlers.setItemProp(index, 'label', newName);
-    updateChanges('renameCount', changes.renameCount + 1);
+    if (edittingList[index].label !== newName) {
+      edittingListHandlers.setItemProp(index, 'label', newName);
+      updateChanges('renameCount', changes.renameCount + 1);
+    }
   };
   const deleteItem = (index: number) => {
     if (edittingList.length === 0) {
@@ -125,7 +136,9 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>Edit Templates</Modal.Title>
+        <Modal.Title>
+          <Title order={4}>Edit Templates</Title>
+        </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>
@@ -152,7 +165,7 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
                   </Group>
                 ),
                 render: (_, index) => (
-                  <Box display="flex">
+                  <Flex justify="center" align="center" gap={4}>
                     <ActionIcon
                       variant="transparent"
                       color="green"
@@ -169,7 +182,7 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
                     >
                       <ArrowDown size={18} />
                     </ActionIcon>
-                  </Box>
+                  </Flex>
                 ),
               },
               {
