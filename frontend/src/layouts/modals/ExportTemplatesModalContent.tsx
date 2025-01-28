@@ -11,12 +11,14 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import { TransferList } from '@/components/TransferList';
 import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 import { useFileSave } from '@/hooks/useFileSave';
 import { getCurrentDateTimeString } from '@/utils/datetime';
+
+import { addNotificationAtom } from '@/features/state/atoms';
 
 type ModalContentProps = {
   close: () => void;
@@ -24,6 +26,7 @@ type ModalContentProps = {
 };
 
 export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const savedTemplates = useAtomValue(savedTemplateListAtom);
   const textInputRef = useRef<HTMLInputElement>(null);
   const [handleFileExport] = useFileSave();
@@ -61,6 +64,12 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
 
     const data = JSON.stringify(selectedTemplateData);
     handleFileExport(fileName, data);
+    addNotification({
+      type: 'success',
+      title: 'Templates exported',
+      message: `Exported: ${fileName}`,
+    });
+
     close();
   };
 

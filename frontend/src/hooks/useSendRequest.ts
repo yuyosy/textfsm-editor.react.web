@@ -8,7 +8,7 @@ import {
   sendTextFSMParseRequest,
 } from '@/features/request/sendTextFSMParseRequest';
 import {
-  responseResultsAtom,
+  addNotificationAtom,
   responseStateAtom,
   resultViewValueAtom,
 } from '@/features/state/atoms';
@@ -35,14 +35,9 @@ export const useSendRequest = () => {
     }, [])
   );
 
-  const readResponseResults = useAtomCallback(
-    useCallback(get => {
-      return get(responseResultsAtom);
-    }, [])
-  );
   const setResponseState = useSetAtom(responseStateAtom);
-  const setResponseResults = useSetAtom(responseResultsAtom);
   const setResultViewValue = useSetAtom(resultViewValueAtom);
+  const addNotification = useSetAtom(addNotificationAtom);
 
   const sendRequest = async () => {
     const template = readTemplate();
@@ -56,10 +51,53 @@ export const useSendRequest = () => {
         readParseRequestDelay()
       );
       setResponseState(response.ok ? 'success' : 'error');
-      setResponseResults([response, ...readResponseResults()]);
       setResultViewValue(response);
+
+      if (response.ok && response.data) {
+        const recordCount = response.data.results.length;
+        const message =
+          recordCount === 0
+            ? 'There are no records.'
+            : recordCount === 1
+              ? 'There is 1 record.'
+              : `There are ${recordCount} records.`;
+
+        addNotification({
+          type: 'api',
+          title: response.data.message,
+          message: message,
+          metadata: {
+            recordCount,
+            results: response.data.results,
+          },
+        });
+      } else if (!response.ok && response.errors) {
+        addNotification({
+          type: 'error',
+          title: response.errors[0].reason,
+          message: response.errors[0].message,
+          metadata: {
+            errors: response.errors,
+          },
+        });
+      }
     } catch (error) {
-      setResponseResults([createErrorResultItem(error), ...readResponseResults()]);
+      const errorResult = createErrorResultItem(error);
+      setResponseState('error');
+      setResultViewValue(errorResult);
+
+      const errorReason =
+        error instanceof Error ? error.constructor.name : 'UnknownError';
+      const errorMessage = error instanceof Error ? error.message : String(error);
+
+      addNotification({
+        type: 'error',
+        title: errorReason,
+        message: errorMessage,
+        metadata: {
+          error: error instanceof Error ? error : String(error),
+        },
+      });
       console.error(error);
     }
   };

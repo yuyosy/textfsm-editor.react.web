@@ -8,12 +8,15 @@ import {
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
 
+import { addNotificationAtom } from '@/features/state/atoms';
+
 type ModalContentProps = {
   close: () => void;
   focusRef: MutableRefObject<HTMLDivElement>;
 };
 
 export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const availableTemplates = useAtomValue(savedTemplateListAtom);
   const setEditorContent = useSetAtom(templateEditorValueAtom);
 
@@ -32,6 +35,11 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
     if (selectedTemplate) {
       setEditorContent(selectedTemplate.value);
     }
+    addNotification({
+      type: 'success',
+      title: 'Template loaded',
+      message: `Loaded: ${selectedTemplateId}`,
+    });
     close();
   };
 

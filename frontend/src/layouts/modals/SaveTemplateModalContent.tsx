@@ -14,9 +14,10 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Replace, SquarePlus } from 'lucide-react';
 
+import { addNotificationAtom } from '@/features/state/atoms';
 import {
   savedTemplateListAtom,
   templateEditorValueAtom,
@@ -28,6 +29,7 @@ type ModalContentProps = {
 };
 
 export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const [savedTemplates, setSavedTemplates] = useAtom(savedTemplateListAtom);
   const currentEditorContent = useAtomValue(templateEditorValueAtom);
 
@@ -64,6 +66,11 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
     }
 
     setSavedTemplates(updatedTemplates);
+    addNotification({
+      type: 'success',
+      title: 'Template saved',
+      message: `Saved: ${templateName}`,
+    });
     handleModalClose();
   };
 

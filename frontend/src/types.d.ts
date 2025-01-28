@@ -21,3 +21,14 @@ interface Timestamp {
 }
 
 export interface ResultItem extends TextFSMParseAPIResponse, Timestamp {}
+
+export type NotificationType = 'api' | 'info' | 'success' | 'warning' | 'error';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}

@@ -1,27 +1,26 @@
-import { Alert, Box, Text } from '@mantine/core';
-
+import { Alert, Text, Tooltip } from '@mantine/core';
 type Props = {
   mainTitle: string;
-  subTitle: string;
+  timestamp: string;
   color: string;
   message: string;
+  onClose?: () => void;
 };
 
-export const AlertCard = ({ mainTitle, subTitle, color, message }: Props) => {
+export const AlertCard = ({ mainTitle, timestamp, color, message, onClose }: Props) => {
   return (
     <Alert
       title={
-        <Box>
+        <Tooltip label={timestamp} position="bottom-start">
           <Text fw={700} c={color}>
             {mainTitle}
           </Text>
-          <Text fz="xs" c="dimmed" fw={400}>
-            {subTitle}
-          </Text>
-        </Box>
+        </Tooltip>
       }
       color={color}
-      p={12}
+      p={10}
+      withCloseButton={onClose ? true : false}
+      onClose={onClose}
     >
       {message}
     </Alert>

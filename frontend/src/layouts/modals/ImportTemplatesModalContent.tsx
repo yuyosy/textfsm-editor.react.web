@@ -21,6 +21,8 @@ import { DataTable } from 'mantine-datatable';
 import { MutableRefObject, useRef, useState } from 'react';
 
 import { TransferList } from '@/components/TransferList';
+import { addNotificationAtom } from '@/features/state/atoms';
+import { useSetAtom } from 'jotai';
 import 'mantine-datatable/styles.layer.css';
 import { TemplateInfo } from './types';
 
@@ -45,6 +47,7 @@ type ModalContentProps = {
 };
 
 export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
   const [selectedJsonFiles, setSelectedJsonFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
@@ -182,6 +185,14 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       ...processedJsonData.filter(item => selectedTemplates.includes(item.label))
     );
     setTemplateList(newTemplateList);
+    addNotification({
+      type: 'success',
+      title: 'Templates imported',
+      message:
+        selectedTemplates.length === 1
+          ? `Imported: ${selectedTemplates.length} file`
+          : `Imported: ${selectedTemplates.length} files`,
+    });
     close();
   };
 
