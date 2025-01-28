@@ -1,6 +1,6 @@
 import { MutableRefObject } from 'react';
 
-import { Button, Group, Modal, Stack, Text, Title } from '@mantine/core';
+import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 
 type ModalContentProps = {
   close: () => void;
@@ -10,8 +10,8 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Preset Templates</Title>
+        <Modal.Title fz={18} fw={700}>
+          Preset Templates
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>

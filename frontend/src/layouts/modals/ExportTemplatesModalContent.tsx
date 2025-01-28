@@ -10,7 +10,6 @@ import {
   Stepper,
   Text,
   TextInput,
-  Title,
 } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 
@@ -25,47 +24,51 @@ type ModalContentProps = {
 };
 
 export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
-  const readTemplateList = useAtomValue(savedTemplateListAtom);
+  const savedTemplates = useAtomValue(savedTemplateListAtom);
   const textInputRef = useRef<HTMLInputElement>(null);
-  const [handleSave] = useFileSave();
+  const [handleFileExport] = useFileSave();
   const [activeStep, setActiveStep] = useState(0);
-  const [defaultFileName, setDefaultFileName] = useState('');
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const [defaultExportFileName, setDefaultExportFileName] = useState('');
+  const [selectedTemplateNames, setSelectedTemplateNames] = useState<string[]>([]);
 
-  const initialLeftData = readTemplateList.map(template => template.label);
+  const initialLeftData = savedTemplates.map(template => template.label);
   const initialRightData: string[] = [];
 
-  const nextStep = () => {
-    setDefaultFileName(
-      getCurrentDateTimeString('textfsm-editor_exported-templates_yyyymmdd-hhmmss.json')
-    );
-    setActiveStep(current => (current < 2 ? current + 1 : current));
-  };
+  const nextStep = () => setActiveStep(current => (current < 2 ? current + 1 : current));
   const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
 
-  const handleTransferChange = (_leftData: string[], rightData: string[]) => {
-    setSelectedTemplates(rightData);
+  const proceedToNextStep = () => {
+    setDefaultExportFileName(
+      getCurrentDateTimeString('textfsm-editor_exported-templates_yyyymmdd-hhmmss.json')
+    );
+    nextStep();
   };
 
-  const exportTemplates = () => {
+  const returnToPreviousStep = () => prevStep();
+
+  const handleTransferChange = (_leftData: string[], rightData: string[]) => {
+    setSelectedTemplateNames(rightData);
+  };
+
+  const saveSelectedTemplatesToFile = () => {
     const fileName = textInputRef.current?.value
       ? textInputRef.current?.value
-      : defaultFileName;
+      : defaultExportFileName;
 
-    const selectedTemplateData = readTemplateList.filter(template =>
-      selectedTemplates.includes(template.label)
+    const selectedTemplateData = savedTemplates.filter(template =>
+      selectedTemplateNames.includes(template.label)
     );
 
     const data = JSON.stringify(selectedTemplateData);
-    handleSave(fileName, data);
+    handleFileExport(fileName, data);
     close();
   };
 
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Export Templates</Title>
+        <Modal.Title fz={18} fw={700}>
+          Export Templates
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
@@ -95,8 +98,8 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 </Button>
                 <Button
                   size="xs"
-                  onClick={nextStep}
-                  disabled={!selectedTemplates.length}
+                  onClick={proceedToNextStep}
+                  disabled={!selectedTemplateNames.length}
                 >
                   Next step
                 </Button>
@@ -117,8 +120,10 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 </List>
                 <TextInput
                   ref={textInputRef}
-                  placeholder={defaultFileName}
+                  placeholder="Enter file name..."
                   label="Export file name"
+                  value={defaultExportFileName}
+                  onChange={e => setDefaultExportFileName(e.target.value)}
                 />
               </Stack>
               <Group justify="space-between" mt="lg">
@@ -126,10 +131,10 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   Close
                 </Button>
                 <Group>
-                  <Button variant="default" size="xs" onClick={prevStep}>
+                  <Button variant="default" size="xs" onClick={returnToPreviousStep}>
                     Back
                   </Button>
-                  <Button size="xs" onClick={exportTemplates}>
+                  <Button size="xs" onClick={saveSelectedTemplatesToFile}>
                     Export Templates
                   </Button>
                 </Group>

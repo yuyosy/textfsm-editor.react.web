@@ -1,6 +1,11 @@
 export interface TemplateInfo {
   label: string;
   value: string;
+  // experimental
+  tags?: string[];
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ItemProps {

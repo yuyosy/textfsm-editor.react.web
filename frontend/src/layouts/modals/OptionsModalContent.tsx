@@ -8,7 +8,6 @@ import {
   Progress,
   Stack,
   Text,
-  Title,
 } from '@mantine/core';
 
 type ModalContentProps = {
@@ -39,8 +38,8 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Options</Title>
+        <Modal.Title fz={18} fw={700}>
+          Options
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>

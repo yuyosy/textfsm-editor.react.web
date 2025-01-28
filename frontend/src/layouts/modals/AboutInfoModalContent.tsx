@@ -10,7 +10,6 @@ import {
   Stack,
   Table,
   Text,
-  Title,
 } from '@mantine/core';
 import { SquareArrowOutUpRight } from 'lucide-react';
 
@@ -22,8 +21,8 @@ export const AboutInfoModalContent = ({ close, focusRef }: ModalContentProps) =>
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>About</Title>
+        <Modal.Title fz={18} fw={700}>
+          About
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>

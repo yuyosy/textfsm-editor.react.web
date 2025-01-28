@@ -1,15 +1,6 @@
 import { MutableRefObject, useState } from 'react';
 
-import {
-  ActionIcon,
-  Button,
-  Flex,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
+import { ActionIcon, Button, Flex, Group, Modal, Stack, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
@@ -20,7 +11,7 @@ import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 
 import { TemplateInfo } from './types';
 interface ChangesState {
-  order: boolean;
+  orderChanged: boolean;
   deleteCount: number;
   renameCount: number;
 }
@@ -31,113 +22,107 @@ type ModalContentProps = {
 };
 
 export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
-  const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
-  const [edittingList, edittingListHandlers] = useListState<TemplateInfo>(templateList);
+  const [savedTemplates, setSavedTemplates] = useAtom(savedTemplateListAtom);
+  const [editingTemplates, editingTemplatesHandlers] =
+    useListState<TemplateInfo>(savedTemplates);
 
-  const [changes, setChanges] = useState<ChangesState>({
-    order: false,
+  const [modifications, setModifications] = useState<ChangesState>({
+    orderChanged: false,
     deleteCount: 0,
     renameCount: 0,
   });
 
-  const updateChanges = <K extends keyof ChangesState>(
+  const updateModification = <K extends keyof ChangesState>(
     key: K,
     value: ChangesState[K]
   ) => {
-    setChanges(prevChanges => ({
-      ...prevChanges,
+    setModifications(prevState => ({
+      ...prevState,
       [key]: value,
     }));
   };
 
-  const initializeList = () => {
-    edittingListHandlers.setState(templateList);
-    resetState();
+  const resetTemplateList = () => {
+    editingTemplatesHandlers.setState(savedTemplates);
+    resetModifications();
   };
 
-  const moveUpArrayIndex = (index: number) => {
-    if (index === 0) {
-      return;
-    }
-    edittingListHandlers.swap({ from: index, to: index - 1 });
-    updateChanges('order', true);
+  const moveTemplateUp = (index: number) => {
+    if (index === 0) return;
+    editingTemplatesHandlers.swap({ from: index, to: index - 1 });
+    updateModification('orderChanged', true);
   };
 
-  const moveDownArrayIndex = (index: number) => {
-    if (index === edittingList.length - 1) {
-      return;
-    }
-    edittingListHandlers.swap({ from: index, to: index + 1 });
-    updateChanges('order', true);
+  const moveTemplateDown = (index: number) => {
+    if (index === editingTemplates.length - 1) return;
+    editingTemplatesHandlers.swap({ from: index, to: index + 1 });
+    updateModification('orderChanged', true);
   };
 
   const renameTemplate = (index: number, newName: string) => {
-    if (edittingList[index].label !== newName) {
-      edittingListHandlers.setItemProp(index, 'label', newName);
-      updateChanges('renameCount', changes.renameCount + 1);
+    if (editingTemplates[index].label !== newName) {
+      editingTemplatesHandlers.setItemProp(index, 'label', newName);
+      updateModification('renameCount', modifications.renameCount + 1);
     }
-  };
-  const deleteItem = (index: number) => {
-    if (edittingList.length === 0) {
-      return;
-    }
-    edittingListHandlers.remove(index);
-    updateChanges('deleteCount', changes.deleteCount + 1);
   };
 
-  const applyChanges = () => {
-    setTemplateList(edittingList);
-    resetState();
+  const deleteTemplate = (index: number) => {
+    if (editingTemplates.length === 0) return;
+    editingTemplatesHandlers.remove(index);
+    updateModification('deleteCount', modifications.deleteCount + 1);
+  };
+
+  const saveChanges = () => {
+    setSavedTemplates(editingTemplates);
+    resetModifications();
   };
 
   const discardChanges = () => {
-    initializeList();
+    resetTemplateList();
   };
 
-  const changesText = (): string => {
-    if (changes.order || changes.deleteCount > 0 || changes.renameCount > 0) {
-      const message = [];
-      if (changes.order) {
-        message.push('Change order');
+  const getModificationSummary = (): string => {
+    if (
+      modifications.orderChanged ||
+      modifications.deleteCount > 0 ||
+      modifications.renameCount > 0
+    ) {
+      const changes = [];
+      if (modifications.orderChanged) {
+        changes.push('Change order');
       }
-      if (changes.deleteCount > 0) {
-        message.push(
-          `Delete ${changes.deleteCount} item${changes.deleteCount == 1 ? '' : 's'}`
+      if (modifications.deleteCount > 0) {
+        changes.push(
+          `Delete ${modifications.deleteCount} item${modifications.deleteCount === 1 ? '' : 's'}`
         );
       }
-      if (changes.renameCount > 0) {
-        message.push(
-          `Rename ${changes.renameCount} item${changes.renameCount == 1 ? '' : 's'}`
+      if (modifications.renameCount > 0) {
+        changes.push(
+          `Rename ${modifications.renameCount} item${modifications.renameCount === 1 ? '' : 's'}`
         );
       }
-      return message.join(' & ') + '.';
-    } else {
-      return 'No changes.';
+      return changes.join(' & ') + '.';
     }
+    return 'No changes.';
   };
 
-  const resetState = () => {
-    updateChanges('order', false);
-    updateChanges('deleteCount', 0);
-    updateChanges('renameCount', 0);
+  const resetModifications = () => {
+    updateModification('orderChanged', false);
+    updateModification('deleteCount', 0);
+    updateModification('renameCount', 0);
   };
 
-  const handleClose = () => {
-    edittingListHandlers.setState([]);
-    resetState();
+  const handleModalClose = () => {
+    editingTemplatesHandlers.setState([]);
+    resetModifications();
     close();
   };
-
-  // Hook
-  // useEffect(() => {
-  //   initializeList();
-  // }, [opened]);
 
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Edit Templates</Title>
+        <Modal.Title fz={18} fw={700}>
+          Edit Templates
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
@@ -153,7 +138,7 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
           </Text>
           <DataTable
             withColumnBorders
-            records={edittingList}
+            records={editingTemplates}
             columns={[
               {
                 accessor: 'move',
@@ -170,15 +155,15 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
                       variant="transparent"
                       color="green"
                       disabled={index === 0}
-                      onClick={() => moveUpArrayIndex(index)}
+                      onClick={() => moveTemplateUp(index)}
                     >
                       <ArrowUp size={18} />
                     </ActionIcon>
                     <ActionIcon
                       variant="transparent"
                       color="green"
-                      disabled={index === edittingList.length - 1}
-                      onClick={() => moveDownArrayIndex(index)}
+                      disabled={index === editingTemplates.length - 1}
+                      onClick={() => moveTemplateDown(index)}
                     >
                       <ArrowDown size={18} />
                     </ActionIcon>
@@ -194,7 +179,6 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
                   />
                 ),
               },
-              // { accessor: 'value' },
               {
                 accessor: 'actions',
                 width: 80,
@@ -206,7 +190,7 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
                       variant="light"
                       color="red"
                       size="sm"
-                      onClick={() => deleteItem(index)}
+                      onClick={() => deleteTemplate(index)}
                     >
                       <Trash size={16} />
                     </ActionIcon>
@@ -220,11 +204,11 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
         </Stack>
         <Group justify="end" my="sm" px={8}>
           <Text size="sm" c="dimmed">
-            {changesText()}
+            {getModificationSummary()}
           </Text>
         </Group>
         <Group justify="space-between">
-          <Button variant="default" size="xs" onClick={handleClose}>
+          <Button variant="default" size="xs" onClick={handleModalClose}>
             Close
           </Button>
           <Group>
@@ -233,7 +217,11 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
               size="xs"
               onClick={discardChanges}
               disabled={
-                !(changes.order || changes.deleteCount > 0 || changes.renameCount > 0)
+                !(
+                  modifications.orderChanged ||
+                  modifications.deleteCount > 0 ||
+                  modifications.renameCount > 0
+                )
               }
             >
               Discard Changes
@@ -241,9 +229,13 @@ export const EditTemplatesModalContent = ({ close, focusRef }: ModalContentProps
             <Button
               size="xs"
               color="cyan"
-              onClick={applyChanges}
+              onClick={saveChanges}
               disabled={
-                !(changes.order || changes.deleteCount > 0 || changes.renameCount > 0)
+                !(
+                  modifications.orderChanged ||
+                  modifications.deleteCount > 0 ||
+                  modifications.renameCount > 0
+                )
               }
             >
               Apply

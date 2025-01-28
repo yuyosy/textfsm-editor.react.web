@@ -12,7 +12,6 @@ import {
   Stack,
   Stepper,
   Text,
-  Title,
   Tooltip,
 } from '@mantine/core';
 import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
@@ -47,34 +46,39 @@ type ModalContentProps = {
 
 export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
   const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
-  const [importTargetFiles, setImportTargetFiles] = useState<File[]>([]);
+  const [selectedJsonFiles, setSelectedJsonFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  const [leftData, setLeftData] = useState<string[]>([]);
-  const [loadedJsonData, setLoadedJsonData] = useState<LoadedJsonData[]>([]);
+  const [availableTemplates, setAvailableTemplates] = useState<string[]>([]);
+  const [processedJsonData, setProcessedJsonData] = useState<LoadedJsonData[]>([]);
   const openRef = useRef<() => void>(null);
 
   const initialRightData: string[] = [];
 
   const nextStep = () => setActiveStep(current => (current < 3 ? current + 1 : current));
   const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
-  const nextValidateStep = () => {
+
+  const proceedToValidationStep = () => {
     nextStep();
-    loadJsonFiles();
+    parseJsonTemplates();
   };
-  const nextImportStep = () => {
-    setLeftData(
-      loadedJsonData.filter(item => !item.hasFormatError).map(item => item.label)
+  const proceedToSelectionStep = () => {
+    setAvailableTemplates(
+      processedJsonData.filter(item => !item.hasFormatError).map(item => item.label)
     );
     nextStep();
   };
+
+  const returnToPreviousStep = () => prevStep();
 
   const handleTransferChange = (_leftData: string[], rightData: string[]) => {
     setSelectedTemplates(rightData);
   };
 
-  const checkLoadedJsonFiles = (results: ImportedTemplateInfo[]): LoadedJsonData[] => {
+  const validateAndProcessTemplates = (
+    results: ImportedTemplateInfo[]
+  ): LoadedJsonData[] => {
     const getLoadedJsonData = (
       item: ImportedTemplateInfo,
       label: string,
@@ -149,8 +153,9 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
     }
     return processedJsonData;
   };
-  const loadJsonFiles = async () => {
-    const promises = importTargetFiles.map(async item => {
+
+  const parseJsonTemplates = async () => {
+    const promises = selectedJsonFiles.map(async item => {
       try {
         const text = await item.text();
         return {
@@ -167,40 +172,41 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       }
     });
     const results = await Promise.all(promises);
-    const checkedData = checkLoadedJsonFiles(results);
-    setLoadedJsonData(checkedData);
+    const checkedData = validateAndProcessTemplates(results);
+    setProcessedJsonData(checkedData);
   };
 
-  const importTemplates = async () => {
+  const saveSelectedTemplates = async () => {
     const newTemplateList = [...templateList];
     newTemplateList.push(
-      ...loadedJsonData.filter(item => selectedTemplates.includes(item.label))
+      ...processedJsonData.filter(item => selectedTemplates.includes(item.label))
     );
     setTemplateList(newTemplateList);
     close();
   };
 
-  const dropFiles = (files: FileWithPath[]) => {
-    const namesInAlreadyFiles = new Set(importTargetFiles.map(item => item.name));
-    setImportTargetFiles([
-      ...importTargetFiles,
-      ...files.filter(item => !namesInAlreadyFiles.has(item.name)),
+  const handleFilesDrop = (files: FileWithPath[]) => {
+    const existingFileNames = new Set(selectedJsonFiles.map(item => item.name));
+    setSelectedJsonFiles([
+      ...selectedJsonFiles,
+      ...files.filter(item => !existingFileNames.has(item.name)),
     ]);
   };
 
-  const rejectFiles = (files: FileRejection[]) => {
-    const namesInAlreadyFiles = new Set(rejectedFiles.map(item => item.file.name));
+  const handleFilesReject = (files: FileRejection[]) => {
+    const existingFileNames = new Set(rejectedFiles.map(item => item.file.name));
     setRejectedFiles([
       ...rejectedFiles,
-      ...files.filter(item => !namesInAlreadyFiles.has(item.file.name)),
+      ...files.filter(item => !existingFileNames.has(item.file.name)),
     ]);
   };
 
-  const deleteImportTargetFilesItem = (index: number) => {
-    if (importTargetFiles.length === 0) return;
-    setImportTargetFiles(importTargetFiles.filter((_, i) => i !== index));
+  const removeSelectedFile = (index: number) => {
+    if (selectedJsonFiles.length === 0) return;
+    setSelectedJsonFiles(selectedJsonFiles.filter((_, i) => i !== index));
   };
-  const deleteRejectedFilesItem = (index: number) => {
+
+  const removeRejectedFile = (index: number) => {
     if (rejectedFiles.length === 0) return;
     setRejectedFiles(rejectedFiles.filter((_, i) => i !== index));
   };
@@ -208,8 +214,8 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Import Templates</Title>
+        <Modal.Title fz={18} fw={700}>
+          Import Templates
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
@@ -227,8 +233,8 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 <Divider my="xs" />
                 <Dropzone
                   openRef={openRef}
-                  onDrop={dropFiles}
-                  onReject={rejectFiles}
+                  onDrop={handleFilesDrop}
+                  onReject={handleFilesReject}
                   activateOnClick={false}
                   maxSize={3 * 1024 ** 2}
                   accept={['application/json']}
@@ -262,12 +268,12 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   />
                   <ScrollArea h={250}>
                     <Stack gap="xs">
-                      {importTargetFiles.map((item: File, index) => {
+                      {selectedJsonFiles.map((item: File, index) => {
                         return (
                           <Notification
                             key={item.name}
                             title={item.name}
-                            onClose={() => deleteImportTargetFilesItem(index)}
+                            onClose={() => removeSelectedFile(index)}
                             py={2}
                             withBorder
                           ></Notification>
@@ -286,7 +292,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                             key={'error_' + item.file.name}
                             title={item.file.name}
                             color="red"
-                            onClose={() => deleteRejectedFilesItem(index)}
+                            onClose={() => removeRejectedFile(index)}
                             py={2}
                             withBorder
                           >
@@ -304,8 +310,8 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 </Button>
                 <Button
                   size="xs"
-                  onClick={nextValidateStep}
-                  disabled={!importTargetFiles.length}
+                  onClick={proceedToValidationStep}
+                  disabled={!selectedJsonFiles.length}
                 >
                   Next step
                 </Button>
@@ -321,7 +327,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   edited from `Edit Template`.
                 </Text> */}
                 <DataTable
-                  records={loadedJsonData}
+                  records={processedJsonData}
                   columns={[
                     {
                       accessor: 'label',
@@ -368,10 +374,10 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   Close
                 </Button>
                 <Group>
-                  <Button variant="default" size="xs" onClick={prevStep}>
+                  <Button variant="default" size="xs" onClick={returnToPreviousStep}>
                     Back
                   </Button>
-                  <Button size="xs" onClick={nextImportStep}>
+                  <Button size="xs" onClick={proceedToSelectionStep}>
                     Select Templates
                   </Button>
                 </Group>
@@ -387,7 +393,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   </List.Item>
                 </List>
                 <TransferList
-                  initialLeftData={leftData}
+                  initialLeftData={availableTemplates}
                   initialRightData={initialRightData}
                   leftSearchPlaceholder="Search unselected templates..."
                   rightSearchPlaceholder="Search selected templates..."
@@ -399,12 +405,12 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   Close
                 </Button>
                 <Group>
-                  <Button variant="default" size="xs" onClick={prevStep}>
+                  <Button variant="default" size="xs" onClick={returnToPreviousStep}>
                     Back
                   </Button>
                   <Button
                     size="xs"
-                    onClick={importTemplates}
+                    onClick={saveSelectedTemplates}
                     disabled={!selectedTemplates.length}
                   >
                     Import Templates

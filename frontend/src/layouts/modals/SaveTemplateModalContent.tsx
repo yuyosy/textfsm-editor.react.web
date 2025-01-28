@@ -11,7 +11,6 @@ import {
   Tabs,
   Text,
   TextInput,
-  Title,
   Tooltip,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -29,60 +28,63 @@ type ModalContentProps = {
 };
 
 export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
-  const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
-  const readTemplateEditorValue = useAtomValue(templateEditorValueAtom);
+  const [savedTemplates, setSavedTemplates] = useAtom(savedTemplateListAtom);
+  const currentEditorContent = useAtomValue(templateEditorValueAtom);
 
-  // States
-  const [templateSelectItems] = useState<(string | ComboboxItem)[]>(
-    templateList.map(item => ({ value: item.label, label: item.label }))
+  const [templateOptions] = useState<(string | ComboboxItem)[]>(
+    savedTemplates.map(template => ({
+      value: template.label,
+      label: template.label,
+    }))
   );
-  const [inputTemplateName, setInputTemplateName] = useState<string>('');
-  const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
-  const [isExistingTemplate, setIsExistingTemplate] = useState<boolean>(false);
+  const [newTemplateName, setNewTemplateName] = useState<string>('');
+  const [existingTemplateId, setExistingTemplateId] = useState<string | null>(null);
+  const [isDuplicateName, setIsDuplicateName] = useState<boolean>(false);
 
-  const [debounced] = useDebouncedValue(inputTemplateName, 200);
+  const [debouncedTemplateName] = useDebouncedValue(newTemplateName, 200);
 
-  const saveTemplate = () => {
-    const templateName = inputTemplateName || selectedTemplateName;
-    const findIndex = templateList.findIndex(item => item.label === templateName);
-    if (!templateName) {
-      return;
-    }
-    if (findIndex != -1) {
-      templateList[findIndex] = {
-        label: templateName,
-        value: readTemplateEditorValue,
-      };
+  const saveTemplateToStorage = () => {
+    const templateName = newTemplateName || existingTemplateId;
+    if (!templateName) return;
+
+    const updatedTemplates = [...savedTemplates];
+    const existingIndex = updatedTemplates.findIndex(
+      template => template.label === templateName
+    );
+
+    const templateData = {
+      label: templateName,
+      value: currentEditorContent,
+    };
+
+    if (existingIndex !== -1) {
+      updatedTemplates[existingIndex] = templateData;
     } else {
-      templateList.push({
-        label: templateName,
-        value: readTemplateEditorValue,
-      });
+      updatedTemplates.push(templateData);
     }
-    setTemplateList(templateList);
-    handleClose();
+
+    setSavedTemplates(updatedTemplates);
+    handleModalClose();
   };
 
-  const handleClose = () => {
-    setInputTemplateName('');
-    setSelectedTemplateName(null);
-    setIsExistingTemplate(false);
+  const handleModalClose = () => {
+    setNewTemplateName('');
+    setExistingTemplateId(null);
+    setIsDuplicateName(false);
     close();
   };
 
   useEffect(() => {
-    if (templateList.some(item => item.label === debounced)) {
-      setIsExistingTemplate(true);
-    } else {
-      setIsExistingTemplate(false);
-    }
-  }, [debounced, templateList]);
+    setIsDuplicateName(
+      savedTemplates.some(template => template.label === debouncedTemplateName)
+    );
+  }, [debouncedTemplateName, savedTemplates]);
 
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Save Template</Title>
+        <Modal.Title fz={18} fw={700}>
+          Save Template
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
@@ -97,7 +99,7 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
               <Tabs.Tab value="new" leftSection={<SquarePlus size={20} />}>
                 Save as New
               </Tabs.Tab>
-              {templateList.length === 0 ? (
+              {savedTemplates.length === 0 ? (
                 <Tooltip
                   label="There are no saved templates"
                   position="bottom"
@@ -121,15 +123,15 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
               <Stack>
                 <Input.Wrapper label="Template Name" withAsterisk>
                   <TextInput
-                    value={inputTemplateName}
+                    value={newTemplateName}
                     placeholder="Input template name"
                     withErrorStyles={false}
-                    onChange={event => setInputTemplateName(event.currentTarget.value)}
+                    onChange={event => setNewTemplateName(event.currentTarget.value)}
                     rightSectionPointerEvents="none"
-                    rightSection={isExistingTemplate ? <Replace size={20} /> : ''}
+                    rightSection={isDuplicateName ? <Replace size={20} /> : ''}
                   />
                   <Input.Error my={4}>
-                    {isExistingTemplate
+                    {isDuplicateName
                       ? 'The template name is already exists. Do you want to replace it? '
                       : ''}
                   </Input.Error>
@@ -141,9 +143,9 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
                 <Select
                   label="Template Name"
                   placeholder="Select one"
-                  data={templateSelectItems}
-                  value={selectedTemplateName}
-                  onChange={setSelectedTemplateName}
+                  data={templateOptions}
+                  value={existingTemplateId}
+                  onChange={setExistingTemplateId}
                   nothingFoundMessage="No templates..."
                   maxDropdownHeight={200}
                   withAsterisk
@@ -155,14 +157,14 @@ export const SaveTemplateModalContent = ({ close, focusRef }: ModalContentProps)
           </Tabs>
         </Stack>
         <Group justify="space-between" mt="lg">
-          <Button variant="default" size="xs" onClick={handleClose}>
+          <Button variant="default" size="xs" onClick={handleModalClose}>
             Close
           </Button>
           <Button
             size="xs"
             color="cyan"
-            onClick={saveTemplate}
-            disabled={!(inputTemplateName || selectedTemplateName)}
+            onClick={saveTemplateToStorage}
+            disabled={!(newTemplateName || existingTemplateId)}
           >
             Save Template
           </Button>

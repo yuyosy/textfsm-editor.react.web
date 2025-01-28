@@ -1,15 +1,6 @@
 import { MutableRefObject, useState } from 'react';
 
-import {
-  Button,
-  ComboboxItem,
-  Group,
-  Modal,
-  Select,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
+import { Button, ComboboxItem, Group, Modal, Select, Stack, Text } from '@mantine/core';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
@@ -23,21 +14,23 @@ type ModalContentProps = {
 };
 
 export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
-  const readTemplateList = useAtomValue(savedTemplateListAtom);
-  const setTemplateEditorValue = useSetAtom(templateEditorValueAtom);
-  // States
-  const [templateSelectItems] = useState<(string | ComboboxItem)[]>(
-    readTemplateList.map(item => ({ value: item.label, label: item.label }))
-  );
-  const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
+  const availableTemplates = useAtomValue(savedTemplateListAtom);
+  const setEditorContent = useSetAtom(templateEditorValueAtom);
 
-  // Functions
-  const loadTemplate = () => {
-    const filtered = readTemplateList.filter(
-      item => item.label === selectedTemplateName
+  const [templateOptions] = useState<(string | ComboboxItem)[]>(
+    availableTemplates.map(template => ({
+      value: template.label,
+      label: template.label,
+    }))
+  );
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+
+  const loadSelectedTemplate = () => {
+    const selectedTemplate = availableTemplates.find(
+      template => template.label === selectedTemplateId
     );
-    if (filtered.length > 0) {
-      setTemplateEditorValue(filtered[0].value);
+    if (selectedTemplate) {
+      setEditorContent(selectedTemplate.value);
     }
     close();
   };
@@ -45,8 +38,8 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>
-          <Title order={4}>Load Template</Title>
+        <Modal.Title fz={18} fw={700}>
+          Load Template
         </Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
@@ -59,9 +52,9 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
           <Select
             label="Template"
             placeholder="Select one"
-            data={templateSelectItems}
-            value={selectedTemplateName}
-            onChange={setSelectedTemplateName}
+            data={templateOptions}
+            value={selectedTemplateId}
+            onChange={setSelectedTemplateId}
             nothingFoundMessage="No templates..."
             maxDropdownHeight={200}
             searchable
@@ -75,8 +68,8 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
           <Button
             size="xs"
             color="cyan"
-            onClick={loadTemplate}
-            disabled={!selectedTemplateName}
+            onClick={loadSelectedTemplate}
+            disabled={!selectedTemplateId}
           >
             Load Template
           </Button>
