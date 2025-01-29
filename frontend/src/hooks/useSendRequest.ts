@@ -112,16 +112,40 @@ export const useAutoRequest = () => {
   const templateValue = useAtomValue(templateEditorValueAtom);
   const sendRequest = useSendRequest();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastValuesRef = useRef({ rawText: '', template: '' });
+
+  const readEditorValues = useAtomCallback(
+    useCallback(get => {
+      return {
+        rawText: get(rawTextEditorValueAtom),
+        template: get(templateEditorValueAtom),
+      };
+    }, [])
+  );
 
   const readParseRequestDelay = useAtomCallback(
-    // 不要な再レンダリングトリガー防止
     useCallback(get => {
       return get(parseRequestDelayAtom);
     }, [])
   );
 
   useEffect(() => {
-    if (!autoRequestEnabled || templateValue === '') {
+    if (!autoRequestEnabled) {
+      return;
+    }
+
+    const currentValues = readEditorValues();
+
+    if (
+      currentValues.rawText === lastValuesRef.current.rawText &&
+      currentValues.template === lastValuesRef.current.template
+    ) {
+      return;
+    }
+
+    lastValuesRef.current = currentValues;
+
+    if (currentValues.template === '') {
       return;
     }
 
@@ -145,5 +169,6 @@ export const useAutoRequest = () => {
     templateValue,
     sendRequest,
     readParseRequestDelay,
+    readEditorValues,
   ]);
 };
