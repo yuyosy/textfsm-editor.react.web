@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 
 import {
@@ -13,6 +13,7 @@ import {
   resultViewValueAtom,
 } from '@/features/state/atoms';
 import {
+  autoRequestEnabledAtom,
   parseRequestDelayAtom,
   rawTextEditorValueAtom,
   templateEditorValueAtom,
@@ -39,7 +40,7 @@ export const useSendRequest = () => {
   const setResultViewValue = useSetAtom(resultViewValueAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 
-  const sendRequest = async () => {
+  const sendRequest = async (immediate = false) => {
     const template = readTemplate();
     if (template === '') {
       return;
@@ -48,7 +49,7 @@ export const useSendRequest = () => {
       const response = await sendTextFSMParseRequest(
         readRawText(),
         template,
-        readParseRequestDelay()
+        immediate ? 0 : readParseRequestDelay()
       );
       setResponseState(response.ok ? 'success' : 'error');
       setResultViewValue(response);
@@ -103,4 +104,46 @@ export const useSendRequest = () => {
   };
 
   return sendRequest;
+};
+
+export const useAutoRequest = () => {
+  const autoRequestEnabled = useAtomValue(autoRequestEnabledAtom);
+  const rawTextValue = useAtomValue(rawTextEditorValueAtom);
+  const templateValue = useAtomValue(templateEditorValueAtom);
+  const sendRequest = useSendRequest();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const readParseRequestDelay = useAtomCallback(
+    // 不要な再レンダリングトリガー防止
+    useCallback(get => {
+      return get(parseRequestDelayAtom);
+    }, [])
+  );
+
+  useEffect(() => {
+    if (!autoRequestEnabled || templateValue === '') {
+      return;
+    }
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      sendRequest(false);
+      timeoutRef.current = null;
+    }, readParseRequestDelay());
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [
+    autoRequestEnabled,
+    rawTextValue,
+    templateValue,
+    sendRequest,
+    readParseRequestDelay,
+  ]);
 };

@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { Button, Chip, Divider, Group, Switch, Text } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { Send } from 'lucide-react';
 
 import { useSendRequest } from '@/hooks/useSendRequest';
 
+import { autoRequestEnabledAtom } from '@/features/state/storageAtoms';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { PanelSelector } from './PanelSelector';
 import { handlePanelToggle } from './panelStateUtils';
 import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
@@ -45,14 +46,12 @@ export const AppMainToolBar = ({
   openedResultViewPanel,
   resultViewPanelActions,
 }: AppMainToolBarProps) => {
-  const [editorAutoParse, setEditorAutoParse] = useLocalStorage<boolean>({
-    key: 'editor-auto-parse',
-    defaultValue: false,
-  });
+  const editorAutoRequest = useAtomValue(autoRequestEnabledAtom);
+  const setEditorAutoRequest = useSetAtom(autoRequestEnabledAtom);
   const sendRequest = useSendRequest();
 
   const handleClickSendRequest = () => {
-    sendRequest();
+    sendRequest(true);
   };
 
   return (
@@ -96,8 +95,8 @@ export const AppMainToolBar = ({
           labelPosition="left"
           onLabel="ON"
           offLabel="OFF"
-          checked={editorAutoParse}
-          onChange={event => setEditorAutoParse(event.currentTarget.checked)}
+          checked={editorAutoRequest}
+          onChange={event => setEditorAutoRequest(event.currentTarget.checked)}
         />
       </Group>
     </Group>

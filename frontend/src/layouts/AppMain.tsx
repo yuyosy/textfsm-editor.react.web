@@ -5,6 +5,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
 
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
+import { useAutoRequest } from '@/hooks/useSendRequest';
 import { PanelLayoutType, PanelRefs } from '@/layouts/types';
 
 import { AppMainToolBar } from './AppMainToolBar';
@@ -19,6 +20,8 @@ export const AppMain = () => {
   const [openedResultViewPanel, resultViewPanelActions] = useDisclosure(false);
 
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
+
+  useAutoRequest();
 
   // Ref State
   const panelRefs: PanelRefs = {

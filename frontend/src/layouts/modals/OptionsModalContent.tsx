@@ -1,7 +1,7 @@
-import { MutableRefObject, useEffect, useState } from 'react';
-
+import { parseRequestDelayAtom } from '@/features/state/storageAtoms';
 import {
   Button,
+  Divider,
   Group,
   Modal,
   NumberFormatter,
@@ -9,6 +9,8 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { useAtom } from 'jotai';
+import { MutableRefObject, useEffect, useState } from 'react';
 
 type ModalContentProps = {
   close: () => void;
@@ -27,6 +29,7 @@ const calculateLocalStorageUsage = () => {
 
 export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
   const [storageUsage, setStorageUsage] = useState(0);
+  const [parseDelay, setParseDelay] = useAtom(parseRequestDelayAtom);
   const storageLimit = 5;
 
   useEffect(() => {
@@ -44,7 +47,34 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>
-        <Stack ref={focusRef}>
+        <Stack ref={focusRef} gap="md">
+        {/* Parse Delay Section */}
+        <Stack gap="sm">
+          <Stack gap="xs">
+            <Text size="sm" fw={500}>
+              Parse Request Delay
+            </Text>
+            <Text size="xs">Delay before sending parse request (500-5000ms)</Text>
+            <Slider
+              value={parseDelay}
+              onChange={setParseDelay}
+              min={500}
+              max={5000}
+              step={500}
+              marks={[
+                { value: 500, label: '500' },
+                { value: 1000, label: '1,000' },
+                { value: 2000, label: '2,000' },
+                { value: 3000, label: '3,000' },
+                { value: 4000, label: '4,000' },
+                { value: 5000, label: '5,000ms' },
+              ]}
+              label={value => `${value}ms`}
+              mx={32}
+              my={12}
+            />
+          </Stack>
+          <Divider my="lg" />
           <Text size="sm" fw={500}>
             LocalStorage Usage
           </Text>
