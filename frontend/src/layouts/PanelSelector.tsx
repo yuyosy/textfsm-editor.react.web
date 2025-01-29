@@ -1,8 +1,9 @@
 import { RefObject } from 'react';
 
-import { SegmentedControl } from '@mantine/core';
+import { Flex, SegmentedControl } from '@mantine/core';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
+import { Columns2, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { PanelLayoutType } from './types';
 
 interface PanelSelectorProps {
@@ -37,9 +38,33 @@ export const PanelSelector = ({
         setMainPanelLyout(value as PanelLayoutType);
       }}
       data={[
-        { label: 'Both', value: 'both' },
-        { label: 'Data', value: 'data' },
-        { label: 'Template', value: 'template' },
+        {
+          label: (
+            <Flex align="center" gap={4}>
+              <Columns2 size={14} strokeWidth={1.4} />
+              Both
+            </Flex>
+          ),
+          value: 'both',
+        },
+        {
+          label: (
+            <Flex align="center" gap={4}>
+              <PanelRightClose size={14} strokeWidth={1.4} />
+              Data
+            </Flex>
+          ),
+          value: 'data',
+        },
+        {
+          label: (
+            <Flex align="center" gap={4}>
+              <PanelLeftClose size={14} strokeWidth={1.4} />
+              Template
+            </Flex>
+          ),
+          value: 'template',
+        },
       ]}
     />
   );

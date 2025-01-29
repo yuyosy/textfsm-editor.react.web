@@ -77,7 +77,7 @@ const RenderList = ({
       active={value.includes(item)}
       onMouseOver={() => combobox.resetSelectedOption()}
     >
-      <Group gap="sm">
+      <Group gap="sm" wrap="nowrap">
         <Checkbox
           checked={value.includes(item)}
           onChange={() => {}}
@@ -85,7 +85,9 @@ const RenderList = ({
           tabIndex={-1}
           style={{ pointerEvents: 'none' }}
         />
-        <Text fz={14}>{item}</Text>
+        <Text fz={14} truncate="end">
+          {item}
+        </Text>
       </Group>
     </Combobox.Option>
   ));

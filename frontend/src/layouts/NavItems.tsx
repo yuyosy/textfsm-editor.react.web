@@ -14,7 +14,7 @@ import { NavItem } from './types';
 export const navItems: NavItem[] = [
   {
     id: 'preset-templates',
-    label: 'Preset (ntc-template)',
+    label: 'Preset (ntc-templates)',
     icon: <Package size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {

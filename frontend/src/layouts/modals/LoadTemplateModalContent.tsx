@@ -65,6 +65,7 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
             onChange={setSelectedTemplateId}
             nothingFoundMessage="No templates..."
             maxDropdownHeight={200}
+            withAsterisk
             searchable
             clearable
           />
