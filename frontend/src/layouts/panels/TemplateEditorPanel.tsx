@@ -9,12 +9,21 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { responseStateAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 
+import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { TemplateEditor } from './TemplateEditor';
 
 const ResponseState = () => {
   const responseState = useAtomValue(responseStateAtom);
   return <StatusBadge variant={responseState} />;
 };
+
+const DownloadButton = () => {
+  const value = useAtomValue(templateEditorValueAtom);
+  return (
+    <FileDownloadButton content={value} filename="textfsm-editor-template.textfsm" />
+  );
+};
+
 const CopyButton = () => {
   const value = useAtomValue(templateEditorValueAtom);
   return <CopyValueButton value={value} />;
@@ -46,7 +55,10 @@ export const TemplateEditorPanel = ({
             <Text fw={700}>Template</Text>
             <ResponseState />
           </Group>
-          <CopyButton />
+          <Group>
+            <DownloadButton />
+            <CopyButton />
+          </Group>
         </Group>
         <TemplateEditor />
       </Stack>

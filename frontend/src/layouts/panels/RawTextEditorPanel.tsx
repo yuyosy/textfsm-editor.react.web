@@ -7,7 +7,13 @@ import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { rawTextEditorValueAtom } from '@/features/state/storageAtoms';
 
+import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { RawTextEditor } from './RawTextEditor';
+
+const DownloadButton = () => {
+  const value = useAtomValue(rawTextEditorValueAtom);
+  return <FileDownloadButton content={value} filename="textfsm-editor-data.txt" />;
+};
 
 const CopyButton = () => {
   const value = useAtomValue(rawTextEditorValueAtom);
@@ -37,7 +43,10 @@ export const RawTextEditorPanel = ({
       <Stack gap={0} h="100%">
         <Group px={10} py={8} justify="space-between">
           <Text fw={700}>Data</Text>
-          <CopyButton />
+          <Group>
+            <DownloadButton />
+            <CopyButton />
+          </Group>
         </Group>
         <RawTextEditor />
       </Stack>

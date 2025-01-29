@@ -11,6 +11,7 @@ import { CopyValueButton } from '@/components/CopyValueButton';
 import { resultViewValueAtom } from '@/features/state/atoms';
 import { Result } from '@/features/types';
 
+import { FileDownloadButton } from '@/components/FileDownloadButton';
 import '@mantine/code-highlight/styles.css';
 import 'mantine-datatable/styles.layer.css';
 
@@ -87,7 +88,13 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
           <Stack gap={0} h="100%">
             <Group px={10} py={4} justify="space-between">
               <Text fw={700}>Table View</Text>
-              <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
+              <Group>
+                <FileDownloadButton
+                  content={tsvDataDeliver()}
+                  filename="textfsm-editor-result.tsv"
+                />
+                <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
+              </Group>
             </Group>
             <DataTable
               columns={getHeader().map(value => {
@@ -114,7 +121,13 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
           <Stack gap={0} h="100%">
             <Group px={10} py={4} justify="space-between">
               <Text fw={700}>JSON View</Text>
-              <CopyValueButton value={jsonDataDeliver()}></CopyValueButton>
+              <Group>
+                <FileDownloadButton
+                  content={jsonDataDeliver()}
+                  filename="textfsm-editor-result.json"
+                />
+                <CopyValueButton value={jsonDataDeliver()}></CopyValueButton>
+              </Group>
             </Group>
             <ScrollArea h="100%">
               <CodeHighlight
