@@ -1,26 +1,34 @@
 services:
-  frontend:
-    container_name: textfsm-editor-frontend
+  # Development services
+  frontend-dev:
+    container_name: textfsm-editor-frontend-dev
     build:
       context: frontend
       dockerfile: Dockerfile
       target: development
     ports:
-      - 5173:5173
+      - "${FRONTEND_PORT_DEV:-5173}:5173"
+    environment:
+      - VITE_API_ENTRYPOINT_DEV=${VITE_API_ENTRYPOINT_DEV:-http://localhost:8000}
     stdin_open: true
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    restart: always
     depends_on:
-      - backend
-  backend:
-    container_name: textfsm-editor-backend
+      - backend-dev
+    profiles:
+      - dev
+
+  backend-dev:
+    container_name: textfsm-editor-backend-dev
     build:
       context: backend
       dockerfile: Dockerfile
       target: development
     ports:
-      - 8000:8000
+      - "${BACKEND_PORT_DEV:-8000}:8000"
     volumes:
       - ./backend/src:/app/src
+    profiles:
+      - dev
+
