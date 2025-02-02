@@ -14,7 +14,7 @@ export const requestTextFSMParse = async (
   };
 
   return api.post(
-    '/parse',
+    '/api/parse',
     {
       data: {
         data_string: dataValue,

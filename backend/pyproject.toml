@@ -9,5 +9,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.0",
+    "ntc-templates>=7.6.0",
     "textfsm>=1.1.3",
 ]

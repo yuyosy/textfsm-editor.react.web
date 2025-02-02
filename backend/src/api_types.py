@@ -1,7 +1,6 @@
-from pydantic import BaseModel, field_validator, validator
-from typing import Any, List
+from typing import Any, Optional
+
 from pydantic import BaseModel
-from typing import List, Optional
 
 
 class TextFSMParseInput(BaseModel):
@@ -40,4 +39,11 @@ class TextFSMParseAPIResponse(BaseModel):
     status: str
     code: int
     data: Optional[TextFSMParseResult] = None
-    errors: Optional[List[TextFSMParseAPIError]] = None
+    errors: Optional[list[TextFSMParseAPIError]] = None
+
+
+class TemplateInfo(BaseModel):
+    template: str
+    hostname: str
+    platform: str
+    command: str
