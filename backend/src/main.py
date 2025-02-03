@@ -98,7 +98,7 @@ async def get_ntc_templates(query: Annotated[FilterParams, Query()]):
         if query.platform:
             conditions.append(lambda item: query.platform in item.platform)
         if query.command:
-            conditions.append(lambda item: regex_search(query.command, item.command))
+            conditions.append(lambda item: regex_search(item.command, query.command))
 
         filtered_list = []
         for item in csv_dict_list:
@@ -131,7 +131,7 @@ def regex_search(regex: str, text: str) -> bool:
         result = chars[-1]
         for char in reversed(chars[:-1]):
             result = f"{char}({result})?"
-        return f"({result})"
+        return f"({result})?"
 
     converted = re.sub(r"\[\[([^\]]+)\]\]", convert_bracket, regex)
 
