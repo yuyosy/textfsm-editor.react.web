@@ -46,4 +46,5 @@ class TemplateInfo(BaseModel):
     template: str
     hostname: str
     platform: str
-    command: str
+    command_raw: str
+    command_regex: str
