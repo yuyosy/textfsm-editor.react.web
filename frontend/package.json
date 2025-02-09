@@ -16,6 +16,7 @@
     "@mantine/hooks": "^7.13.2",
     "@monaco-editor/react": "^4.6.0",
     "clsx": "^2.1.1",
+    "fuse.js": "^7.1.0",
     "jotai": "^2.10.0",
     "lucide-react": "^0.447.0",
     "mantine-datatable": "^7.12.4",
