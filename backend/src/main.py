@@ -2,10 +2,11 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+import ntc_templates
 from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.api_types import (
@@ -88,6 +89,29 @@ async def get_ntc_templates():
             media_type="application/json",
         )
 
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@api.get("/ntc-templates/{template_name}")
+async def get_ntc_template(template_name: str):
+    try:
+        templates_foler_path = Path(ntc_templates.__file__).parent.joinpath("templates")
+        template_path = templates_foler_path.joinpath(template_name)
+        if not template_path.exists():
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    "message": f"Template not found.",
+                    "template_name": template_name,
+                },
+            )
+        return FileResponse(
+            template_path,
+            media_type="text/plain",
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)

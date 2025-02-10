@@ -1,10 +1,13 @@
 import { api } from '@/features/api';
-// import { templateEditorValueAtom } from '@/features/state/storageAtoms';
+import { addNotificationAtom } from '@/features/state/atoms';
+import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 import {
   Badge,
   Button,
+  Code,
   Divider,
   Group,
+  HoverCard,
   Modal,
   Select,
   Stack,
@@ -14,7 +17,8 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import Fuse from 'fuse.js';
-// import { useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
+import { CircleHelp } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 import { MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -47,13 +51,15 @@ const regexSearch = (regex: string, text: string): boolean => {
 };
 
 export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
   const [templates, setTemplates] = useState<{ [platform: string]: TemplateInfo[] }>({});
   const [selectedRecords, setSelectedRecords] = useState<SearchedTemplateInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAndCondition, setIsAndCondition] = useState(true);
   const [isFuzzyEnabled, setIsFuzzyEnabled] = useState(true);
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
-  // const setEditorContent = useSetAtom(templateEditorValueAtom);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const setEditorContent = useSetAtom(templateEditorValueAtom);
 
   const [searchParams, setSearchParams] = useState({
     template: '',
@@ -189,6 +195,27 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
     fetchTemplates();
   }, []);
 
+  const handleSelectTemplate = (template: string) => {
+    setSelectedTemplate(template);
+  };
+
+  const handleLoadTemplate = async () => {
+    try {
+      const response = await api.get(`/api/ntc-templates/${selectedTemplate}`, {
+        responseType: 'text',
+      });
+      setEditorContent(response);
+      addNotification({
+        type: 'success',
+        title: 'Preset template loaded',
+        message: `Loaded: ${selectedTemplate}`,
+      });
+      close();
+    } catch (error) {
+      console.error('Failed to load template:', error);
+    }
+  };
+
   return (
     <Modal.Content>
       <Modal.Header>
@@ -211,7 +238,7 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             clearable
             searchable
           />
-          <Divider label="Search Options" my="2" />
+          <Divider my="2" />
           <TextInput
             label="Template Name"
             placeholder="Search by template name"
@@ -224,19 +251,32 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             value={searchParams.command}
             onChange={handleCommandSearchChange}
           />
-          <Switch
-            label="Use AND condition for filters"
-            checked={isAndCondition}
-            onChange={e => setIsAndCondition(e.currentTarget.checked)}
-          />
-          <Switch
-            label="Enable Fuzzy Match"
-            checked={isFuzzyEnabled}
-            onChange={e => setIsFuzzyEnabled(e.currentTarget.checked)}
-          />
-          <Text size="sm" c="dimmed">
-            The command regex `abc[[xyz]]` expands to `abc(x(y(z)?)?)?`.
-          </Text>
+          <Group>
+            <Switch
+              size="xs"
+              label="Use AND condition for filters"
+              checked={isAndCondition}
+              onChange={e => setIsAndCondition(e.currentTarget.checked)}
+            />
+            <Switch
+              size="xs"
+              label="Enable Fuzzy Match"
+              checked={isFuzzyEnabled}
+              onChange={e => setIsFuzzyEnabled(e.currentTarget.checked)}
+            />{' '}
+            <HoverCard width={280} shadow="md">
+              <HoverCard.Target>
+                <CircleHelp size={16} color="#5e5e5e" />
+              </HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text size="sm">
+                  The command regular expression <Code>abc[[xyz]]</Code> means
+                  <Code>abc(x(y(z)?)?)?</Code> and will match <Code>abc</Code>,{' '}
+                  <Code>abcx</Code>, <Code>abcxy</Code>, and <Code>abcxyz</Code>.
+                </Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+          </Group>
           <DataTable
             height={300}
             minHeight={300}
@@ -255,13 +295,13 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                 title: 'Template',
                 render: record => (
                   <Stack gap={0}>
-                    <Text>{record.template.slice(0, -8)}</Text>
-                    <Text size="sm" c="dimmed" p={4}>
+                    <Text>{record.template}</Text>
+                    <Text size="xs" c="dimmed" p={4}>
                       {record.command_raw}
                     </Text>
-                    <Group>
+                    <Group gap={8}>
                       <Badge
-                        variant="light"
+                        variant="default"
                         color="blue"
                         radius="sm"
                         size="xs"
@@ -269,27 +309,15 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                       >
                         {record.platform}
                       </Badge>
-                      {record.matchType === 'regex' ? (
-                        <Badge
-                          variant="dot"
-                          color="green"
-                          radius="sm"
-                          size="xs"
-                          tt="capitalize"
-                        >
-                          Regex Match
-                        </Badge>
-                      ) : (
-                        <Badge
-                          variant="dot"
-                          color="blue"
-                          radius="sm"
-                          size="xs"
-                          tt="capitalize"
-                        >
-                          Fuzzy Match
-                        </Badge>
-                      )}
+                      <Badge
+                        variant="dot"
+                        color={record.matchType === 'regex' ? 'green' : 'blue'}
+                        radius="sm"
+                        size="xs"
+                        tt="capitalize"
+                      >
+                        {record.matchType === 'regex' ? 'Regex Match' : 'Fuzzy Match'}
+                      </Badge>
                     </Group>
                   </Stack>
                 ),
@@ -297,27 +325,31 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
               {
                 accessor: 'actions',
                 title: 'Select',
-                textAlign: 'right',
-                render: _record => (
-                  <Button variant="default" size="xs">
+                render: record => (
+                  <Button
+                    variant="default"
+                    size="xs"
+                    onClick={() => handleSelectTemplate(record.template)}
+                  >
                     Select
                   </Button>
                 ),
               },
             ]}
           />
-          <TextInput
-            label="Selected Template"
-            value="selected record will be loaded into the editor (not implemented)"
-            readOnly
-          />
+          <TextInput label="Selected Template" value={selectedTemplate} readOnly />
         </Stack>
         <Group justify="space-between" mt="lg">
           <Button variant="default" size="xs" onClick={close}>
             Close
           </Button>
-          <Button size="xs" color="cyan" disabled={!close}>
-            Load Template (not implemented)
+          <Button
+            size="xs"
+            color="cyan"
+            onClick={handleLoadTemplate}
+            disabled={!selectedTemplate}
+          >
+            Load Template
           </Button>
         </Group>
       </Modal.Body>
