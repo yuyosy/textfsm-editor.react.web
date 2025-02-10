@@ -21,7 +21,7 @@ export const requestTextFSMParse = async (
         template_string: templateValue,
       },
     },
-    config
+    { config: config }
   ) as Promise<TextFSMParseAPIResponse>;
 };
 
