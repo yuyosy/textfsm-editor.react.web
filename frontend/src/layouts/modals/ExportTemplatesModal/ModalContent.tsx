@@ -91,7 +91,7 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             allowNextStepsSelect={false}
           >
             <Stepper.Step label="Step 1" description="Select templates">
-              <Stack>
+              <Stack p={8}>
                 <Divider my="sm" />
                 <TransferList
                   initialLeftData={initialLeftData}
@@ -115,7 +115,7 @@ export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
               </Group>
             </Stepper.Step>
             <Stepper.Step label="Step 2" description="Export templates JSON">
-              <Stack>
+              <Stack p={8}>
                 <Divider my="sm" />
                 <List size="xs">
                   <List.Item>

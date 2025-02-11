@@ -238,9 +238,10 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             onStepClick={setActiveStep}
             size="sm"
             allowNextStepsSelect={false}
+            p={8}
           >
             <Stepper.Step label="Step 1" description="Load templates JSON">
-              <Stack>
+              <Stack p={8}>
                 <Divider my="xs" />
                 <Dropzone
                   openRef={openRef}
@@ -329,7 +330,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
               </Group>
             </Stepper.Step>
             <Stepper.Step label="Step 2" description="List of templates">
-              <Stack>
+              <Stack p={8}>
                 <Divider my="xs" />
                 {/* <Text size="sm" c="dimmed">
                   If the template has the same name as an already saved template, it will
@@ -395,7 +396,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
               </Group>
             </Stepper.Step>
             <Stepper.Step label="Step 3" description="Import templates">
-              <Stack>
+              <Stack p={8}>
                 <Divider my="sm" />
                 <List size="xs">
                   <List.Item>

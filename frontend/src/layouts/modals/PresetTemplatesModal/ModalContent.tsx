@@ -114,7 +114,7 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
         <Modal.CloseButton />
       </Modal.Header>
       <Modal.Body>
-        <Stack ref={focusRef}>
+        <Stack ref={focusRef} p={8}>
           <SearchForm
             templates={templates}
             searchParams={searchParams}

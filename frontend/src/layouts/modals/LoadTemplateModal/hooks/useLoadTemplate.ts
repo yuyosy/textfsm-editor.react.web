@@ -18,7 +18,7 @@ export const useLoadTemplate = (
         addNotification({
           type: 'success',
           title: 'Template loaded',
-          message: `Loaded: ${selectedTemplate.value}`,
+          message: `Loaded: ${selectedTemplate.label}`,
         });
       }
     },

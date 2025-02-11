@@ -25,6 +25,7 @@ export const OverwriteTemplate = ({
   return (
     <Stack>
       <TextInput
+        label="Search Templates"
         placeholder="Search templates..."
         value={search}
         onChange={e => setSearch(e.currentTarget.value)}
