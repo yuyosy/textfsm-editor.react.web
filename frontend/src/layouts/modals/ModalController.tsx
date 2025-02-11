@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 
 import { controlModalAtom } from '@/features/state/atoms';
 
-import { AboutInfoModalContent } from './AboutInfoModalContent';
+import { AboutInfoModalContent } from './AboutInfoModal/ModalContent';
 import { EditTemplatesModalContent } from './EditTemplatesModalContent';
 import { ExportTemplatesModalContent } from './ExportTemplatesModalContent';
 import { ImportTemplatesModalContent } from './ImportTemplatesModalContent';
