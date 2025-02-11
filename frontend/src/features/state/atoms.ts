@@ -3,7 +3,7 @@ import { atomWithReset } from 'jotai/utils';
 
 import { StatusBadgeVariant } from '@/components/StatusBadge';
 import { ModalState } from '@/layouts/modals/types';
-import { Notification, ResultItem } from '@/types';
+import { Notification, NotificationItemInfo, ResultItem } from '@/types';
 
 export const responseStateAtom = atom<StatusBadgeVariant>('init');
 export const responseResultsAtom = atomWithReset<ResultItem[]>([]);
@@ -16,7 +16,7 @@ export const notificationsAtom = atom<Notification[]>([]);
 // add notification action
 export const addNotificationAtom = atom(
   null,
-  (get, set, notification: Omit<Notification, 'id' | 'timestamp'>) => {
+  (get, set, notification: NotificationItemInfo) => {
     const notifications = get(notificationsAtom);
     const newNotification: Notification = {
       ...notification,
