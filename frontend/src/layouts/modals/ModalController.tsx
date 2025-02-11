@@ -10,7 +10,7 @@ import { ExportTemplatesModalContent } from './ExportTemplatesModalContent';
 import { ImportTemplatesModalContent } from './ImportTemplatesModalContent';
 import { LoadTemplateModalContent } from './LoadTemplateModal/ModalContent';
 import { OptionsModalContent } from './OptionsModal/ModalContent';
-import { PresetTemplatesModalContent } from './PresetTemplatesModalContent';
+import { PresetTemplatesModalContent } from './PresetTemplatesModal/ModalContent';
 import { SaveTemplateModalContent } from './SaveTemplateModal/ModalContent';
 
 export const ModalController = () => {

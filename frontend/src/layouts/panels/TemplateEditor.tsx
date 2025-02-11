@@ -24,7 +24,7 @@ export const TemplateEditor = () => {
     templateEditorRef.current.setValue(templateEditorValue);
   };
   const handleTemplateEditorChange: OnChange = value => {
-    if (value) {
+    if (value !== undefined) {
       saveTemplateToSessionStorage(value);
     }
   };
