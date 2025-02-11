@@ -32,3 +32,5 @@ export interface Notification {
   timestamp: string;
   metadata?: Record<string, unknown>;
 }
+
+export type NotificationItemInfo = Omit<Notification, 'id' | 'timestamp'>;

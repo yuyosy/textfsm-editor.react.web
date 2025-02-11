@@ -11,7 +11,7 @@ import { ImportTemplatesModalContent } from './ImportTemplatesModalContent';
 import { LoadTemplateModalContent } from './LoadTemplateModal/ModalContent';
 import { OptionsModalContent } from './OptionsModal/ModalContent';
 import { PresetTemplatesModalContent } from './PresetTemplatesModalContent';
-import { SaveTemplateModalContent } from './SaveTemplateModalContent';
+import { SaveTemplateModalContent } from './SaveTemplateModal/ModalContent';
 
 export const ModalController = () => {
   const [controlModal, setControlModalAtom] = useAtom(controlModalAtom);
