@@ -6,8 +6,8 @@ import { controlModalAtom } from '@/features/state/atoms';
 
 import { AboutInfoModalContent } from './AboutInfoModal/ModalContent';
 import { EditTemplatesModalContent } from './EditTemplatesModal/ModalContent';
-import { ExportTemplatesModalContent } from './ExportTemplatesModalContent';
-import { ImportTemplatesModalContent } from './ImportTemplatesModalContent';
+import { ExportTemplatesModalContent } from './ExportTemplatesModal/ModalContent';
+import { ImportTemplatesModalContent } from './ImportTemplatesModal/ModalContent';
 import { LoadTemplateModalContent } from './LoadTemplateModal/ModalContent';
 import { OptionsModalContent } from './OptionsModal/ModalContent';
 import { PresetTemplatesModalContent } from './PresetTemplatesModal/ModalContent';

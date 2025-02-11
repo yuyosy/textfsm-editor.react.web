@@ -24,7 +24,7 @@ import { TransferList } from '@/components/TransferList';
 import { addNotificationAtom } from '@/features/state/atoms';
 import { useSetAtom } from 'jotai';
 import 'mantine-datatable/styles.layer.css';
-import { TemplateInfo } from './types';
+import { TemplateInfo } from '../types';
 
 type ImportedTemplateInfo = {
   fileName: string;
