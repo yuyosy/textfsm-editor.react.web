@@ -1,10 +1,5 @@
 import { MutableRefObject } from 'react';
 
-export type TemplateInfo = {
-  label: string;
-  value: string;
-};
-
 export type ChangesState = {
   orderChanged: boolean;
   deleteCount: number;

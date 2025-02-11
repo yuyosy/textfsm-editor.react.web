@@ -2,7 +2,7 @@ import { EditableText } from '@/components/EditableText';
 import { ActionIcon, Flex, Group, Text } from '@mantine/core';
 import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { TemplateInfo } from './types';
+import { TemplateInfo } from '../types';
 
 type TemplateTableProps = {
   editingTemplates: TemplateInfo[];
