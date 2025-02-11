@@ -9,7 +9,7 @@ import { EditTemplatesModalContent } from './EditTemplatesModal/ModalContent';
 import { ExportTemplatesModalContent } from './ExportTemplatesModalContent';
 import { ImportTemplatesModalContent } from './ImportTemplatesModalContent';
 import { LoadTemplateModalContent } from './LoadTemplateModalContent';
-import { OptionsModalContent } from './OptionsModalContent';
+import { OptionsModalContent } from './OptionsModal/ModalContent';
 import { PresetTemplatesModalContent } from './PresetTemplatesModalContent';
 import { SaveTemplateModalContent } from './SaveTemplateModalContent';
 
