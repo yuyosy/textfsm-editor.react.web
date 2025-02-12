@@ -28,3 +28,8 @@ export type ModalId =
   | 'export-templates'
   | 'options'
   | 'about-info';
+
+export interface PlatformPriority {
+  platform: string;
+  priority: number;
+}

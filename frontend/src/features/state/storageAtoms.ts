@@ -1,6 +1,6 @@
 import { atomWithStorage } from 'jotai/utils';
 
-import { TemplateInfo } from '@/layouts/modals/types';
+import { PlatformPriority, TemplateInfo } from '@/layouts/modals/types';
 
 import { localStorage, sessionStorage } from './syncStorage';
 
@@ -25,6 +25,15 @@ export const parseRequestDelayAtom = atomWithStorage<number>(
 export const autoRequestEnabledAtom = atomWithStorage<boolean>(
   'options-editor-auto-request-enabled',
   false,
+  localStorage(),
+  {
+    getOnInit: true,
+  }
+);
+
+export const platformPrioritiesAtom = atomWithStorage<PlatformPriority[]>(
+  'options-platform-priorities',
+  [],
   localStorage(),
   {
     getOnInit: true,

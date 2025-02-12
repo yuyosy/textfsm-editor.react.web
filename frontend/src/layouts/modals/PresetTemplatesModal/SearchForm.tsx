@@ -10,6 +10,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { CircleHelp } from 'lucide-react';
+import { usePlatformPriority } from './hooks/usePlatformPriority';
 import { SearchParams } from './types';
 
 interface SearchFormProps {
@@ -35,14 +36,36 @@ export const SearchForm = ({
   onAndConditionChange,
   onFuzzyEnabledChange,
 }: SearchFormProps) => {
+  const { platformPriorities } = usePlatformPriority();
+
+  const groupedPlatforms = Object.keys(templates).reduce(
+    (acc, platform) => {
+      const priority =
+        platformPriorities.find(p => p.platform === platform)?.priority || 0;
+      if (!acc[priority]) {
+        acc[priority] = [];
+      }
+      acc[priority].push(platform);
+      return acc;
+    },
+    {} as { [priority: number]: string[] }
+  );
+
+  const sortedGroups = Object.keys(groupedPlatforms)
+    .map(Number)
+    .sort((a, b) => b - a);
+
   return (
     <Stack>
       <Select
         label="Select Platform"
         placeholder="Pick one"
-        data={Object.keys(templates).map(platform => ({
-          value: platform,
-          label: platform,
+        data={sortedGroups.map(priority => ({
+          group: `Priority ${priority}`,
+          items: groupedPlatforms[priority].map(platform => ({
+            value: platform,
+            label: platform,
+          })),
         }))}
         value={selectedPlatform}
         onChange={onPlatformChange}

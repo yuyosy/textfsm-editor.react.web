@@ -1,29 +1,10 @@
 import { Button, Divider, Group, Modal, Stack } from '@mantine/core';
-import { useEffect, useState } from 'react';
 import { ParseDelaySection } from './ParseDelaySection';
+import { PlatformPrioritySection } from './PlatformPrioritySection';
 import { StorageUsageSection } from './StorageUsageSection';
 import { ModalContentProps } from './types';
 
-const calculateLocalStorageUsage = () => {
-  let total = 0;
-  for (let key in localStorage) {
-    if (localStorage.hasOwnProperty(key)) {
-      total += localStorage[key].length + key.length;
-    }
-  }
-  return total / (1024 * 1024);
-};
-
 export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
-  const [storageUsage, setStorageUsage] = useState(0);
-  const storageLimit = 5;
-
-  useEffect(() => {
-    setStorageUsage(calculateLocalStorageUsage());
-  }, []);
-
-  const usagePercentage = (storageUsage / storageLimit) * 100;
-
   return (
     <Modal.Content>
       <Modal.Header>
@@ -36,11 +17,9 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
         <Stack ref={focusRef} p={8} gap="md">
           <ParseDelaySection />
           <Divider my="lg" />
-          <StorageUsageSection
-            storageUsage={storageUsage}
-            storageLimit={storageLimit}
-            usagePercentage={usagePercentage}
-          />
+          <PlatformPrioritySection />
+          <Divider my="lg" />
+          <StorageUsageSection />
         </Stack>
         <Group justify="space-between" mt="lg">
           <Button variant="default" size="xs" onClick={close}>
