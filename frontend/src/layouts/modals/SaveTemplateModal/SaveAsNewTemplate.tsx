@@ -1,34 +1,59 @@
-import { Input, Stack, TextInput } from '@mantine/core';
-import { Replace } from 'lucide-react';
+import { Button, Group, Stack, TextInput } from '@mantine/core';
+import { useState } from 'react';
+import { TemplateInfo } from '../types';
+import { useSaveNewTemplate } from './hooks/useSaveNewTemplate';
 
 interface SaveAsNewTemplateProps {
-  isDuplicateName: boolean;
-  newTemplateName: string;
-  setNewTemplateName: (name: string) => void;
+  close: () => void;
+  savedTemplates: TemplateInfo[];
+  setSavedTemplates: (templates: TemplateInfo[]) => void;
+  currentEditorContent: string;
 }
 
 export const SaveAsNewTemplate = ({
-  isDuplicateName,
-  newTemplateName,
-  setNewTemplateName,
+  close,
+  savedTemplates,
+  setSavedTemplates,
+  currentEditorContent,
 }: SaveAsNewTemplateProps) => {
+  const [newTemplateName, setTemplateName] = useState('');
+  const { setNewTemplateName, saveTemplateToStorage, isDuplicateName } =
+    useSaveNewTemplate(savedTemplates, setSavedTemplates, currentEditorContent);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTemplateName(e.currentTarget.value);
+    setNewTemplateName(e.currentTarget.value);
+  };
+
+  const handleSaveTemplate = () => {
+    saveTemplateToStorage();
+    close();
+  };
+
   return (
     <Stack>
-      <Input.Wrapper label="Template Name" withAsterisk>
+      <Stack p={8} gap={2}>
         <TextInput
+          label="New Template Name"
+          placeholder="Enter new template name..."
           value={newTemplateName}
-          placeholder="Input template name"
-          withErrorStyles={false}
-          onChange={event => setNewTemplateName(event.currentTarget.value)}
-          rightSectionPointerEvents="none"
-          rightSection={isDuplicateName ? <Replace size={20} /> : ''}
+          onChange={handleInputChange}
+          error={isDuplicateName ? 'Template name already exists' : null}
         />
-        <Input.Error my={4}>
-          {isDuplicateName
-            ? 'The template name is already exists. Do you want to replace it? '
-            : ''}
-        </Input.Error>
-      </Input.Wrapper>
+      </Stack>
+      <Group justify="space-between" mt="lg">
+        <Button variant="default" size="xs" onClick={close}>
+          Close
+        </Button>
+        <Button
+          size="xs"
+          color="cyan"
+          onClick={handleSaveTemplate}
+          disabled={!newTemplateName || isDuplicateName}
+        >
+          Save Template
+        </Button>
+      </Group>
     </Stack>
   );
 };

@@ -4,14 +4,13 @@ import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { TemplateInfo } from '../../types';
 
-export const useSaveTemplate = (
+export const useSaveNewTemplate = (
   savedTemplates: TemplateInfo[],
   setSavedTemplates: (templates: TemplateInfo[]) => void,
   currentEditorContent: string
 ) => {
   const addNotification = useSetAtom(addNotificationAtom);
   const [newTemplateName, setNewTemplateName] = useState<string>('');
-  const [existingTemplateName, setExistingTemplateName] = useState<string | null>(null);
   const [isDuplicateName, setIsDuplicateName] = useState<boolean>(false);
 
   const [debouncedTemplateName] = useDebouncedValue(newTemplateName, 200);
@@ -23,46 +22,33 @@ export const useSaveTemplate = (
   }, [debouncedTemplateName, savedTemplates]);
 
   const saveTemplateToStorage = () => {
-    const templateName = newTemplateName || existingTemplateName;
-    if (!templateName) return;
+    if (!newTemplateName || isDuplicateName) return;
 
-    const updatedTemplates = [...savedTemplates];
-    const existingIndex = updatedTemplates.findIndex(
-      template => template.label === templateName
-    );
-
-    const templateData = {
-      label: templateName,
-      value: currentEditorContent,
-    };
-
-    if (existingIndex !== -1) {
-      updatedTemplates[existingIndex] = templateData;
-    } else {
-      updatedTemplates.push(templateData);
-    }
+    const updatedTemplates = [
+      ...savedTemplates,
+      {
+        label: newTemplateName,
+        value: currentEditorContent,
+      },
+    ];
 
     setSavedTemplates(updatedTemplates);
     addNotification({
       type: 'success',
       title: 'Template saved',
-      message: `Saved: ${templateName}`,
+      message: `Saved: ${newTemplateName}`,
     });
     reset();
   };
 
   const reset = () => {
     setNewTemplateName('');
-    setExistingTemplateName(null);
     setIsDuplicateName(false);
   };
 
   return {
-    newTemplateName,
     setNewTemplateName,
-    existingTemplateName,
-    setExistingTemplateName,
-    isDuplicateName,
     saveTemplateToStorage,
+    isDuplicateName,
   };
 };
