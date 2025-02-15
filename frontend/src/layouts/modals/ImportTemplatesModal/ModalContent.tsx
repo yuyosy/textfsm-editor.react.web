@@ -4,6 +4,7 @@ import { Button, Group, Modal, Stack, Stepper, Text } from '@mantine/core';
 import { FileRejection } from '@mantine/dropzone';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRef, useState } from 'react';
+import { TemplateInfo } from '../types';
 import { DropzoneSection } from './DropzoneSection';
 import { useParseJsonTemplates } from './hooks/useParseJsonTemplates';
 import { ImportSelectionSection } from './ImportSelectionSection';
@@ -46,10 +47,15 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   };
 
   const saveSelectedTemplates = async () => {
-    const newTemplateList = [...templateList];
-    newTemplateList.push(
-      ...processedJsonData.filter(item => selectedTemplates.includes(item.label))
-    );
+    const newTemplateList: TemplateInfo[] = [
+      ...templateList,
+      ...processedJsonData
+        .filter(item => selectedTemplates.includes(item.label))
+        .map(item => ({
+          label: item.label,
+          value: item.value,
+        })),
+    ];
     setTemplateList(newTemplateList);
     addNotification({
       type: 'success',
