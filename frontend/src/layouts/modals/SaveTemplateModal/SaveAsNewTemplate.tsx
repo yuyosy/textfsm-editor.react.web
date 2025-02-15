@@ -1,5 +1,16 @@
-import { Button, Group, Stack, TextInput } from '@mantine/core';
-import { useState } from 'react';
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+import {
+  Button,
+  Grid,
+  Group,
+  MultiSelect,
+  MultiSelectProps,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { useAtom } from 'jotai';
 import { TemplateInfo } from '../types';
 import { useSaveNewTemplate } from './hooks/useSaveNewTemplate';
 
@@ -16,18 +27,42 @@ export const SaveAsNewTemplate = ({
   setSavedTemplates,
   currentEditorContent,
 }: SaveAsNewTemplateProps) => {
-  const [newTemplateName, setTemplateName] = useState('');
-  const { setNewTemplateName, saveTemplateToStorage, isDuplicateName } =
-    useSaveNewTemplate(savedTemplates, setSavedTemplates, currentEditorContent);
+  const [tags] = useAtom(templateTagsAtom);
+  const {
+    templateProperties,
+    isNameDuplicate,
+    setTemplateField,
+    saveTemplateToStorage,
+  } = useSaveNewTemplate(savedTemplates, setSavedTemplates, currentEditorContent);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTemplateName(e.currentTarget.value);
-    setNewTemplateName(e.currentTarget.value);
+    setTemplateField('label', e.currentTarget.value);
+  };
+
+  const handleTagChange = (selectedTags: string[]) => {
+    setTemplateField('tags', selectedTags);
   };
 
   const handleSaveTemplate = () => {
+    setTemplateField('value', currentEditorContent);
     saveTemplateToStorage();
     close();
+  };
+
+  const renderMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
+    const tag = tags[tags.findIndex(tag => tag.name === option.value)];
+    return (
+      <Grid align="center">
+        <Grid.Col span="content">
+          <TagBadge {...tag} />
+        </Grid.Col>
+        <Grid.Col span="content">
+          <Text size="xs" c="dimmed">
+            {tag.description}
+          </Text>
+        </Grid.Col>
+      </Grid>
+    );
   };
 
   return (
@@ -36,9 +71,20 @@ export const SaveAsNewTemplate = ({
         <TextInput
           label="New Template Name"
           placeholder="Enter new template name..."
-          value={newTemplateName}
           onChange={handleInputChange}
-          error={isDuplicateName ? 'Template name already exists' : null}
+          error={isNameDuplicate ? 'Template name already exists' : null}
+        />
+        <MultiSelect
+          data={tags.map(tag => ({ value: tag.name, label: tag.name }))}
+          label="Select Tags"
+          placeholder="Select tags for the template"
+          onChange={handleTagChange}
+          renderOption={renderMultiSelectOption}
+          nothingFoundMessage="Nothing found..."
+          maxDropdownHeight={200}
+          searchable
+          clearable
+          hidePickedOptions
         />
       </Stack>
       <Group justify="space-between" mt="lg">
@@ -49,7 +95,7 @@ export const SaveAsNewTemplate = ({
           size="xs"
           color="cyan"
           onClick={handleSaveTemplate}
-          disabled={!newTemplateName || isDuplicateName}
+          disabled={templateProperties.label === '' || isNameDuplicate}
         >
           Save Template
         </Button>

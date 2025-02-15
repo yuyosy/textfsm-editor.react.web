@@ -1,4 +1,7 @@
-import { Button, Group, Stack, TextInput } from '@mantine/core';
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { Button, Flex, Group, Stack, Text, TextInput } from '@mantine/core';
+import { useAtomValue } from 'jotai';
 import { DataTable } from 'mantine-datatable';
 import { useState } from 'react';
 import { TemplateInfo } from '../types';
@@ -18,6 +21,7 @@ export const OverwriteTemplate = ({
   currentEditorContent,
 }: OverwriteTemplateProps) => {
   const [search, setSearch] = useState('');
+  const tags = useAtomValue(templateTagsAtom);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const { setExistingTemplateName, saveTemplateToStorage } = useOverwriteTemplate(
     savedTemplates,
@@ -41,7 +45,7 @@ export const OverwriteTemplate = ({
 
   return (
     <Stack>
-      <Stack p={8} gap={2}>
+      <Stack p={8} gap={8}>
         <TextInput
           label="Search Templates"
           placeholder="Search templates..."
@@ -60,7 +64,25 @@ export const OverwriteTemplate = ({
           scrollAreaProps={{ type: 'always', offsetScrollbars: 'y' }}
           records={filteredTemplates}
           columns={[
-            { accessor: 'label', title: 'Template Name' },
+            {
+              accessor: 'label',
+              title: 'Template Name',
+              render: record => (
+                <Flex direction="column" gap={4}>
+                  <Text>{record.label}</Text>
+                  {record.tags ? (
+                    <Group gap={4}>
+                      {record.tags.map(tagName => {
+                        const tag = tags[tags.findIndex(tag => tag.name === tagName)];
+                        return <TagBadge {...tag} size="sm" />;
+                      })}
+                    </Group>
+                  ) : (
+                    ''
+                  )}
+                </Flex>
+              ),
+            },
             {
               accessor: 'action',
               title: 'Action',

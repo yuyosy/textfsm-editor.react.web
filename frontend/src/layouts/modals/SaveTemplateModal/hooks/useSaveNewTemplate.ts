@@ -10,10 +10,13 @@ export const useSaveNewTemplate = (
   currentEditorContent: string
 ) => {
   const addNotification = useSetAtom(addNotificationAtom);
-  const [newTemplateName, setNewTemplateName] = useState<string>('');
-  const [isDuplicateName, setIsDuplicateName] = useState<boolean>(false);
+  const [templateProperties, setTemplateProperties] = useState<TemplateInfo>({
+    label: '',
+    value: currentEditorContent,
+  });
+  const [isNameDuplicate, setIsDuplicateName] = useState<boolean>(false);
 
-  const [debouncedTemplateName] = useDebouncedValue(newTemplateName, 200);
+  const [debouncedTemplateName] = useDebouncedValue(templateProperties.label, 200);
 
   useEffect(() => {
     setIsDuplicateName(
@@ -22,33 +25,34 @@ export const useSaveNewTemplate = (
   }, [debouncedTemplateName, savedTemplates]);
 
   const saveTemplateToStorage = () => {
-    if (!newTemplateName || isDuplicateName) return;
+    if (!templateProperties.label || isNameDuplicate) return;
 
-    const updatedTemplates = [
-      ...savedTemplates,
-      {
-        label: newTemplateName,
-        value: currentEditorContent,
-      },
-    ];
-
+    const updatedTemplates = [...savedTemplates, templateProperties];
     setSavedTemplates(updatedTemplates);
     addNotification({
       type: 'success',
       title: 'Template saved',
-      message: `Saved: ${newTemplateName}`,
+      message: `Saved: ${templateProperties.label}`,
     });
     reset();
   };
 
   const reset = () => {
-    setNewTemplateName('');
+    setTemplateProperties({
+      label: '',
+      value: '',
+    });
     setIsDuplicateName(false);
   };
 
+  const setTemplateField = (field: keyof TemplateInfo, value: any) => {
+    setTemplateProperties({ ...templateProperties, [field]: value });
+  };
+
   return {
-    setNewTemplateName,
+    templateProperties,
+    isNameDuplicate,
+    setTemplateField,
     saveTemplateToStorage,
-    isDuplicateName,
   };
 };
