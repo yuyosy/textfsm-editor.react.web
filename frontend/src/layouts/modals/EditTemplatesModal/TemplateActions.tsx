@@ -1,18 +1,17 @@
 import { Button, Group } from '@mantine/core';
-import { ChangesState } from './types';
 
 type TemplateActionsProps = {
   handleModalClose: () => void;
   discardChanges: () => void;
   saveChanges: () => void;
-  modifications: ChangesState;
+  hasModifications: boolean;
 };
 
 export const TemplateActions = ({
   handleModalClose,
   discardChanges,
   saveChanges,
-  modifications,
+  hasModifications,
 }: TemplateActionsProps) => {
   return (
     <Group justify="space-between">
@@ -24,13 +23,7 @@ export const TemplateActions = ({
           variant="default"
           size="xs"
           onClick={discardChanges}
-          disabled={
-            !(
-              modifications.orderChanged ||
-              modifications.deleteCount > 0 ||
-              modifications.renameCount > 0
-            )
-          }
+          disabled={!hasModifications}
         >
           Discard Changes
         </Button>
@@ -38,13 +31,7 @@ export const TemplateActions = ({
           size="xs"
           color="cyan"
           onClick={saveChanges}
-          disabled={
-            !(
-              modifications.orderChanged ||
-              modifications.deleteCount > 0 ||
-              modifications.renameCount > 0
-            )
-          }
+          disabled={!hasModifications}
         >
           Apply
         </Button>

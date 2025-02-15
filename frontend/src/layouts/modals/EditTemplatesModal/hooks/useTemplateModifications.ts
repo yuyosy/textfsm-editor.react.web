@@ -3,24 +3,46 @@ import { useEffect, useState } from 'react';
 import { TemplateInfo } from '../../types';
 import { ChangesState } from '../types';
 
+const deepCopyTemplates = (templates: TemplateInfo[]): TemplateInfo[] => {
+  return templates.map(template => ({
+    ...template,
+    tags: [...(template.tags || [])],
+  }));
+};
+
 type EditingTemplateInfo = {
   original: TemplateInfo;
   current: TemplateInfo;
 };
 
 export const useTemplateModifications = (
-  savedTemplates: TemplateInfo[],
+  initialTemplates: TemplateInfo[],
   setSavedTemplates: (templates: TemplateInfo[]) => void
 ) => {
   const [editingTemplates, editingTemplatesHandlers] = useListState<EditingTemplateInfo>(
-    savedTemplates.map(template => ({ original: template, current: template }))
+    deepCopyTemplates(initialTemplates).map(template => ({
+      original: template,
+      current: template,
+    }))
   );
 
   const [modifications, setModifications] = useState<ChangesState>({
     orderChanged: false,
     deleteCount: 0,
     renameCount: 0,
+    tagUpdateCount: 0,
   });
+
+  const [hasModifications, setHasModifications] = useState<boolean>(false);
+
+  useEffect(() => {
+    setHasModifications(
+      modifications.orderChanged ||
+        modifications.deleteCount > 0 ||
+        modifications.renameCount > 0 ||
+        modifications.tagUpdateCount > 0
+    );
+  }, [modifications]);
 
   useEffect(() => {
     const renameCount = editingTemplates.reduce((count, template) => {
@@ -47,7 +69,10 @@ export const useTemplateModifications = (
 
   const resetTemplateList = () => {
     editingTemplatesHandlers.setState(
-      savedTemplates.map(template => ({ original: template, current: template }))
+      deepCopyTemplates(initialTemplates).map(template => ({
+        original: template,
+        current: template,
+      }))
     );
     resetModifications();
   };
@@ -65,11 +90,12 @@ export const useTemplateModifications = (
   };
 
   const renameTemplate = (index: number, newName: string) => {
-    if (editingTemplates[index].current.label !== newName) {
+    if (editingTemplates[index].original.label !== newName) {
       editingTemplatesHandlers.setItemProp(index, 'current', {
         ...editingTemplates[index].current,
         label: newName,
       });
+      updateModification('renameCount', modifications.renameCount + 1);
     }
   };
 
@@ -77,6 +103,16 @@ export const useTemplateModifications = (
     if (editingTemplates.length === 0) return;
     editingTemplatesHandlers.remove(index);
     updateModification('deleteCount', modifications.deleteCount + 1);
+  };
+
+  const updateTemplateTags = (index: number, tags: string[]) => {
+    if (editingTemplates[index].original.tags !== tags) {
+      editingTemplatesHandlers.setItemProp(index, 'current', {
+        ...editingTemplates[index].current,
+        tags: tags,
+      });
+      updateModification('tagUpdateCount', modifications.tagUpdateCount + 1);
+    }
   };
 
   const saveChanges = () => {
@@ -93,16 +129,19 @@ export const useTemplateModifications = (
       orderChanged: false,
       deleteCount: 0,
       renameCount: 0,
+      tagUpdateCount: 0,
     });
   };
 
   return {
     editingTemplates: editingTemplates.map(template => template.current),
     modifications,
+    hasModifications,
     moveTemplateUp,
     moveTemplateDown,
     renameTemplate,
     deleteTemplate,
+    updateTemplateTags,
     discardChanges,
     saveChanges,
   };

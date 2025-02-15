@@ -1,7 +1,20 @@
-import { EditableText } from '@/components/EditableText';
-import { ActionIcon, Flex, Group, Text } from '@mantine/core';
-import { ArrowDown, ArrowDownUp, ArrowUp, Trash } from 'lucide-react';
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+import {
+  ActionIcon,
+  Flex,
+  Grid,
+  Group,
+  MultiSelect,
+  MultiSelectProps,
+  Popover,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { useAtom } from 'jotai';
+import { ArrowDown, ArrowDownUp, ArrowUp, Tags, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
+import { useRef } from 'react';
 import { TemplateInfo } from '../types';
 
 type TemplateTableProps = {
@@ -10,6 +23,71 @@ type TemplateTableProps = {
   moveTemplateDown: (index: number) => void;
   renameTemplate: (index: number, newName: string) => void;
   deleteTemplate: (index: number) => void;
+  updateTemplateTags: (index: number, tags: string[]) => void;
+};
+
+const TagEditorPopover = ({
+  record,
+  index,
+  updateTemplateTags,
+}: {
+  record: TemplateInfo;
+  index: number;
+  updateTemplateTags: (index: number, tags: string[]) => void;
+}) => {
+  const [tags] = useAtom(templateTagsAtom);
+  const findTag = (name: string) => tags[tags.findIndex(tag => tag.name === name)];
+
+  const handleTagChange = (index: number, selectedTags: string[]) => {
+    updateTemplateTags(index, selectedTags);
+  };
+
+  const renderMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
+    const tag = findTag(option.value);
+    return (
+      <Grid align="center">
+        <Grid.Col span="content">
+          <TagBadge {...tag} />
+        </Grid.Col>
+        <Grid.Col span="content">
+          <Text size="xs" c="dimmed">
+            {tag.description}
+          </Text>
+        </Grid.Col>
+      </Grid>
+    );
+  };
+
+  return (
+    <Popover width={400} position="bottom" withArrow shadow="md" arrowSize={16}>
+      <Popover.Target>
+        <Group>
+          <ActionIcon variant="light" color="green" size="sm">
+            <Tags size={16} />
+          </ActionIcon>
+        </Group>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <MultiSelect
+          data={tags.map(tag => ({
+            value: tag.name,
+            label: tag.name,
+          }))}
+          defaultValue={record.tags ? record.tags.map(tag => tag) : []}
+          label={`Tags (${record.tags ? record.tags.length : 0})`}
+          placeholder="Select tags for the template"
+          onChange={selectedTags => handleTagChange(index, selectedTags)}
+          renderOption={renderMultiSelectOption}
+          nothingFoundMessage="Nothing found..."
+          maxDropdownHeight={200}
+          comboboxProps={{ withinPortal: false }}
+          searchable
+          clearable
+          hidePickedOptions
+        />
+      </Popover.Dropdown>
+    </Popover>
+  );
 };
 
 export const TemplateTable = ({
@@ -18,10 +96,12 @@ export const TemplateTable = ({
   moveTemplateDown,
   renameTemplate,
   deleteTemplate,
+  updateTemplateTags,
 }: TemplateTableProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <DataTable
-      withColumnBorders
       records={editingTemplates}
       columns={[
         {
@@ -57,19 +137,49 @@ export const TemplateTable = ({
         {
           accessor: 'label',
           render: (item, index) => (
-            <EditableText
-              text={item.label}
-              setText={value => renameTemplate(index, value)}
+            <TextInput
+              defaultValue={item.label}
+              ref={inputRef}
+              onBlur={event => {
+                const value = event.currentTarget.value;
+                console.log(value, item.label);
+                if (value !== item.label) {
+                  renameTemplate(index, value);
+                }
+              }}
+              onKeyDown={event => {
+                const value = event.currentTarget.value;
+                if (event.key === 'Enter') {
+                  if (value !== item.label) {
+                    event.currentTarget.blur();
+                  }
+                } else if (event.key === 'Escape') {
+                  event.currentTarget.value = item.label;
+                  event.currentTarget.blur();
+                }
+              }}
             />
           ),
         },
         {
+          accessor: 'tags',
+          width: 80,
+          render: record => {
+            const len = record.tags?.length || 0;
+            return <Text>{len === 1 ? `1 tag` : `${len} tags`}</Text>;
+          },
+        },
+        {
           accessor: 'actions',
           width: 80,
-          title: '',
           textAlign: 'center',
-          render: (_item, index) => (
+          render: (record, index) => (
             <Group gap={4} justify="space-around">
+              <TagEditorPopover
+                record={record}
+                index={index}
+                updateTemplateTags={updateTemplateTags}
+              />
               <ActionIcon
                 variant="light"
                 color="red"
@@ -83,7 +193,9 @@ export const TemplateTable = ({
         },
       ]}
       idAccessor="label"
-      height={300}
+      height={360}
+      scrollAreaProps={{ offsetScrollbars: true, type: 'always' }}
+      withColumnBorders
     />
   );
 };
