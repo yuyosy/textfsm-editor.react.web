@@ -19,7 +19,7 @@ export const PlatformPrioritySection = ({}: PlatformPrioritySectionProps) => {
   });
 
   return (
-    <Stack>
+    <Stack gap="xs">
       <Text size="sm" fw={500}>
         Platform Priority
       </Text>

@@ -72,7 +72,7 @@ export const StorageUsageSection = ({}: StorageUsageSectionProps) => {
         />{' '}
         used
       </Text>
-      <Blockquote color="blue" icon={<Info size={14} />} iconSize={30} py={8}>
+      <Blockquote color="blue" icon={<Info size={14} />} iconSize={30} py={8} mx={8}>
         <Text size="xs">
           The data entered into the data editor and template editor is stored in
           SessionStorage and retained until the tab is closed.{' '}
