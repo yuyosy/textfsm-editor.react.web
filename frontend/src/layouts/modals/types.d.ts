@@ -33,3 +33,9 @@ export interface PlatformPriority {
   platform: string;
   priority: number;
 }
+
+export interface TemplateTag {
+  name: string;
+  description: string;
+  color: string;
+}

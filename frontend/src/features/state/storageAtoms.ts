@@ -1,6 +1,6 @@
 import { atomWithStorage } from 'jotai/utils';
 
-import { PlatformPriority, TemplateInfo } from '@/layouts/modals/types';
+import { PlatformPriority, TemplateInfo, TemplateTag } from '@/layouts/modals/types';
 
 import { localStorage, sessionStorage } from './syncStorage';
 
@@ -53,6 +53,15 @@ export const templateEditorValueAtom = atomWithStorage<string>(
   'template-editor-value',
   '# Type your template herssse',
   sessionStorage(),
+  {
+    getOnInit: true,
+  }
+);
+
+export const templateTagsAtom = atomWithStorage<TemplateTag[]>(
+  'options-template-tags',
+  [],
+  localStorage(),
   {
     getOnInit: true,
   }

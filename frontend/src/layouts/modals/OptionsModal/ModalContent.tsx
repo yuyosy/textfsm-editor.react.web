@@ -1,8 +1,9 @@
 import { Button, Group, Modal, ScrollArea, Stack, Tabs } from '@mantine/core';
-import { Package, PencilLine, PencilRuler } from 'lucide-react';
+import { Package, PencilLine, PencilRuler, Tags } from 'lucide-react';
 import { ParseDelaySection } from './ParseDelaySection';
 import { PlatformPrioritySection } from './PlatformPrioritySection';
 import { StorageUsageSection } from './StorageUsageSection';
+import { TemplateTagSection } from './TemplateTagSection';
 import { ModalContentProps } from './types';
 
 export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
@@ -26,6 +27,13 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
                 Editor
               </Tabs.Tab>
               <Tabs.Tab
+                value="tags"
+                p={8}
+                leftSection={<Tags size={20} strokeWidth={1.5} />}
+              >
+                Tags
+              </Tabs.Tab>
+              <Tabs.Tab
                 value="presets"
                 p={8}
                 leftSection={<Package size={20} strokeWidth={1.5} />}
@@ -43,6 +51,9 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
             <ScrollArea h={500} p={16} type="always" offsetScrollbars>
               <Tabs.Panel value="editor" py={8}>
                 <ParseDelaySection />
+              </Tabs.Panel>
+              <Tabs.Panel value="tags" py={8}>
+                <TemplateTagSection />
               </Tabs.Panel>
               <Tabs.Panel value="presets" py={8}>
                 <PlatformPrioritySection />
