@@ -16,8 +16,14 @@ export type LoadedJsonData = {
   fileName: string;
   label: string;
   labelOrigin: string;
-  value: string;
+  templateInfoData: TemplateInfo | null;
   isDuplicate: boolean;
   isAlreadySaved: boolean;
   hasFormatError: boolean;
+};
+
+export type ProcessedJsonData = {
+  fileName: string;
+  label: string;
+  templateInfoData: TemplateInfo;
 };

@@ -9,7 +9,7 @@ export const validateAndProcessTemplates = (
     item: ImportedTemplateInfo,
     label: string,
     labelOrigin: string,
-    value: string,
+    templateInfoData: TemplateInfo | null,
     hasFormatError: boolean,
     isDuplicate: boolean,
     isAlreadySaved: boolean
@@ -18,7 +18,7 @@ export const validateAndProcessTemplates = (
       fileName: item.fileName,
       label: label,
       labelOrigin: labelOrigin,
-      value: value,
+      templateInfoData: templateInfoData,
       isDuplicate: isDuplicate,
       isAlreadySaved: isAlreadySaved,
       hasFormatError: hasFormatError,
@@ -44,10 +44,14 @@ export const validateAndProcessTemplates = (
 
   for (const item of results) {
     if (item.hasFormatError) {
-      processedJsonData.push(getLoadedJsonData(item, '-', '-', '', true, false, false));
+      processedJsonData.push(
+        getLoadedJsonData(item, '-', '-', null, true, false, false)
+      );
     }
     if (!Array.isArray(item.templateInfo) || item.templateInfo === null) {
-      processedJsonData.push(getLoadedJsonData(item, '-', '-', '', false, false, false));
+      processedJsonData.push(
+        getLoadedJsonData(item, '-', '-', null, false, false, false)
+      );
     }
 
     for (const data of item.templateInfo) {
@@ -64,7 +68,7 @@ export const validateAndProcessTemplates = (
         item,
         label,
         data.label,
-        data.value,
+        data,
         hasFormatError,
         isDuplicate,
         isAlreadySaved

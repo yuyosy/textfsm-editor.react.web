@@ -1,10 +1,10 @@
 import { addNotificationAtom } from '@/features/state/atoms';
-import { savedTemplateListAtom } from '@/features/state/storageAtoms';
+import { savedTemplateListAtom, templateTagsAtom } from '@/features/state/storageAtoms';
 import { Button, Group, Modal, Stack, Stepper, Text } from '@mantine/core';
 import { FileRejection } from '@mantine/dropzone';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRef, useState } from 'react';
-import { TemplateInfo } from '../types';
+import { TemplateInfo, TemplateTag } from '../types';
 import { DropzoneSection } from './DropzoneSection';
 import { useParseJsonTemplates } from './hooks/useParseJsonTemplates';
 import { ImportSelectionSection } from './ImportSelectionSection';
@@ -14,6 +14,7 @@ import { LoadedJsonData, ModalContentProps } from './types';
 export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
   const addNotification = useSetAtom(addNotificationAtom);
   const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
+  const [tags, setTags] = useAtom(templateTagsAtom);
   const [selectedJsonFiles, setSelectedJsonFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
   const [activeStep, setActiveStep] = useState(0);
@@ -47,15 +48,30 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   };
 
   const saveSelectedTemplates = async () => {
+    const newTags: TemplateTag[] = [];
+    for (let data of processedJsonData) {
+      for (let tagName of data.templateInfoData?.tags || []) {
+        if (tags.findIndex(item => item.name === tagName) === -1) {
+          newTags.push({
+            name: tagName,
+            description: `import from ${data.fileName}`,
+            color: '#A0A0A0',
+          });
+        }
+      }
+    }
+    setTags([...tags, ...newTags]);
+
     const newTemplateList: TemplateInfo[] = [
       ...templateList,
       ...processedJsonData
-        .filter(item => selectedTemplates.includes(item.label))
-        .map(item => ({
-          label: item.label,
-          value: item.value,
-        })),
+        .filter(
+          item =>
+            selectedTemplates.includes(item.label) && item.templateInfoData !== null
+        )
+        .map(item => ({ ...item.templateInfoData, label: item.label }) as TemplateInfo),
     ];
+
     setTemplateList(newTemplateList);
     addNotification({
       type: 'success',
