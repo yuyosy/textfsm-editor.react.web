@@ -4,7 +4,7 @@ __pycache__/
 ## Environments
 .env
 .venv
-*.local
+*.local*
 
 ## ruff
 .ruff_cache/
