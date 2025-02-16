@@ -1,13 +1,17 @@
-import { Badge, MantineSize } from '@mantine/core';
+import { Badge, BadgeProps } from '@mantine/core';
 
-export interface TagBadgeProps {
-  name: string;
-  color: string;
-  size?: MantineSize | (string & {}) | undefined;
+export interface TagBadgeProps extends BadgeProps {
+  name?: string;
+  children?: React.ReactNode;
 }
 
-export const TagBadge = ({ name, color, size = 'md' }: TagBadgeProps) => (
-  <Badge color={color} variant="filled" tt="unset" size={size} autoContrast>
+export const TagBadge = ({ name, children, ...props }: TagBadgeProps) => (
+  <Badge
+    {...props}
+    tt={props.tt || 'unset'}
+    autoContrast={props.autoContrast === undefined ? true : props.autoContrast}
+  >
     {name}
+    {children}
   </Badge>
 );
