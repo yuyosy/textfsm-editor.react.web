@@ -1,16 +1,6 @@
-import { TagBadge } from '@/components/TagBadege';
+import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
-import {
-  ActionIcon,
-  Flex,
-  Grid,
-  Group,
-  MultiSelect,
-  MultiSelectProps,
-  Popover,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { ActionIcon, Flex, Group, Popover, Text, TextInput } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Tags, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
@@ -36,26 +26,9 @@ const TagEditorPopover = ({
   updateTemplateTags: (index: number, tags: string[]) => void;
 }) => {
   const [tags] = useAtom(templateTagsAtom);
-  const findTag = (name: string) => tags[tags.findIndex(tag => tag.name === name)];
 
   const handleTagChange = (index: number, selectedTags: string[]) => {
     updateTemplateTags(index, selectedTags);
-  };
-
-  const renderMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
-    const tag = findTag(option.value);
-    return (
-      <Grid align="center">
-        <Grid.Col span="content">
-          <TagBadge {...tag} />
-        </Grid.Col>
-        <Grid.Col span="content">
-          <Text size="xs" c="dimmed">
-            {tag.description}
-          </Text>
-        </Grid.Col>
-      </Grid>
-    );
   };
 
   return (
@@ -68,22 +41,13 @@ const TagEditorPopover = ({
         </Group>
       </Popover.Target>
       <Popover.Dropdown>
-        <MultiSelect
-          data={tags.map(tag => ({
-            value: tag.name,
-            label: tag.name,
-          }))}
-          defaultValue={record.tags ? record.tags.map(tag => tag) : []}
+        <TagBadgeMultiSelect
           label={`Tags (${record.tags ? record.tags.length : 0})`}
-          placeholder="Select tags for the template"
+          selectItems={tags}
           onChange={selectedTags => handleTagChange(index, selectedTags)}
-          renderOption={renderMultiSelectOption}
-          nothingFoundMessage="Nothing found..."
-          maxDropdownHeight={200}
-          comboboxProps={{ withinPortal: false }}
-          searchable
+          defaultValue={record.tags}
+          withinPortal={false}
           clearable
-          hidePickedOptions
         />
       </Popover.Dropdown>
     </Popover>

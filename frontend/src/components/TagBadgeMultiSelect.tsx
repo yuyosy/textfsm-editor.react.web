@@ -21,16 +21,20 @@ export interface TagBadgeMultiSelectProps extends ComboboxProps {
   label: string;
   selectItems: TemplateTag[];
   onChange?: (value: string[]) => void;
+  defaultValue?: string[];
+  clearable?: boolean;
 }
 
 export const TagBadgeMultiSelect = ({
   label,
   selectItems,
   onChange,
+  defaultValue = [],
+  clearable = false,
   ...props
 }: TagBadgeMultiSelectProps) => {
   const [search, setSearch] = useState('');
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue);
 
   const findItem = (value: string): TemplateTag =>
     selectItems[selectItems.findIndex(item => item.name === value)];
@@ -47,14 +51,18 @@ export const TagBadgeMultiSelect = ({
   });
 
   const handleValueSelect = (val: string) => {
-    setSelectedValues(current =>
-      current.includes(val) ? current.filter(v => v !== val) : [...current, val]
-    );
-    onChange && onChange(selectedValues);
+    const newSelectedValues = selectedValues.includes(val)
+      ? selectedValues.filter(v => v !== val)
+      : [...selectedValues, val];
+    setSelectedValues(newSelectedValues);
+    onChange && onChange(newSelectedValues);
   };
 
-  const handleValueRemove = (val: string) =>
-    setSelectedValues(current => current.filter(v => v !== val));
+  const handleValueRemove = (val: string) => {
+    const newSelectedValues = selectedValues.filter(v => v !== val);
+    setSelectedValues(newSelectedValues);
+    onChange && onChange(newSelectedValues);
+  };
 
   const selectedValueNodes = selectedValues.map(item => (
     <TagBadge key={item} color={findItem(item).color} p={8} mt={2} autoContrast>
@@ -72,47 +80,52 @@ export const TagBadgeMultiSelect = ({
     </TagBadge>
   ));
 
-  const optionNodes = selectItems
-    .filter(item => item.name.toLowerCase().includes(search.toLowerCase().trim()))
-    .reduce(
-      (acc, item) => {
-        if (selectedValues.includes(item.name)) {
-          acc[1].values.push(item);
-        } else {
-          acc[0].values.push(item);
-        }
-        return acc;
-      },
-      [
-        { label: 'available', values: [] as typeof selectItems },
-        { label: 'selected', values: [] as typeof selectItems },
-      ]
-    )
-    .map(group => (
-      <Combobox.Group key={group.label} label={group.label}>
-        {group.values.map(item => (
-          <Combobox.Option
-            key={item.name}
-            value={item.name}
-            active={selectedValues.includes(item.name)}
-          >
-            <Grid align="center">
-              <Grid.Col span="content">
-                <Group gap="sm">
-                  {selectedValues.includes(item.name) ? <CheckIcon size={12} /> : null}
-                  <TagBadge {...item} />
-                </Group>
-              </Grid.Col>
-              <Grid.Col span="content">
-                <Text size="xs" c="dimmed">
-                  {item.description}
-                </Text>
-              </Grid.Col>
-            </Grid>
-          </Combobox.Option>
-        ))}
-      </Combobox.Group>
-    ));
+  const groupSelectItems = (items: TemplateTag[], selectedValues: string[]) => {
+    return items
+      .filter(item => item.name.toLowerCase().includes(search.toLowerCase().trim()))
+      .reduce(
+        (acc, item) => {
+          if (selectedValues.includes(item.name)) {
+            acc[1].values.push(item);
+          } else {
+            acc[0].values.push(item);
+          }
+          return acc;
+        },
+        [
+          { label: 'available', values: [] as typeof items },
+          { label: 'selected', values: [] as typeof items },
+        ]
+      );
+  };
+
+  const groupedItems = groupSelectItems(selectItems, selectedValues);
+
+  const optionNodes = groupedItems.map(group => (
+    <Combobox.Group key={group.label} label={group.label}>
+      {group.values.map(item => (
+        <Combobox.Option
+          key={item.name}
+          value={item.name}
+          active={selectedValues.includes(item.name)}
+        >
+          <Grid align="center">
+            <Grid.Col span="content">
+              <Group gap="sm">
+                {selectedValues.includes(item.name) ? <CheckIcon size={12} /> : null}
+                <TagBadge {...item} />
+              </Group>
+            </Grid.Col>
+            <Grid.Col span="content">
+              <Text size="xs" c="dimmed">
+                {item.description}
+              </Text>
+            </Grid.Col>
+          </Grid>
+        </Combobox.Option>
+      ))}
+    </Combobox.Group>
+  ));
 
   return (
     <Combobox {...props} store={combobox} onOptionSubmit={handleValueSelect} offset={0}>
@@ -122,11 +135,15 @@ export const TagBadgeMultiSelect = ({
           label={label}
           onClick={() => combobox.toggleDropdown()}
           rightSection={
-            selectedValues && (
+            clearable &&
+            selectedValues.length > 0 && (
               <CloseButton
                 size="sm"
                 onMouseDown={event => event.preventDefault()}
-                onClick={() => setSelectedValues([])}
+                onClick={() => {
+                  setSelectedValues([]);
+                  onChange && onChange([]);
+                }}
                 aria-label="Clear value"
               />
             )
@@ -169,6 +186,24 @@ export const TagBadgeMultiSelect = ({
             <Combobox.Empty>Nothing found</Combobox.Empty>
           )}
         </Combobox.Options>
+        <Combobox.Footer p={0} ml={0} mr={4}>
+          <Group justify="space-between">
+            <Text fz="xs" c="dimmed">
+              Available: {groupedItems[0].values.length}, Selected:{' '}
+              {groupedItems[1].values.length}
+            </Text>
+            <Flex
+              align="center"
+              onClick={() => combobox.closeDropdown()}
+              style={{ cursor: 'pointer' }}
+            >
+              <Text fz="xs" c="dimmed">
+                Close
+              </Text>
+              <CloseButton size="sm" />
+            </Flex>
+          </Group>
+        </Combobox.Footer>
       </Combobox.Dropdown>
     </Combobox>
   );

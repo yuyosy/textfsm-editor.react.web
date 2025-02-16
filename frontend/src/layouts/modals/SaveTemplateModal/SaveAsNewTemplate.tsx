@@ -1,15 +1,6 @@
-import { TagBadge } from '@/components/TagBadege';
+import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
-import {
-  Button,
-  Grid,
-  Group,
-  MultiSelect,
-  MultiSelectProps,
-  Stack,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Button, Group, Stack, TextInput } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { TemplateInfo } from '../types';
 import { useSaveNewTemplate } from './hooks/useSaveNewTemplate';
@@ -49,22 +40,6 @@ export const SaveAsNewTemplate = ({
     close();
   };
 
-  const renderMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
-    const tag = tags[tags.findIndex(tag => tag.name === option.value)];
-    return (
-      <Grid align="center">
-        <Grid.Col span="content">
-          <TagBadge {...tag} />
-        </Grid.Col>
-        <Grid.Col span="content">
-          <Text size="xs" c="dimmed">
-            {tag.description}
-          </Text>
-        </Grid.Col>
-      </Grid>
-    );
-  };
-
   return (
     <Stack>
       <Stack p={8} gap={2}>
@@ -74,17 +49,12 @@ export const SaveAsNewTemplate = ({
           onChange={handleInputChange}
           error={isNameDuplicate ? 'Template name already exists' : null}
         />
-        <MultiSelect
-          data={tags.map(tag => ({ value: tag.name, label: tag.name }))}
+        <TagBadgeMultiSelect
           label="Select Tags"
-          placeholder="Select tags for the template"
+          selectItems={tags}
           onChange={handleTagChange}
-          renderOption={renderMultiSelectOption}
-          nothingFoundMessage="Nothing found..."
-          maxDropdownHeight={200}
-          searchable
+          defaultValue={templateProperties.tags}
           clearable
-          hidePickedOptions
         />
       </Stack>
       <Group justify="space-between" mt="lg">
