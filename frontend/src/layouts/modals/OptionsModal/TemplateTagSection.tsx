@@ -1,4 +1,6 @@
+import { TagBadge } from '@/components/TagBadege';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { colors } from '@/utils/colors';
 import {
   Accordion,
   Badge,
@@ -16,7 +18,6 @@ import { useAtom } from 'jotai';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { TemplateTag } from '../types';
-import { colors } from './colors';
 
 const getRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
@@ -160,9 +161,7 @@ export const TemplateTagSection = () => {
             <Accordion.Control>
               <Grid align="center">
                 <Grid.Col span="content">
-                  <Badge color={tag.color} variant="filled" tt="unset" autoContrast>
-                    {tag.name}
-                  </Badge>
+                  <TagBadge name={tag.name} color={tag.color} />
                 </Grid.Col>
                 <Grid.Col span="content">
                   <Text size="xs" c="dimmed">
@@ -196,7 +195,7 @@ export const TemplateTagSection = () => {
                     label="Background"
                     format="hex"
                     swatches={colors}
-                    swatchesPerRow={6}
+                    swatchesPerRow={8}
                     size="xs"
                     value={editingTag?.name === tag.name ? editingTagColor : tag.color}
                     onChange={setEditingTagColor}
