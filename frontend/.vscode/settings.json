@@ -1,5 +1,5 @@
 {
-  "editor.wordWrapColumn": 89,
+  // "editor.wordWrapColumn": 89,
   "[markdown]": {
     "editor.formatOnSave": false,
   },

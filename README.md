@@ -83,6 +83,12 @@ Open the `textfsm-editor.react.web.code-workspace` file with VSCode to open the 
   - Refer to the installation instructions for Docker Compose. [Getting Started with Docker Compose](#getting-started-with-docker-compose)
 
 
+### Notice
+
+This software loads Monaco Editor (Microsoft) from jsDelivr, an external CDN.
+- https://www.jsdelivr.com/package/npm/monaco-editor
+
+
 ### Getting Started with the Primitive Environment
 
 #### Prerequisites
@@ -175,12 +181,17 @@ docker compose build
 
 1. Start containers
 ```bash
-docker compose --profile dev up
+docker compose --profile dev up --build --watch
 ```
 
-#### Production
+#### Production (Experimental)
 
-TODO: 
+TODO:
+
+1. Start containers
+```bash
+docker compose --profile prod up --build
+```
 
 
 ## Contributing
@@ -197,12 +208,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 MIT License Copyright (c) 2023 yuyosy
 
-## Notice
-
-This project incorporates components from the project below.
-monaco-editor is distributed in Copyright (c) 2016 - present Microsoft Corporation (MIT License).
-
-- [monaco-editor](public/libs/monaco-editor) ([MIT License](public/libs/monaco-editor/LICENSE))
 
 ## References
 
