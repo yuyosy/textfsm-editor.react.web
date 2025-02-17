@@ -1,7 +1,7 @@
 # ==========================
-# Development stage
+# Base stage
 # ==========================
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS development
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS base
 
 # Install the project into `/app`
 WORKDIR /app
@@ -26,10 +26,36 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
+# ==========================
+# Development stage
+# ==========================
+FROM base AS development
+
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
 # Run the FastAPI application by default
 # --reload option that is useful during development
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+# ==========================
+# Production stage
+# ==========================
+FROM base AS production
+
+# Create necessary directories
+RUN mkdir -p /app/public/static
+
+# Copy static files
+COPY public/ntc-templates-info.json /app/public/
+
+# Install the project's dependencies without development dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
+
+# Reset the entrypoint, don't invoke `uv`
+ENTRYPOINT []
+
+# Run the FastAPI application by default
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 

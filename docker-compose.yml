@@ -11,9 +11,15 @@ services:
     environment:
       - VITE_API_ENTRYPOINT_DEV=${VITE_API_ENTRYPOINT_DEV:-http://localhost:8000}
     stdin_open: true
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules
     depends_on:
       - backend-dev
     profiles:
@@ -31,4 +37,37 @@ services:
       - ./backend/src:/app/src
     profiles:
       - dev
+
+  frontend-prod:
+    container_name: textfsm-editor-frontend-prod
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: build
+    volumes:
+      - build-output:/app/dist
+    profiles:
+      - prod
+
+  backend-prod:
+    container_name: textfsm-editor-backend-prod
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "${BACKEND_PORT_PROD:-8000}:8000"
+    environment:
+      - MODE=production
+      - PUBLIC_DIR=/app/public
+      - STATIC_DIR=/app/public/static
+    volumes:
+      - build-output:/app/public/static
+    depends_on:
+      - frontend-prod
+    profiles:
+      - prod
+
+volumes:
+  build-output:
 

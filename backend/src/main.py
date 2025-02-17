@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
+from logging import StreamHandler, getLogger
 from pathlib import Path
+from typing import Literal
 
 import ntc_templates
 from fastapi import APIRouter, FastAPI, HTTPException, status
@@ -18,8 +20,12 @@ from src.api_types import (
 )
 from src.parse import parse_text
 
-public_dir = Path(os.getenv("PUNLIC_DIR}", "./public"))
-static_files_dir = Path(os.getenv("STATIC_FILES_DIR", "./public/static"))
+mode = os.getenv("MODE", "development")
+# Define paths for static files
+public_dir = Path(os.getenv("PUBLIC_DIR", "./public"))
+static_dir = Path(os.getenv("STATIC_DIR", f"{public_dir}/static"))
+assets_dir = Path(os.getenv("ASSETS_DIR", f"{static_dir}/assets"))
+
 
 app = FastAPI()
 api = APIRouter(prefix="/api")
@@ -34,17 +40,27 @@ app.add_middleware(
 )
 
 
-if static_files_dir.joinpath("index.html").exists():
-    app.mount(
-        "/",
-        StaticFiles(directory=static_files_dir, html=True),
-        name="static",
-    )
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 
-@api.get("/")
-def hello_world():
-    return {"message": "OK", "datetime": datetime.now().isoformat()}
+@app.get("/", include_in_schema=False)
+async def root():
+    if mode == "development":
+        return {
+            "mode": mode,
+            "message": "This Path is the entry point in production mode.",
+            "datetime": datetime.now().isoformat(),
+        }
+
+    index_file = static_dir.joinpath("index.html")
+    if index_file.exists():
+        return FileResponse(index_file)
+    else:
+        JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"message": f"{static_dir.joinpath("index.html")} is not exist."},
+        )
 
 
 @api.post("/parse", response_model=TextFSMParseAPIResponse)
