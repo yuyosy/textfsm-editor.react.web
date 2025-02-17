@@ -7,6 +7,14 @@ import { version } from './package.json';
 export default defineConfig(({ mode }) => {
   // https://vite.dev/config/#using-environment-variables-in-config
   const env = loadEnv(mode, process.cwd());
+
+  // Experimental -->
+  //
+  // const useBundled =
+  //   env.VITE_USE_BUNDLED_MONACO === 'true' || env.VITE_USE_BUNDLED_MONACO === 'True';
+  //
+  // <-- Experimental
+
   return {
     root: 'src',
     plugins: [react()],
@@ -24,6 +32,16 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        // Experimental -->
+        //
+        // Dynamically set alias for the Monaco initialization module
+        // Bundling Monaco adds 15MB to the size
+        //
+        // '@/features/editor/initializeEditor': useBundled
+        //   ? resolve(__dirname, 'src/features/editor/initializeEditorBundledMonaco.ts')
+        //   : resolve(__dirname, 'src/features/editor/initializeEditor.ts'),
+        //
+        // <-- Experimental
         '@/': `${__dirname}/src/`,
       },
     },
