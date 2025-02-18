@@ -3,9 +3,11 @@ import { templateTagsAtom } from '@/features/state/storageAtoms';
 import { colors } from '@/utils/colors';
 import {
   Accordion,
+  ActionIcon,
   Badge,
   Button,
   ColorInput,
+  Divider,
   Flex,
   Grid,
   Group,
@@ -15,7 +17,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useAtom } from 'jotai';
-import { Plus } from 'lucide-react';
+import { ArrowDown, ArrowUp, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { TemplateTag } from '../types';
 
@@ -65,6 +67,19 @@ export const TemplateTagSection = () => {
   const deleteTag = (name: string) => {
     const updatedTags = tags.filter(tag => tag.name !== name);
     setTags(updatedTags);
+  };
+
+  const swapTag = (tag: TemplateTag, to: number) => {
+    const cloned = [...tags];
+    const from = cloned.findIndex(item => item.name === tag.name);
+    if (from < 0) {
+      return;
+    }
+    const fromItem = cloned[from];
+    const toItem = cloned[to];
+    cloned.splice(to, 1, fromItem);
+    cloned.splice(from, 1, toItem);
+    setTags(cloned);
   };
 
   const startEditing = (tag: TemplateTag) => {
@@ -156,7 +171,7 @@ export const TemplateTagSection = () => {
             </Stack>
           </Accordion.Panel>
         </Accordion.Item>
-        {tags.map(tag => (
+        {tags.map((tag, index) => (
           <Accordion.Item key={tag.name} value={tag.name}>
             <Accordion.Control>
               <Grid align="center">
@@ -201,37 +216,58 @@ export const TemplateTagSection = () => {
                     onChange={setEditingTagColor}
                   />
                 </SimpleGrid>
-                <Group gap="sm" justify="end">
-                  <Button
-                    size="compact-xs"
-                    variant="filled"
-                    color="red"
-                    onClick={() => deleteTag(tag.name)}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    size="compact-xs"
-                    variant="filled"
-                    color="gray"
-                    onClick={discardChanges}
-                  >
-                    Discard
-                  </Button>
-                  <Button
-                    size="compact-xs"
-                    variant="filled"
-                    onClick={() =>
-                      updateTag({
-                        ...tag,
-                        name: editingTagName,
-                        description: editingTagDescription,
-                        color: editingTagColor,
-                      })
-                    }
-                  >
-                    Save
-                  </Button>
+                <Group gap="sm" justify="space-between">
+                  <Flex justify="center" align="center" gap={4}>
+                    <ActionIcon
+                      variant="transparent"
+                      color="green"
+                      disabled={index === 0}
+                      onClick={() => swapTag(tag, index - 1)}
+                    >
+                      <ArrowUp size={18} />
+                    </ActionIcon>
+                    <ActionIcon
+                      variant="transparent"
+                      color="green"
+                      disabled={index === tags.length - 1}
+                      onClick={() => swapTag(tag, index + 1)}
+                    >
+                      <ArrowDown size={18} />
+                    </ActionIcon>
+                  </Flex>
+                  <Group>
+                    <Button
+                      size="compact-xs"
+                      variant="filled"
+                      color="red"
+                      onClick={() => deleteTag(tag.name)}
+                    >
+                      Delete
+                    </Button>
+                    <Divider orientation="vertical" />
+                    <Button
+                      size="compact-xs"
+                      variant="filled"
+                      color="gray"
+                      onClick={discardChanges}
+                    >
+                      Discard
+                    </Button>
+                    <Button
+                      size="compact-xs"
+                      variant="filled"
+                      onClick={() =>
+                        updateTag({
+                          ...tag,
+                          name: editingTagName,
+                          description: editingTagDescription,
+                          color: editingTagColor,
+                        })
+                      }
+                    >
+                      Save
+                    </Button>
+                  </Group>
                 </Group>
               </Stack>
             </Accordion.Panel>

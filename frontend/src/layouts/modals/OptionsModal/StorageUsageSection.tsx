@@ -74,8 +74,8 @@ export const StorageUsageSection = ({}: StorageUsageSectionProps) => {
       </Text>
       <Blockquote color="blue" icon={<Info size={14} />} iconSize={30} py={8} mx={8}>
         <Text size="xs">
-          The data entered into the data editor and template editor is stored in
-          SessionStorage and retained until the tab is closed.{' '}
+          Data entered in the Data Editor and Template Editor is stored in SessionStorage
+          and retained until the tab is closed.
         </Text>
         <Anchor
           href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"

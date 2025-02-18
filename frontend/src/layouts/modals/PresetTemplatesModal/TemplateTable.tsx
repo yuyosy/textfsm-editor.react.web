@@ -1,12 +1,18 @@
-import { Badge, Button, Group, Stack, Text } from '@mantine/core';
+import { Badge, Button, DefaultMantineColor, Group, Stack, Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
-import { SearchedTemplateInfo } from './types';
+import { MatchType, SearchedTemplateInfo } from './types';
 
 interface TemplateTableProps {
   templates: SearchedTemplateInfo[];
   loading: boolean;
   onSelectTemplate: (template: string) => void;
 }
+
+const badgeStyles: Record<MatchType, { color: DefaultMantineColor; label: string }> = {
+  regex: { color: 'green', label: 'Regex Match' },
+  fuzzy: { color: 'blue', label: 'Fuzzy Match' },
+  all: { color: 'gray', label: 'All' },
+};
 
 export const TemplateTable = ({
   templates,
@@ -46,15 +52,19 @@ export const TemplateTable = ({
                 >
                   {record.platform}
                 </Badge>
-                <Badge
-                  variant="dot"
-                  color={record.matchType === 'regex' ? 'green' : 'blue'}
-                  radius="sm"
-                  size="xs"
-                  tt="capitalize"
-                >
-                  {record.matchType === 'regex' ? 'Regex Match' : 'Fuzzy Match'}
-                </Badge>
+                {record.matchType === 'all' ? (
+                  ''
+                ) : (
+                  <Badge
+                    variant="dot"
+                    color={badgeStyles[record.matchType].color}
+                    radius="sm"
+                    size="xs"
+                    tt="capitalize"
+                  >
+                    {badgeStyles[record.matchType].label}
+                  </Badge>
+                )}
               </Group>
             </Stack>
           ),

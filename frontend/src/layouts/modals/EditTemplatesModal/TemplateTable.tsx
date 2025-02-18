@@ -1,6 +1,15 @@
 import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
-import { ActionIcon, Flex, Group, Popover, Text, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  CloseButton,
+  Flex,
+  Group,
+  Popover,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Tags, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
@@ -26,23 +35,37 @@ const TagEditorPopover = ({
   updateTemplateTags: (index: number, tags: string[]) => void;
 }) => {
   const [tags] = useAtom(templateTagsAtom);
+  const [opened, handlers] = useDisclosure(false);
 
   const handleTagChange = (index: number, selectedTags: string[]) => {
     updateTemplateTags(index, selectedTags);
   };
 
   return (
-    <Popover width={400} position="bottom" withArrow shadow="md" arrowSize={16}>
+    <Popover
+      opened={opened}
+      width={400}
+      position="bottom"
+      withArrow
+      shadow="md"
+      arrowSize={16}
+      offset={12}
+      onChange={handlers.toggle}
+    >
       <Popover.Target>
         <Group>
-          <ActionIcon variant="light" color="green" size="sm">
+          <ActionIcon onClick={handlers.toggle} variant="light" color="green" size="sm">
             <Tags size={16} />
           </ActionIcon>
         </Group>
       </Popover.Target>
-      <Popover.Dropdown>
+      <Popover.Dropdown p={12} pt={8}>
+        <Group justify="space-between">
+          <Text>Edit tags</Text>
+          <CloseButton onClick={handlers.close} />
+        </Group>
         <TagBadgeMultiSelect
-          label={`Tags (${record.tags ? record.tags.length : 0})`}
+          label={`Selected: ${record.tags ? record.tags.length : 0}`}
           selectItems={tags}
           onChange={selectedTags => handleTagChange(index, selectedTags)}
           defaultValue={record.tags}

@@ -1,5 +1,7 @@
 import { MutableRefObject } from 'react';
 
+export type MatchType = 'all' | 'regex' | 'fuzzy';
+
 export interface NtcTemplateInfo {
   template: string;
   hostname: string;
@@ -14,7 +16,7 @@ export interface NtcTemplateIndex {
 }
 
 export interface SearchedTemplateInfo extends NtcTemplateInfo {
-  matchType: 'regex' | 'fuzzy';
+  matchType: MatchType;
 }
 
 export interface PlatformTemplatesDict {

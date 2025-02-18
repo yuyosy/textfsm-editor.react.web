@@ -121,10 +121,10 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             isAndCondition={isAndCondition}
             isFuzzyEnabled={isFuzzyEnabled}
             selectedPlatform={selectedPlatform}
-            onSearchParamsChange={handleSearchParamsChange}
-            onPlatformChange={handlePlatformChange}
-            onAndConditionChange={handleAndConditionChange}
-            onFuzzyEnabledChange={handleFuzzyEnabledChange}
+            handleSearchParamsChange={handleSearchParamsChange}
+            handlePlatformChange={handlePlatformChange}
+            handleAndConditionChange={handleAndConditionChange}
+            handleFuzzyEnabledChange={handleFuzzyEnabledChange}
           />
           <TemplateTable
             templates={selectedRecords}

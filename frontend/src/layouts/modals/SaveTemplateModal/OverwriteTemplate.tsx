@@ -86,6 +86,7 @@ export const OverwriteTemplate = ({
             {
               accessor: 'action',
               title: 'Action',
+              width: 80,
               render: record => (
                 <Button
                   variant="default"

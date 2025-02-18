@@ -38,7 +38,10 @@ export const getRegexFilteredTemplates = (
         ? conditions.every(value => value === true)
         : conditions.some(value => value === true);
     })
-    .map(item => ({ ...item, matchType: 'regex' }));
+    .map(item => ({
+      ...item,
+      matchType: searchParams.command === '' ? 'all' : 'regex',
+    }));
 };
 
 // Function to filter templates based on fuzzy search

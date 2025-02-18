@@ -1,4 +1,5 @@
 import {
+  CloseButton,
   Code,
   Divider,
   Group,
@@ -19,10 +20,10 @@ interface SearchFormProps {
   isAndCondition: boolean;
   isFuzzyEnabled: boolean;
   selectedPlatform: string | null;
-  onSearchParamsChange: (field: keyof SearchParams, value: string) => void;
-  onPlatformChange: (platform: string | null) => void;
-  onAndConditionChange: (value: boolean) => void;
-  onFuzzyEnabledChange: (value: boolean) => void;
+  handleSearchParamsChange: (field: keyof SearchParams, value: string) => void;
+  handlePlatformChange: (platform: string | null) => void;
+  handleAndConditionChange: (value: boolean) => void;
+  handleFuzzyEnabledChange: (value: boolean) => void;
 }
 
 export const SearchForm = ({
@@ -31,10 +32,10 @@ export const SearchForm = ({
   isAndCondition,
   isFuzzyEnabled,
   selectedPlatform,
-  onSearchParamsChange,
-  onPlatformChange,
-  onAndConditionChange,
-  onFuzzyEnabledChange,
+  handleSearchParamsChange,
+  handlePlatformChange,
+  handleAndConditionChange,
+  handleFuzzyEnabledChange,
 }: SearchFormProps) => {
   const { platformPriorities } = usePlatformPriority();
 
@@ -68,7 +69,7 @@ export const SearchForm = ({
           })),
         }))}
         value={selectedPlatform}
-        onChange={onPlatformChange}
+        onChange={handlePlatformChange}
         clearable
         searchable
       />
@@ -77,26 +78,38 @@ export const SearchForm = ({
         label="Template Name"
         placeholder="Search by template name"
         value={searchParams.template}
-        onChange={e => onSearchParamsChange('template', e.target.value)}
+        onChange={e => handleSearchParamsChange('template', e.target.value)}
+        rightSection={
+          <CloseButton
+            size="sm"
+            onClick={() => handleSearchParamsChange('template', '')}
+          />
+        }
       />
       <TextInput
         label="Command"
         placeholder="Search by command"
         value={searchParams.command}
-        onChange={e => onSearchParamsChange('command', e.target.value)}
+        onChange={e => handleSearchParamsChange('command', e.target.value)}
+        rightSection={
+          <CloseButton
+            size="sm"
+            onClick={() => handleSearchParamsChange('command', '')}
+          />
+        }
       />
       <Group>
         <Switch
           size="xs"
           label="Use AND condition for filters"
           checked={isAndCondition}
-          onChange={e => onAndConditionChange(e.currentTarget.checked)}
+          onChange={e => handleAndConditionChange(e.currentTarget.checked)}
         />
         <Switch
           size="xs"
           label="Enable Fuzzy Match"
           checked={isFuzzyEnabled}
-          onChange={e => onFuzzyEnabledChange(e.currentTarget.checked)}
+          onChange={e => handleFuzzyEnabledChange(e.currentTarget.checked)}
         />{' '}
         <HoverCard width={280} shadow="md">
           <HoverCard.Target>
