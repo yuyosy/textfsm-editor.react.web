@@ -64,21 +64,32 @@ export const TagBadgeMultiSelect = ({
     onChange && onChange(newSelectedValues);
   };
 
-  const selectedValueNodes = selectedValues.map(item => (
-    <TagBadge key={item} color={findItem(item).color} p={8} mt={2} autoContrast>
-      <Flex align="center" wrap="nowrap">
-        {item}
-        <CloseButton
-          onMouseDown={() => handleValueRemove(item)}
-          variant="transparent"
-          color="gray"
-          size={22}
-          iconSize={14}
-          tabIndex={-1}
-        />
-      </Flex>
-    </TagBadge>
-  ));
+  const selectedValueNodes = selectedValues.map(item => {
+    const tag = findItem(item);
+    return (
+      <TagBadge
+        key={item}
+        color={tag ? tag.color : ''}
+        p={8}
+        mt={2}
+        variant={tag ? 'filled' : 'default'}
+        style={tag ? {} : { border: 'dashed 1px #666' }}
+        autoContrast
+      >
+        <Flex align="center" wrap="nowrap">
+          {item}
+          <CloseButton
+            onMouseDown={() => handleValueRemove(item)}
+            variant="transparent"
+            color="gray"
+            size={22}
+            iconSize={14}
+            tabIndex={-1}
+          />
+        </Flex>
+      </TagBadge>
+    );
+  });
 
   const groupSelectItems = (items: TemplateTag[], selectedValues: string[]) => {
     return items

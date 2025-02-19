@@ -74,7 +74,18 @@ export const OverwriteTemplate = ({
                     <Group gap={4}>
                       {record.tags.map(tagName => {
                         const tag = tags[tags.findIndex(tag => tag.name === tagName)];
-                        return <TagBadge key={tag.name} {...tag} size="sm" />;
+                        return tag ? (
+                          <TagBadge key={tagName} size="sm" {...tag} />
+                        ) : (
+                          <TagBadge
+                            key={tagName}
+                            size="sm"
+                            variant="default"
+                            style={tag ? {} : { border: 'dashed 1px #666' }}
+                          >
+                            {tagName}
+                          </TagBadge>
+                        );
                       })}
                     </Group>
                   ) : (
