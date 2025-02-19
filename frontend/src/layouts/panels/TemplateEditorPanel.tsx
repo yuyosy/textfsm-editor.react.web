@@ -10,6 +10,8 @@ import { responseStateAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 
 import { FileDownloadButton } from '@/components/FileDownloadButton';
+import { editorTemplateText } from '@/features/fileNames';
+import { getCurrentDateTimeString } from '@/utils/datetime';
 import { TemplateEditor } from './TemplateEditor';
 
 const ResponseState = () => {
@@ -20,7 +22,10 @@ const ResponseState = () => {
 const DownloadButton = () => {
   const value = useAtomValue(templateEditorValueAtom);
   return (
-    <FileDownloadButton content={value} filename="textfsm-editor-template.textfsm" />
+    <FileDownloadButton
+      content={value}
+      filename={getCurrentDateTimeString(editorTemplateText)}
+    />
   );
 };
 

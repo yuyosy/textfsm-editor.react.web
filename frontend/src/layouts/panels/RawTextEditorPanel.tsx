@@ -8,11 +8,18 @@ import { CopyValueButton } from '@/components/CopyValueButton';
 import { rawTextEditorValueAtom } from '@/features/state/storageAtoms';
 
 import { FileDownloadButton } from '@/components/FileDownloadButton';
+import { editorDataText } from '@/features/fileNames';
+import { getCurrentDateTimeString } from '@/utils/datetime';
 import { RawTextEditor } from './RawTextEditor';
 
 const DownloadButton = () => {
   const value = useAtomValue(rawTextEditorValueAtom);
-  return <FileDownloadButton content={value} filename="textfsm-editor-data.txt" />;
+  return (
+    <FileDownloadButton
+      content={value}
+      filename={getCurrentDateTimeString(editorDataText)}
+    />
+  );
 };
 
 const CopyButton = () => {

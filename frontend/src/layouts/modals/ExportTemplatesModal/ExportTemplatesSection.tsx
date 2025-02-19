@@ -1,3 +1,4 @@
+import { exportedTemplatesJSON } from '@/features/fileNames';
 import { addNotificationAtom } from '@/features/state/atoms';
 import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 import { useFileSave } from '@/hooks/useFileSave';
@@ -14,7 +15,7 @@ export const ExportTemplatesSection = ({
 }: ExportTemplatesSectionProps) => {
   const addNotification = useSetAtom(addNotificationAtom);
   const [defaultExportFileName, setDefaultExportFileName] = useState(
-    getCurrentDateTimeString('textfsm-editor_exported-templates_yyyymmdd-hhmmss.json')
+    getCurrentDateTimeString(exportedTemplatesJSON)
   );
   const textInputRef = useRef<HTMLInputElement>(null);
   const savedTemplates = useAtomValue(savedTemplateListAtom);

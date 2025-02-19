@@ -9,9 +9,11 @@ import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { resultViewValueAtom } from '@/features/state/atoms';
-import { Result } from '@/features/types';
 
 import { FileDownloadButton } from '@/components/FileDownloadButton';
+import { resultJSON, resultTSV } from '@/features/fileNames';
+import { useDataDeliver } from '@/hooks/useDataDeliver';
+import { getCurrentDateTimeString } from '@/utils/datetime';
 import '@mantine/code-highlight/styles.css';
 import 'mantine-datatable/styles.layer.css';
 
@@ -21,42 +23,11 @@ interface ResultViewPanelProps {
 }
 export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelProps) => {
   const resultViewValue = useAtomValue(resultViewValueAtom);
-  // const [resultHeaders, setResultHeaders] = useListState<string>([]);
-  // const [resultData, setResultData] = useListState<any>([]);
 
-  const tsvDataDeliver = (): string => {
-    const header = getHeader();
-    const results = getResults();
-    if (header && results) {
-      const headerString = header.join('\t');
-      const rowsString = results
-        .map(row =>
-          header
-            .map(key => {
-              const value = row[key] ?? '';
-              return String(value).replace(/\t/g, ' ');
-            })
-            .join('\t')
-        )
-        .join('\n');
+  const header = resultViewValue?.data?.header || [];
+  const results = resultViewValue?.data?.results || [];
 
-      return `${headerString}\n${rowsString}`;
-    }
-    return '';
-  };
-
-  const jsonDataDeliver = (): string => {
-    return JSON.stringify(getResults(), null, '  ');
-  };
-
-  const getHeader = (): string[] =>
-    resultViewValue && resultViewValue.data && resultViewValue.data.header
-      ? resultViewValue.data.header
-      : [];
-  const getResults = (): Result[] =>
-    resultViewValue && resultViewValue.data && resultViewValue.data.results
-      ? resultViewValue.data.results
-      : [];
+  const { tsvDataDeliver, jsonDataDeliver } = useDataDeliver({ header, results });
 
   return (
     <Panel
@@ -91,22 +62,18 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
               <Group>
                 <FileDownloadButton
                   content={tsvDataDeliver()}
-                  filename="textfsm-editor-result.tsv"
+                  filename={getCurrentDateTimeString(resultTSV)}
                 />
-                <CopyValueButton value={tsvDataDeliver()}></CopyValueButton>
+                <CopyValueButton value={tsvDataDeliver()} />
               </Group>
             </Group>
             <DataTable
-              columns={getHeader().map(value => {
-                return { accessor: value };
-              })}
-              records={getResults().map((item, index) => {
-                const entries = Object.entries(item).map(([key, val]) => {
-                  if (Array.isArray(val)) {
-                    return [key, val.join(', ')];
-                  }
-                  return [key, val];
-                });
+              columns={header.map(value => ({ accessor: value }))}
+              records={results.map((item, index) => {
+                const entries = Object.entries(item).map(([key, val]) => [
+                  key,
+                  Array.isArray(val) ? val.join(', ') : val,
+                ]);
                 entries.push(['$index', index]);
                 return Object.fromEntries(entries);
               })}
@@ -124,14 +91,14 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
               <Group>
                 <FileDownloadButton
                   content={jsonDataDeliver()}
-                  filename="textfsm-editor-result.json"
+                  filename={getCurrentDateTimeString(resultJSON)}
                 />
-                <CopyValueButton value={jsonDataDeliver()}></CopyValueButton>
+                <CopyValueButton value={jsonDataDeliver()} />
               </Group>
             </Group>
             <ScrollArea h="100%">
               <CodeHighlight
-                code={JSON.stringify(getResults(), null, '  ')}
+                code={jsonDataDeliver()}
                 language="json"
                 h="100%"
                 withCopyButton={false}
