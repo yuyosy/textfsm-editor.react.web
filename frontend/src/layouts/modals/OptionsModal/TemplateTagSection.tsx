@@ -29,14 +29,14 @@ export const TemplateTagSection = () => {
   const [tags, setTags] = useAtom(templateTagsAtom);
   const [newTagName, setNewTagName] = useState('');
   const [newTagDescription, setNewTagDescription] = useState('');
-  const [newTagColor, setNewTagColor] = useState(colors[0]);
+  const [newTagColor, setNewTagColor] = useState(getRandomColor());
   const [accordionSection, setAccordionSection] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [editingTag, setEditingTag] = useState<TemplateTag | null>(null);
   const [originalTag, setOriginalTag] = useState<TemplateTag | null>(null);
   const [editingTagName, setEditingTagName] = useState('');
   const [editingTagDescription, setEditingTagDescription] = useState('');
-  const [editingTagColor, setEditingTagColor] = useState(colors[0]);
+  const [editingTagColor, setEditingTagColor] = useState(getRandomColor());
 
   const addTag = () => {
     if (tags.some(tag => tag.name === newTagName)) {
@@ -87,14 +87,14 @@ export const TemplateTagSection = () => {
     setOriginalTag(tag);
     setEditingTagName(tag.name);
     setEditingTagDescription(tag.description || '');
-    setEditingTagColor(tag.color || colors[0]);
+    setEditingTagColor(tag.color || getRandomColor());
   };
 
   const discardChanges = () => {
     if (originalTag) {
       setEditingTagName(originalTag.name);
       setEditingTagDescription(originalTag.description || '');
-      setEditingTagColor(originalTag.color || colors[0]);
+      setEditingTagColor(originalTag.color || getRandomColor());
     }
     resetEditingState();
   };

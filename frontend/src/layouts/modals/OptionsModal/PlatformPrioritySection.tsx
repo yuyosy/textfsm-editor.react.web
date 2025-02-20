@@ -6,6 +6,12 @@ import { usePlatformPriority } from '../PresetTemplatesModal/hooks/usePlatformPr
 
 interface PlatformPrioritySectionProps {}
 
+export const normalize = (str: string): string =>
+  str
+    .replace(/[^\w\s]|_/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
 export const PlatformPrioritySection = ({}: PlatformPrioritySectionProps) => {
   const { platformPriorities, setPlatformPriority, removePlatformPriority } =
     usePlatformPriority();
@@ -29,11 +35,15 @@ export const PlatformPrioritySection = ({}: PlatformPrioritySectionProps) => {
         same priority, it will be in ascending order.
       </Text>
       <DataTable
-        height={300}
+        height={320}
         idAccessor="platform"
         records={platforms}
         columns={[
-          { accessor: 'platform', title: 'Platform' },
+          {
+            accessor: 'platform',
+            title: 'Platform',
+            render: record => normalize(record.platform),
+          },
           {
             accessor: 'priority',
             title: 'Priority',

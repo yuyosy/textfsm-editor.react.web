@@ -13,6 +13,7 @@ import {
 import { CircleHelp } from 'lucide-react';
 import { usePlatformPriority } from './hooks/usePlatformPriority';
 import { SearchParams } from './types';
+import { normalize } from './utils';
 
 interface SearchFormProps {
   templates: { [platform: string]: any[] };
@@ -65,11 +66,12 @@ export const SearchForm = ({
           group: `Priority ${priority}`,
           items: groupedPlatforms[priority].map(platform => ({
             value: platform,
-            label: platform,
+            label: normalize(platform),
           })),
         }))}
         value={selectedPlatform}
         onChange={handlePlatformChange}
+        comboboxProps={{ shadow: 'lg' }}
         clearable
         searchable
       />

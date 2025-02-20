@@ -22,7 +22,7 @@ export const PanelSelector = ({
   return (
     <SegmentedControl
       size="xs"
-      color="blue"
+      color="var(--mantine-primary-color-filled)"
       value={mainPanelLyout}
       onChange={value => {
         if (value === 'both') {

@@ -1,6 +1,7 @@
 import { Badge, Button, DefaultMantineColor, Group, Stack, Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { MatchType, SearchedTemplateInfo } from './types';
+import { normalize } from './utils';
 
 interface TemplateTableProps {
   templates: SearchedTemplateInfo[];
@@ -43,14 +44,8 @@ export const TemplateTable = ({
                 {record.command_raw}
               </Text>
               <Group gap={8}>
-                <Badge
-                  variant="default"
-                  color="blue"
-                  radius="sm"
-                  size="xs"
-                  tt="capitalize"
-                >
-                  {record.platform}
+                <Badge variant="default" color="blue.5" radius="sm" size="xs" tt="unset">
+                  {normalize(record.platform)}
                 </Badge>
                 {record.matchType === 'all' ? (
                   ''
