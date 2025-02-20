@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
@@ -52,6 +53,12 @@ export default defineConfig(({ mode }) => {
           ? env.VITE_API_ENTRYPOINT_PROD || '/'
           : env.VITE_API_ENTRYPOINT_DEV || 'http://localhost:8000'
       ),
+    },
+    test: {
+      dir: 'tests',
+      exclude: ['**/*.local*'],
+      reporters: ['json', 'default'],
+      outputFile: '../.coverage/test-output.json',
     },
   };
 });
