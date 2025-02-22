@@ -1,6 +1,6 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 export type ModalContentProps = {
   close: () => void;
-  focusRef: MutableRefObject<HTMLDivElement>;
+  focusRef: RefObject<HTMLDivElement>;
 };

@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 export interface ExportTemplates {
   selectedTemplateNames: string[];
@@ -9,7 +9,7 @@ export interface ExportTemplates {
 
 export type ModalContentProps = {
   close: () => void;
-  focusRef: MutableRefObject<HTMLDivElement>;
+  focusRef: RefObject<HTMLDivElement>;
 };
 
 export type SelectTemplatesSectionProps = {

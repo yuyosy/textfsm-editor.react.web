@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 
 export type ChangesState = {
   orderChanged: boolean;
@@ -9,5 +9,5 @@ export type ChangesState = {
 
 export type ModalContentProps = {
   close: () => void;
-  focusRef: MutableRefObject<HTMLDivElement>;
+  focusRef: RefObject<HTMLDivElement>;
 };

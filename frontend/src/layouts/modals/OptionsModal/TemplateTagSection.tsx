@@ -17,7 +17,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useAtom } from 'jotai';
-import { ArrowDown, ArrowUp, Plus } from 'lucide-react';
+import { ArrowDown, ArrowUp, Plus, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { TemplateTag } from '../types';
 
@@ -151,8 +151,18 @@ export const TemplateTagSection = () => {
                   swatches={colors}
                   swatchesPerRow={8}
                   size="xs"
+                  withEyeDropper={true}
                   value={newTagColor}
                   onChange={setNewTagColor}
+                  rightSection={
+                    <ActionIcon
+                      variant="transparent"
+                      color="gray"
+                      onClick={() => setNewTagColor(getRandomColor())}
+                    >
+                      <RefreshCw size={16} />
+                    </ActionIcon>
+                  }
                 />
                 <Flex align="center" pt={24}>
                   <Badge color={newTagColor} variant="filled" tt="unset" autoContrast>
