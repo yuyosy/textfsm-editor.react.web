@@ -21,7 +21,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [availableTemplates, setAvailableTemplates] = useState<string[]>([]);
   const [processedJsonData, setProcessedJsonData] = useState<LoadedJsonData[]>([]);
-  const openRef = useRef<() => void>(null);
+  const openRef = useRef<() => void>(() => {});
 
   const initialRightData: string[] = [];
 
