@@ -14,8 +14,6 @@ import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { resultJSON, resultTSV } from '@/features/fileNames';
 import { useDataDeliver } from '@/hooks/useDataDeliver';
 import { getCurrentDateTimeString } from '@/utils/datetime';
-import '@mantine/code-highlight/styles.css';
-import 'mantine-datatable/styles.layer.css';
 
 interface ResultViewPanelProps {
   panelRef: RefObject<ImperativePanelHandle>;
