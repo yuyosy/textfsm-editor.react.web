@@ -154,7 +154,7 @@ export const useAutoRequest = () => {
     }
 
     timeoutRef.current = setTimeout(() => {
-      sendRequest(false);
+      sendRequest(true);
       timeoutRef.current = null;
     }, readParseRequestDelay());
 
