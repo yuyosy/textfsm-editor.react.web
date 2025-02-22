@@ -12,6 +12,7 @@ from src.api_types import (
     TextFSMParseAPIResponse,
     TextFSMParseInput,
 )
+from src.myLogger import myLogger
 from src.parse import parse_text
 
 router = APIRouter()
@@ -36,7 +37,8 @@ async def parse(request: TextFSMParseAPIRequest):
                 data_string=request.data.data_string,
             )
         )
-    except Exception:
+    except Exception as err:
+        myLogger.error(f"Error parsing text: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",
@@ -76,7 +78,8 @@ async def get_ntc_templates():
             public_dir.joinpath("ntc-templates-info.json"),
             media_type="application/json",
         )
-    except Exception:
+    except Exception as err:
+        myLogger.error(f"Error getting NTC templates: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",
@@ -106,7 +109,8 @@ async def get_ntc_template(template_name: str):
             template_path,
             media_type="text/plain",
         )
-    except Exception:
+    except Exception as err:
+        myLogger.error(f"Error getting NTC template: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",
