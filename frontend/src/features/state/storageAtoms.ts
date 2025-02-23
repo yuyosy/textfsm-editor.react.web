@@ -2,6 +2,7 @@ import { atomWithStorage } from 'jotai/utils';
 
 import { PlatformPriority, TemplateInfo, TemplateTag } from '@/layouts/modals/types';
 
+import { HistoryAutoSaveItem } from '@/types';
 import { localStorage, sessionStorage } from './syncStorage';
 
 export const savedTemplateListAtom = atomWithStorage<TemplateInfo[]>(
@@ -66,3 +67,26 @@ export const templateTagsAtom = atomWithStorage<TemplateTag[]>(
     getOnInit: true,
   }
 );
+
+export const historyAutoSaveEnabledAtom = atomWithStorage<boolean>(
+  'options-history-auto-save-enabled',
+  true,
+  localStorage(),
+  { getOnInit: true }
+);
+
+export const historyAutoSaveCountAtom = atomWithStorage<number>(
+  'options-history-auto-save-count',
+  5,
+  localStorage(),
+  { getOnInit: true }
+);
+
+export const historyAutoSaveItemsAtom = atomWithStorage<HistoryAutoSaveItem[]>(
+  'options-history-auto-save-items',
+  [],
+  localStorage(),
+  { getOnInit: true }
+);
+
+// Removed history auto-save action atoms, they are extracted to historyAutoSaveActions.ts

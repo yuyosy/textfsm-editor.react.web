@@ -7,6 +7,7 @@ import {
   createErrorResultItem,
   sendTextFSMParseRequest,
 } from '@/features/request/sendTextFSMParseRequest';
+import { historyAutoSaveHandler } from '@/features/state/actionAtoms';
 import {
   addNotificationAtom,
   responseStateAtom,
@@ -39,6 +40,7 @@ export const useSendRequest = () => {
   const setResponseState = useSetAtom(responseStateAtom);
   const setResultViewValue = useSetAtom(resultViewValueAtom);
   const addNotification = useSetAtom(addNotificationAtom);
+  const autoSaveHandler = useSetAtom(historyAutoSaveHandler);
 
   const sendRequest = async (immediate = false) => {
     const template = readTemplate();
@@ -72,6 +74,12 @@ export const useSendRequest = () => {
             results: response.data.results,
           },
         });
+        autoSaveHandler({
+          template: template,
+          data: readRawText(),
+          result: JSON.stringify(response.data.results, null, 2),
+          status: 'success',
+        });
       } else if (!response.ok && response.errors) {
         addNotification({
           type: 'error',
@@ -80,6 +88,12 @@ export const useSendRequest = () => {
           metadata: {
             errors: response.errors,
           },
+        });
+        autoSaveHandler({
+          template: template,
+          data: readRawText(),
+          result: '',
+          status: 'error',
         });
       }
     } catch (error) {

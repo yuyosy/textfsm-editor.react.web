@@ -26,6 +26,7 @@ export type ModalId =
   | 'edit-templates'
   | 'import-templates'
   | 'export-templates'
+  | 'history'
   | 'options'
   | 'about-info';
 

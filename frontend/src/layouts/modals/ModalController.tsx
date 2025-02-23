@@ -7,6 +7,7 @@ import { controlModalAtom } from '@/features/state/atoms';
 import { AboutInfoModalContent } from './AboutInfoModal/ModalContent';
 import { EditTemplatesModalContent } from './EditTemplatesModal/ModalContent';
 import { ExportTemplatesModalContent } from './ExportTemplatesModal/ModalContent';
+import { HistoryModalContent } from './HistoryModal/ModalContent';
 import { ImportTemplatesModalContent } from './ImportTemplatesModal/ModalContent';
 import { LoadTemplateModalContent } from './LoadTemplateModal/ModalContent';
 import { OptionsModalContent } from './OptionsModal/ModalContent';
@@ -43,6 +44,9 @@ export const ModalController = () => {
       )}
       {controlModal.opened && controlModal.type === 'export-templates' && (
         <ExportTemplatesModalContent focusRef={focusRef} close={close} />
+      )}
+      {controlModal.opened && controlModal.type === 'history' && (
+        <HistoryModalContent focusRef={focusRef} close={close} />
       )}
       {controlModal.opened && controlModal.type === 'options' && (
         <OptionsModalContent focusRef={focusRef} close={close} />

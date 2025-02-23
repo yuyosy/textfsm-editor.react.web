@@ -1,12 +1,13 @@
 import { Button, Group, Modal, ScrollArea, Stack, Tabs } from '@mantine/core';
-import { Package, PencilLine, PencilRuler, Tags } from 'lucide-react';
+import { FileClock, Package, PencilLine, PencilRuler, Tags } from 'lucide-react';
+import { HistoryAutoSaveSection } from './HistoryAutoSaveSection';
 import { ParseDelaySection } from './ParseDelaySection';
 import { PlatformPrioritySection } from './PlatformPrioritySection';
 import { StorageUsageSection } from './StorageUsageSection';
 import { TemplateTagSection } from './TemplateTagSection';
 import { ModalContentProps } from './types';
 
-export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
+export const OptionsModalContent = ({ focusRef, close }: ModalContentProps) => {
   return (
     <Modal.Content>
       <Modal.Header>
@@ -41,6 +42,13 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
                 Presets
               </Tabs.Tab>
               <Tabs.Tab
+                value="history"
+                p={8}
+                leftSection={<FileClock size={20} strokeWidth={1.5} />}
+              >
+                History
+              </Tabs.Tab>
+              <Tabs.Tab
                 value="general"
                 p={8}
                 leftSection={<PencilRuler size={20} strokeWidth={1.5} />}
@@ -57,6 +65,9 @@ export const OptionsModalContent = ({ close, focusRef }: ModalContentProps) => {
               </Tabs.Panel>
               <Tabs.Panel value="presets" py={8}>
                 <PlatformPrioritySection />
+              </Tabs.Panel>
+              <Tabs.Panel value="history" py={8}>
+                <HistoryAutoSaveSection />
               </Tabs.Panel>
               <Tabs.Panel value="general" py={8}>
                 <StorageUsageSection />

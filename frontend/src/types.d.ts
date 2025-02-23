@@ -22,6 +22,15 @@ interface Timestamp {
 
 export interface ResultItem extends TextFSMParseAPIResponse, Timestamp {}
 
+export interface HistoryAutoSaveItem {
+  timestamp: string;
+  template: string;
+  data: string;
+  result: string;
+  status: StatusBadgeVariant;
+}
+export type HistoryAutoSaveItemInfo = Omit<HistoryAutoSaveItem, 'timestamp'>;
+
 export type NotificationType = 'api' | 'info' | 'success' | 'warning' | 'error';
 
 export interface Notification {

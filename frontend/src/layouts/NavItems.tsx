@@ -1,5 +1,6 @@
 import {
   Edit,
+  FileClock,
   Info,
   Package,
   PlaneLanding,
@@ -43,6 +44,11 @@ export const navItems: NavItem[] = [
     id: 'export-templates',
     label: 'Export Templates',
     icon: <PlaneTakeoff size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
+  },
+  {
+    id: 'history',
+    label: 'History',
+    icon: <FileClock size={24} strokeWidth={1.5} color="var(--mantine-color-text)" />,
   },
   {
     id: 'options',
