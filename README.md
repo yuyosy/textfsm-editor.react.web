@@ -6,7 +6,7 @@ A web-based editor for TextFSM templates with real-time parsing capabilities. Th
 
 > ! This documentation is a work in progress. It may be incomplete or inaccurate.
 
-![screenshot1](pictures/screenshot1.png)
+![screenshot1](pictures/editor.png)
 
 ## Features
 
@@ -31,9 +31,13 @@ A web-based editor for TextFSM templates with real-time parsing capabilities. Th
 - 🔍 Multiple Data View Options
   - Table view for structured data representation
   - JSON view for programmatic access
+- 🕰️ Parsing history
+  - The values of Data, Template, and Result are temporarily stored in LocalStorage
 
 ### Template Management
-
+- 🗃️ Presets
+  - Load template from NTC Templates
+  - Template search using regular expressions, fuzzy search
 - 🗂️ Template Management
   - Save templates to LocalStorage
   - Load existing templates
@@ -42,17 +46,19 @@ A web-based editor for TextFSM templates with real-time parsing capabilities. Th
   - Export templates to files
 
 Interface theme
-![interface theme](pictures/features_theme.png)
+![interface theme](pictures/editor-theme.png)
 
 Word suggestion and syntax highlighting
-![Word suggestion and code highlight](pictures/features_editor.png)
+![Word suggestion and code highlight](pictures/feature-highlight-suggetion.png)
 
 Table display of parsed data
-![Table display of parsed data](pictures/features_view_table.png)
+![Table display of parsed data](pictures/feature-result-table-view.png)
 
 JSON display of parsed data
-![JSON display of parsed data](pictures/features_view_json.png)
+![JSON display of parsed data](pictures/feature-result-json-view.png)
 
+Editor's useful features
+![Editor features](pictures/editor-features.png)
 
 ## Project Structure
 
