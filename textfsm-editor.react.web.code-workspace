@@ -15,7 +15,6 @@
 	],
 	"settings": {
 		"editor.tabSize": 2,
-		"editor.wordWrap": "bounded",
 		"files.insertFinalNewline": true,
 	}
 }

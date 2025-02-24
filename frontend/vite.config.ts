@@ -54,6 +54,16 @@ export default defineConfig(({ mode }) => {
           : env.VITE_API_ENTRYPOINT_DEV || 'http://localhost:8000'
       ),
     },
+    // Using Vite on WSL2
+    // refer to https://vite.dev/config/server-options
+    //  uncomment the following lines to enable polling
+    // server: {
+    //   watch: {
+    //     usePolling: true,
+    //     interval: 1200, // default 100
+    //     binaryInterval: 3600, // default 300
+    //   },
+    // },
     test: {
       dir: 'tests',
       exclude: ['**/*.local*'],
