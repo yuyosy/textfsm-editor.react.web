@@ -5,6 +5,7 @@ import { Send } from 'lucide-react';
 
 import { useSendRequest } from '@/hooks/useSendRequest';
 
+import { addNotificationAtom } from '@/features/state/atoms';
 import { autoRequestEnabledAtom } from '@/features/state/storageAtoms';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { PanelSelector } from './PanelSelector';
@@ -49,9 +50,13 @@ export const AppMainToolBar = ({
   const editorAutoRequest = useAtomValue(autoRequestEnabledAtom);
   const setEditorAutoRequest = useSetAtom(autoRequestEnabledAtom);
   const sendRequest = useSendRequest();
+  const addNotification = useSetAtom(addNotificationAtom);
 
-  const handleClickSendRequest = () => {
-    sendRequest(true);
+  const handleClickSendRequest = async () => {
+    const result = await sendRequest(true);
+    if (result.notification) {
+      addNotification(result.notification);
+    }
   };
 
   return (

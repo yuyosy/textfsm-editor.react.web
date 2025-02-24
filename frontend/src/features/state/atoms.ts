@@ -17,6 +17,9 @@ export const notificationsAtom = atom<Notification[]>([]);
 export const addNotificationAtom = atom(
   null,
   (get, set, notification: NotificationItemInfo) => {
+    if (!notification) {
+      return;
+    }
     const notifications = get(notificationsAtom);
     const newNotification: Notification = {
       ...notification,

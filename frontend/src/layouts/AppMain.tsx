@@ -8,6 +8,8 @@ import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
 import { useAutoRequest } from '@/hooks/useSendRequest';
 import { PanelLayoutType, PanelRefs } from '@/layouts/types';
 
+import { addNotificationAtom } from '@/features/state/atoms';
+import { useSetAtom } from 'jotai';
 import { AppMainToolBar } from './AppMainToolBar';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { RawTextEditorPanel } from './panels/RawTextEditorPanel';
@@ -21,7 +23,8 @@ export const AppMain = () => {
 
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
 
-  useAutoRequest();
+  const addNotification = useSetAtom(addNotificationAtom);
+  useAutoRequest(addNotification);
 
   // Ref State
   const panelRefs: PanelRefs = {

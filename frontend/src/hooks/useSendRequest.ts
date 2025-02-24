@@ -8,17 +8,14 @@ import {
   sendTextFSMParseRequest,
 } from '@/features/request/sendTextFSMParseRequest';
 import { historyAutoSaveHandler } from '@/features/state/actionAtoms';
-import {
-  addNotificationAtom,
-  responseStateAtom,
-  resultViewValueAtom,
-} from '@/features/state/atoms';
+import { responseStateAtom, resultViewValueAtom } from '@/features/state/atoms';
 import {
   autoRequestEnabledAtom,
   parseRequestDelayAtom,
   rawTextEditorValueAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
+import { NotificationItemInfo } from '@/types';
 
 export const useSendRequest = () => {
   const readRawText = useAtomCallback(
@@ -39,14 +36,14 @@ export const useSendRequest = () => {
 
   const setResponseState = useSetAtom(responseStateAtom);
   const setResultViewValue = useSetAtom(resultViewValueAtom);
-  const addNotification = useSetAtom(addNotificationAtom);
   const autoSaveHandler = useSetAtom(historyAutoSaveHandler);
 
   const sendRequest = async (immediate = false) => {
     const template = readTemplate();
     if (template === '') {
-      return;
+      return { response: null, notification: null };
     }
+    let notification: NotificationItemInfo | null = null;
     try {
       const response = await sendTextFSMParseRequest(
         readRawText(),
@@ -64,16 +61,12 @@ export const useSendRequest = () => {
             : recordCount === 1
               ? 'There is 1 record.'
               : `There are ${recordCount} records.`;
-
-        addNotification({
+        notification = {
           type: 'api',
           title: response.data.message,
           message: message,
-          metadata: {
-            recordCount,
-            results: response.data.results,
-          },
-        });
+          metadata: { recordCount, results: response.data.results },
+        };
         autoSaveHandler({
           template: template,
           data: readRawText(),
@@ -81,14 +74,12 @@ export const useSendRequest = () => {
           status: 'success',
         });
       } else if (!response.ok && response.errors) {
-        addNotification({
+        notification = {
           type: 'error',
           title: response.errors[0].reason,
           message: response.errors[0].message,
-          metadata: {
-            errors: response.errors,
-          },
-        });
+          metadata: { errors: response.errors },
+        };
         autoSaveHandler({
           template: template,
           data: readRawText(),
@@ -96,31 +87,31 @@ export const useSendRequest = () => {
           status: 'error',
         });
       }
+      return { response, notification };
     } catch (error) {
       const errorResult = createErrorResultItem(error);
       setResponseState('error');
       setResultViewValue(errorResult);
-
       const errorReason =
         error instanceof Error ? error.constructor.name : 'UnknownError';
       const errorMessage = error instanceof Error ? error.message : String(error);
-
-      addNotification({
+      notification = {
         type: 'error',
         title: errorReason,
         message: errorMessage,
-        metadata: {
-          error: error instanceof Error ? error : String(error),
-        },
-      });
+        metadata: { error: error instanceof Error ? error : String(error) },
+      };
       console.error(error);
+      return { response: errorResult, notification };
     }
   };
 
   return sendRequest;
 };
 
-export const useAutoRequest = () => {
+export const useAutoRequest = (
+  onNotification?: (notification: NotificationItemInfo) => void
+) => {
   const autoRequestEnabled = useAtomValue(autoRequestEnabledAtom);
   const rawTextValue = useAtomValue(rawTextEditorValueAtom);
   const templateValue = useAtomValue(templateEditorValueAtom);
@@ -167,8 +158,12 @@ export const useAutoRequest = () => {
       clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
-      sendRequest(true);
+    timeoutRef.current = setTimeout(async () => {
+      const result = await sendRequest(true);
+      // Call external notification handler if provided
+      if (result.notification && onNotification) {
+        onNotification(result.notification);
+      }
       timeoutRef.current = null;
     }, readParseRequestDelay());
 
