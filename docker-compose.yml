@@ -1,0 +1,76 @@
+services:
+  # Development services
+  frontend-dev:
+    container_name: textfsm-editor-frontend-dev
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "${FRONTEND_PORT_DEV:-5173}:5173"
+    environment:
+      - VITE_API_ENTRYPOINT_DEV=${VITE_API_ENTRYPOINT_DEV:-http://localhost:8000}
+    stdin_open: true
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules
+    depends_on:
+      - backend-dev
+    profiles:
+      - dev
+
+  backend-dev:
+    container_name: textfsm-editor-backend-dev
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "${BACKEND_PORT_DEV:-8000}:8000"
+    volumes:
+      - ./backend/src:/app/src
+    profiles:
+      - dev
+
+  frontend-prod:
+    container_name: textfsm-editor-frontend-prod
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: build
+    volumes:
+      - build-output:/app/dist
+    profiles:
+      - prod
+
+  backend-prod:
+    container_name: textfsm-editor-backend-prod
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "${BACKEND_PORT_PROD:-8000}:8000"
+    environment:
+      - MODE=production
+      - PUBLIC_DIR=/app/public
+      - STATIC_DIR=/app/public/static
+      - ENABLE_HTTPS_REDIRECT=${ENABLE_HTTPS_REDIRECT:-false}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
+    volumes:
+      - build-output:/app/public/static
+    depends_on:
+      - frontend-prod
+    profiles:
+      - prod
+
+volumes:
+  build-output:
+

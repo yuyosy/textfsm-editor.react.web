@@ -1,25 +1,6 @@
-
 # Logs
 logs
 *.log
-
-### Python ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-
-### Node.js ###
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -29,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.coverage
 *.local*
 
 # Editor directories and files
