@@ -1,9 +1,12 @@
-import { TagBadge } from '@/components/TagBadege';
-import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { useState } from 'react';
+
 import { Button, Flex, Group, Text, TextInput } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { DataTable } from 'mantine-datatable';
-import { useState } from 'react';
+
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+
 import { TemplateInfo } from '../types';
 
 type TemplateTableProps = {

@@ -1,11 +1,13 @@
+import { useState } from 'react';
+
 import { Button, Group, Modal, Stack, Text, TextInput } from '@mantine/core';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useState } from 'react';
 
 import {
   savedTemplateListAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
+
 import { useLoadTemplate } from './hooks/useLoadTemplate';
 import { TemplateTable } from './TemplateTable';
 import { ModalContentProps } from './types';

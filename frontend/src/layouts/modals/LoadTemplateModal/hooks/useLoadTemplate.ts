@@ -1,6 +1,9 @@
-import { addNotificationAtom } from '@/features/state/atoms';
-import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
+
+import { useSetAtom } from 'jotai';
+
+import { addNotificationAtom } from '@/features/state/atoms';
+
 import { TemplateInfo } from '../../types';
 
 export const useLoadTemplate = (
@@ -22,6 +25,6 @@ export const useLoadTemplate = (
         });
       }
     },
-    [availableTemplates, setEditorContent]
+    [availableTemplates, setEditorContent, addNotification]
   );
 };

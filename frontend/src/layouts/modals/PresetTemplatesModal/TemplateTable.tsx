@@ -1,7 +1,9 @@
 import { Badge, Button, DefaultMantineColor, Group, Stack, Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
+
+import { normalize } from '@/utils/stringHelpers';
+
 import { MatchType, SearchedTemplateInfo } from './types';
-import { normalize } from './utils';
 
 interface TemplateTableProps {
   templates: SearchedTemplateInfo[];

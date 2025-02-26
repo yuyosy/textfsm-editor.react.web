@@ -1,6 +1,7 @@
-import { downloadFile } from '@/utils/downloadFile';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { FileDown } from 'lucide-react';
+
+import { downloadFile } from '@/utils/downloadFile';
 
 interface DownloadButtonProps {
   content: string;

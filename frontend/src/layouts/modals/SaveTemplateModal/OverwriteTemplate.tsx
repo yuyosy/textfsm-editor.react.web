@@ -1,10 +1,14 @@
-import { TagBadge } from '@/components/TagBadege';
-import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { useState } from 'react';
+
 import { Button, Flex, Group, Stack, Text, TextInput } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { DataTable } from 'mantine-datatable';
-import { useState } from 'react';
+
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+
 import { TemplateInfo } from '../types';
+
 import { useOverwriteTemplate } from './hooks/useOverwriteTemplate';
 
 interface OverwriteTemplateProps {

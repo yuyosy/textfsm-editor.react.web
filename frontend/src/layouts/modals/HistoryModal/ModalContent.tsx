@@ -1,11 +1,14 @@
+import { useState } from 'react';
+
+import { Button, Group, Modal, Stack, Text, TextInput } from '@mantine/core';
+import { useSetAtom } from 'jotai';
+
 import {
   rawTextEditorValueAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
 import { HistoryAutoSaveItem } from '@/types';
-import { Button, Group, Modal, Stack, Text, TextInput } from '@mantine/core';
-import { useSetAtom } from 'jotai';
-import { useState } from 'react';
+
 import { HistoryDataTable } from './HistoryDataTable';
 import { ModalContentProps } from './types';
 

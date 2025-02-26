@@ -179,5 +179,6 @@ export const useAutoRequest = (
     sendRequest,
     readParseRequestDelay,
     readEditorValues,
+    onNotification,
   ]);
 };

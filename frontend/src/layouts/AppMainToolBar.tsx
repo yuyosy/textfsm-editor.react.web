@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { Button, Chip, Divider, Group, Switch, Text } from '@mantine/core';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Send } from 'lucide-react';
-
-import { useSendRequest } from '@/hooks/useSendRequest';
 
 import { addNotificationAtom } from '@/features/state/atoms';
 import { autoRequestEnabledAtom } from '@/features/state/storageAtoms';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSendRequest } from '@/hooks/useSendRequest';
+
 import { PanelSelector } from './PanelSelector';
 import { handlePanelToggle } from './panelStateUtils';
 import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';

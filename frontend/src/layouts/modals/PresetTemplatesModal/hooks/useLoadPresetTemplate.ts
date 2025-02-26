@@ -1,7 +1,8 @@
+import { useSetAtom } from 'jotai';
+
 import { api } from '@/features/api';
 import { addNotificationAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
-import { useSetAtom } from 'jotai';
 
 export const useLoadPresetTemplate = () => {
   const addNotification = useSetAtom(addNotificationAtom);

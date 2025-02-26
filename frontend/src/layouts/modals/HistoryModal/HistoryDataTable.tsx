@@ -1,10 +1,12 @@
-import { StatusBadge } from '@/components/StatusBadge';
-import { historyAutoSaveItemsAtom } from '@/features/state/storageAtoms';
-import { HistoryAutoSaveItem } from '@/types';
+import { useState } from 'react';
+
 import { Button, Code, Group, Popover } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { DataTable } from 'mantine-datatable';
-import { useState } from 'react';
+
+import { StatusBadge } from '@/components/StatusBadge';
+import { historyAutoSaveItemsAtom } from '@/features/state/storageAtoms';
+import { HistoryAutoSaveItem } from '@/types';
 
 interface HistoryDataTableProps {
   onSelect: (record: HistoryAutoSaveItem) => void;

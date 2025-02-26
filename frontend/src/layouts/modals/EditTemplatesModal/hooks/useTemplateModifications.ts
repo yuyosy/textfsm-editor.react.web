@@ -1,5 +1,7 @@
-import { useListState } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+
+import { useListState } from '@mantine/hooks';
+
 import { TemplateInfo } from '../../types';
 import { ChangesState } from '../types';
 

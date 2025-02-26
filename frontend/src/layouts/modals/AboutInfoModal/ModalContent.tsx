@@ -1,4 +1,5 @@
 import { Button, Group, Modal, Stack } from '@mantine/core';
+
 import { AboutSection } from './AboutSection';
 import { ReferencesSection } from './ReferencesSection';
 import { RelatedLinksSection } from './RelatedLinksSection';

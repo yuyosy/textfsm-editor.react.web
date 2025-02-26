@@ -1,8 +1,11 @@
-import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
-import { templateTagsAtom } from '@/features/state/storageAtoms';
 import { Button, Group, Stack, TextInput } from '@mantine/core';
 import { useAtom } from 'jotai';
+
+import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+
 import { TemplateInfo } from '../types';
+
 import { useSaveNewTemplate } from './hooks/useSaveNewTemplate';
 
 interface SaveAsNewTemplateProps {

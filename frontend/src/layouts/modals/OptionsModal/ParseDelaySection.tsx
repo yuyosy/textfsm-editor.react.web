@@ -1,6 +1,7 @@
-import { parseRequestDelayAtom } from '@/features/state/storageAtoms';
 import { Slider, Stack, Text } from '@mantine/core';
 import { useAtom } from 'jotai';
+
+import { parseRequestDelayAtom } from '@/features/state/storageAtoms';
 
 export const ParseDelaySection = () => {
   const [parseDelay, setParseDelay] = useAtom(parseRequestDelayAtom);

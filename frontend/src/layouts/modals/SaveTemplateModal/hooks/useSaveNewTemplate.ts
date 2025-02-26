@@ -1,7 +1,10 @@
-import { addNotificationAtom } from '@/features/state/atoms';
+import { useEffect, useState } from 'react';
+
 import { useDebouncedValue } from '@mantine/hooks';
 import { useSetAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+
+import { addNotificationAtom } from '@/features/state/atoms';
+
 import { TemplateInfo } from '../../types';
 
 export const useSaveNewTemplate = (
@@ -45,7 +48,7 @@ export const useSaveNewTemplate = (
     setIsDuplicateName(false);
   };
 
-  const setTemplateField = (field: keyof TemplateInfo, value: any) => {
+  const setTemplateField = (field: keyof TemplateInfo, value: string | string[]) => {
     setTemplateProperties({ ...templateProperties, [field]: value });
   };
 

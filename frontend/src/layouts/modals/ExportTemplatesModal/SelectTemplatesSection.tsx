@@ -1,5 +1,7 @@
-import { TransferList } from '@/components/TransferList';
 import { Button, Divider, Group, Stack } from '@mantine/core';
+
+import { TransferList } from '@/components/TransferList';
+
 import { SelectTemplatesSectionProps } from './types';
 
 export const SelectTemplatesSection = ({

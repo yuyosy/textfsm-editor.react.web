@@ -2,9 +2,10 @@ import { Group, Modal, Stack, Text } from '@mantine/core';
 import { useAtom } from 'jotai';
 
 import { savedTemplateListAtom } from '@/features/state/storageAtoms';
+
+import { useTemplateModifications } from './hooks/useTemplateModifications';
 import { TemplateActions } from './TemplateActions';
 import { TemplateTable } from './TemplateTable';
-import { useTemplateModifications } from './hooks/useTemplateModifications';
 import { ChangesState, ModalContentProps } from './types';
 
 const getModificationSummary = (

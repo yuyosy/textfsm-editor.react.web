@@ -1,4 +1,5 @@
 import { TemplateInfo } from '../types';
+
 import { ImportedTemplateInfo, LoadedJsonData } from './types';
 
 export const validateAndProcessTemplates = (
@@ -92,7 +93,7 @@ export const parseJsonTemplates = async (
         templateInfo: JSON.parse(text) as TemplateInfo[],
         hasFormatError: false,
       };
-    } catch (error) {
+    } catch {
       return {
         fileName: item.name,
         templateInfo: [],

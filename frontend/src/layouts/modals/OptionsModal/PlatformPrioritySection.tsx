@@ -1,18 +1,13 @@
 import { ActionIcon, Group, Rating, Stack, Text } from '@mantine/core';
 import { StarOff } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
+
+import { normalize } from '@/utils/stringHelpers';
+
 import { useFetchTemplates } from '../PresetTemplatesModal/hooks/useFetchTemplates';
 import { usePlatformPriority } from '../PresetTemplatesModal/hooks/usePlatformPriority';
 
-interface PlatformPrioritySectionProps {}
-
-export const normalize = (str: string): string =>
-  str
-    .replace(/[^\w\s]|_/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-export const PlatformPrioritySection = ({}: PlatformPrioritySectionProps) => {
+export const PlatformPrioritySection = () => {
   const { platformPriorities, setPlatformPriority, removePlatformPriority } =
     usePlatformPriority();
   const { templates } = useFetchTemplates();
@@ -53,7 +48,7 @@ export const PlatformPrioritySection = ({}: PlatformPrioritySectionProps) => {
                   size="ms"
                   color="gray"
                   variant="transparent"
-                  onClick={_event => removePlatformPriority(record.platform)}
+                  onClick={() => removePlatformPriority(record.platform)}
                 >
                   <StarOff size={16} />
                 </ActionIcon>

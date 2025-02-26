@@ -1,6 +1,5 @@
-import { TagBadge } from '@/components/TagBadege';
-import { templateTagsAtom } from '@/features/state/storageAtoms';
-import { colors } from '@/utils/colors';
+import { useState } from 'react';
+
 import {
   Accordion,
   ActionIcon,
@@ -18,7 +17,11 @@ import {
 } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowUp, Plus, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+
+import { TagBadge } from '@/components/TagBadege';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { colors } from '@/utils/colors';
+
 import { TemplateTag } from '../types';
 
 const getRandomColor = () => {

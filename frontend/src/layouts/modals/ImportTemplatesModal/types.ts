@@ -1,4 +1,5 @@
 import { RefObject } from 'react';
+
 import { TemplateInfo } from '../types';
 
 export type ModalContentProps = {

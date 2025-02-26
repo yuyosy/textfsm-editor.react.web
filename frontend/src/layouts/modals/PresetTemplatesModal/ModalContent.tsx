@@ -1,7 +1,9 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import Fuse from 'fuse.js';
-import { useEffect, useMemo, useState } from 'react';
+
 import { useFetchTemplates } from './hooks/useFetchTemplates';
 import { useLoadPresetTemplate } from './hooks/useLoadPresetTemplate';
 import { SearchForm } from './SearchForm';

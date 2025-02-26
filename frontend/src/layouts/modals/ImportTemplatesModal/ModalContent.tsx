@@ -1,10 +1,14 @@
-import { addNotificationAtom } from '@/features/state/atoms';
-import { savedTemplateListAtom, templateTagsAtom } from '@/features/state/storageAtoms';
+import { useRef, useState } from 'react';
+
 import { Button, Group, Modal, Stack, Stepper, Text } from '@mantine/core';
 import { FileRejection } from '@mantine/dropzone';
 import { useAtom, useSetAtom } from 'jotai';
-import { useRef, useState } from 'react';
+
+import { addNotificationAtom } from '@/features/state/atoms';
+import { savedTemplateListAtom, templateTagsAtom } from '@/features/state/storageAtoms';
+
 import { TemplateInfo, TemplateTag } from '../types';
+
 import { DropzoneSection } from './DropzoneSection';
 import { useParseJsonTemplates } from './hooks/useParseJsonTemplates';
 import { ImportSelectionSection } from './ImportSelectionSection';
@@ -49,8 +53,8 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
 
   const saveSelectedTemplates = async () => {
     const newTags: TemplateTag[] = [];
-    for (let data of processedJsonData) {
-      for (let tagName of data.templateInfoData?.tags || []) {
+    for (const data of processedJsonData) {
+      for (const tagName of data.templateInfoData?.tags || []) {
         if (tags.findIndex(item => item.name === tagName) === -1) {
           newTags.push({
             name: tagName,

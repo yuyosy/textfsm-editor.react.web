@@ -5,13 +5,13 @@ import { useAtomValue } from 'jotai';
 import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
+import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { StatusBadge } from '@/components/StatusBadge';
+import { editorTemplateText } from '@/features/fileNames';
 import { responseStateAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
-
-import { FileDownloadButton } from '@/components/FileDownloadButton';
-import { editorTemplateText } from '@/features/fileNames';
 import { getCurrentDateTimeString } from '@/utils/datetime';
+
 import { TemplateEditor } from './TemplateEditor';
 
 const ResponseState = () => {

@@ -1,10 +1,12 @@
+import React from 'react';
+
+import { Checkbox, NumberInput, Stack, Text } from '@mantine/core';
+import { useAtom } from 'jotai';
+
 import {
   historyAutoSaveCountAtom,
   historyAutoSaveEnabledAtom,
 } from '@/features/state/storageAtoms';
-import { Checkbox, NumberInput, Stack, Text } from '@mantine/core';
-import { useAtom } from 'jotai';
-import React from 'react';
 
 export const HistoryAutoSaveSection: React.FC = () => {
   const [enabled, setEnabled] = useAtom(historyAutoSaveEnabledAtom);

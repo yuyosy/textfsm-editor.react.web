@@ -1,8 +1,8 @@
 import { atomWithStorage } from 'jotai/utils';
 
 import { PlatformPriority, TemplateInfo, TemplateTag } from '@/layouts/modals/types';
-
 import { HistoryAutoSaveItem } from '@/types';
+
 import { localStorage, sessionStorage } from './syncStorage';
 
 export const savedTemplateListAtom = atomWithStorage<TemplateInfo[]>(

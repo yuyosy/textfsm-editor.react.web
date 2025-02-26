@@ -1,5 +1,6 @@
-import { platformPrioritiesAtom } from '@/features/state/storageAtoms';
 import { useAtom } from 'jotai';
+
+import { platformPrioritiesAtom } from '@/features/state/storageAtoms';
 
 export const usePlatformPriority = () => {
   const [platformPriorities, setPlatformPriorities] = useAtom(platformPrioritiesAtom);

@@ -1,5 +1,5 @@
-import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
-import { templateTagsAtom } from '@/features/state/storageAtoms';
+import { useRef } from 'react';
+
 import {
   ActionIcon,
   CloseButton,
@@ -13,7 +13,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import { ArrowDown, ArrowDownUp, ArrowUp, Tags, Trash } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { useRef } from 'react';
+
+import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
+import { templateTagsAtom } from '@/features/state/storageAtoms';
+
 import { TemplateInfo } from '../types';
 
 type TemplateTableProps = {

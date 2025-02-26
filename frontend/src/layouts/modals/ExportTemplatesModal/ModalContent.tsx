@@ -1,8 +1,10 @@
-import { Modal, Stack, Stepper, Text } from '@mantine/core';
 import { MutableRefObject, useState } from 'react';
+
+import { Modal, Stack, Stepper, Text } from '@mantine/core';
+
 import { ExportTemplatesSection } from './ExportTemplatesSection';
-import { SelectTemplatesSection } from './SelectTemplatesSection';
 import { useExportTemplates } from './hooks/useExportTemplates';
+import { SelectTemplatesSection } from './SelectTemplatesSection';
 
 type ModalContentProps = {
   close: () => void;

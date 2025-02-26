@@ -1,9 +1,9 @@
 import { RefObject } from 'react';
 
 import { Flex, SegmentedControl } from '@mantine/core';
+import { Columns2, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
-import { Columns2, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { PanelLayoutType } from './types';
 
 interface PanelSelectorProps {

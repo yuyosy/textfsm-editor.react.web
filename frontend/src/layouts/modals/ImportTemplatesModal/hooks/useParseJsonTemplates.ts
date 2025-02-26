@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { TemplateInfo } from '../../types';
 import { LoadedJsonData } from '../types';
 import { validateAndProcessTemplates } from '../utils';
@@ -18,7 +19,7 @@ export const useParseJsonTemplates = () => {
             templateInfo: JSON.parse(text) as TemplateInfo[],
             hasFormatError: false,
           };
-        } catch (error) {
+        } catch {
           return {
             fileName: item.name,
             templateInfo: [],

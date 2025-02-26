@@ -1,5 +1,6 @@
-import { TransferList } from '@/components/TransferList';
 import { Divider, List, Stack } from '@mantine/core';
+
+import { TransferList } from '@/components/TransferList';
 
 interface ImportSelectionSectionProps {
   availableTemplates: string[];

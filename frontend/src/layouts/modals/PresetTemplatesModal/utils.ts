@@ -1,5 +1,7 @@
-import { regexTest } from '@/utils/regexTest';
 import Fuse from 'fuse.js';
+
+import { regexTest } from '@/utils/regexTest';
+
 import {
   NtcTemplateInfo,
   PlatformTemplatesDict,
@@ -48,7 +50,7 @@ export const getRegexFilteredTemplates = (
 export const getFuzzyFilteredTemplates = (
   fuse: Fuse<NtcTemplateInfo>,
   searchValue: string,
-  regexFilteredTemplates: any[],
+  regexFilteredTemplates: SearchedTemplateInfo[],
   selectedPlatform: string | null
 ): SearchedTemplateInfo[] => {
   return fuse
@@ -65,9 +67,3 @@ export const getFuzzyFilteredTemplates = (
     )
     .map(item => ({ ...item, matchType: 'fuzzy' }));
 };
-
-export const normalize = (str: string): string =>
-  str
-    .replace(/[^\w\s]|_/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();

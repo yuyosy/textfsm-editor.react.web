@@ -2,14 +2,14 @@ import { useRef, useState } from 'react';
 
 import { AppShell, Paper, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useSetAtom } from 'jotai';
 import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
 
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
+import { addNotificationAtom } from '@/features/state/atoms';
 import { useAutoRequest } from '@/hooks/useSendRequest';
 import { PanelLayoutType, PanelRefs } from '@/layouts/types';
 
-import { addNotificationAtom } from '@/features/state/atoms';
-import { useSetAtom } from 'jotai';
 import { AppMainToolBar } from './AppMainToolBar';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { RawTextEditorPanel } from './panels/RawTextEditorPanel';

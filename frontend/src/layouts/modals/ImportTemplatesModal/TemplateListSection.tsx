@@ -1,6 +1,7 @@
 import { ActionIcon, Divider, Stack, Text, Tooltip } from '@mantine/core';
 import { FileJson } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
+
 import { LoadedJsonData } from './types';
 
 interface TemplateListSectionProps {

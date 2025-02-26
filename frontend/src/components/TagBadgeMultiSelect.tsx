@@ -1,4 +1,5 @@
-import { TemplateTag } from '@/layouts/modals/types';
+import { useState } from 'react';
+
 import {
   CheckIcon,
   CloseButton,
@@ -14,7 +15,9 @@ import {
   Text,
   useCombobox,
 } from '@mantine/core';
-import { useState } from 'react';
+
+import { TemplateTag } from '@/layouts/modals/types';
+
 import { TagBadge } from './TagBadege';
 
 export interface TagBadgeMultiSelectProps extends ComboboxProps {
@@ -55,13 +58,17 @@ export const TagBadgeMultiSelect = ({
       ? selectedValues.filter(v => v !== val)
       : [...selectedValues, val];
     setSelectedValues(newSelectedValues);
-    onChange && onChange(newSelectedValues);
+    if (onChange) {
+      onChange(newSelectedValues);
+    }
   };
 
   const handleValueRemove = (val: string) => {
     const newSelectedValues = selectedValues.filter(v => v !== val);
     setSelectedValues(newSelectedValues);
-    onChange && onChange(newSelectedValues);
+    if (onChange) {
+      onChange(newSelectedValues);
+    }
   };
 
   const selectedValueNodes = selectedValues.map(item => {
@@ -146,18 +153,19 @@ export const TagBadgeMultiSelect = ({
           label={label}
           onClick={() => combobox.toggleDropdown()}
           rightSection={
-            clearable &&
-            selectedValues.length > 0 && (
+            clearable && selectedValues.length > 0 ? (
               <CloseButton
                 size="sm"
                 onMouseDown={event => event.preventDefault()}
                 onClick={() => {
                   setSelectedValues([]);
-                  onChange && onChange([]);
+                  if (onChange) {
+                    onChange([]);
+                  }
                 }}
                 aria-label="Clear value"
               />
-            )
+            ) : null
           }
         >
           <Pill.Group>

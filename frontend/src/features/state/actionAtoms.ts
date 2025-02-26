@@ -1,5 +1,7 @@
-import { HistoryAutoSaveItem, HistoryAutoSaveItemInfo } from '@/types';
 import { atom } from 'jotai';
+
+import { HistoryAutoSaveItem, HistoryAutoSaveItemInfo } from '@/types';
+
 import {
   historyAutoSaveCountAtom,
   historyAutoSaveEnabledAtom,

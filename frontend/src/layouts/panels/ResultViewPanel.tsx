@@ -8,10 +8,9 @@ import { DataTable } from 'mantine-datatable';
 import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
-import { resultViewValueAtom } from '@/features/state/atoms';
-
 import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { resultJSON, resultTSV } from '@/features/fileNames';
+import { resultViewValueAtom } from '@/features/state/atoms';
 import { useDataDeliver } from '@/hooks/useDataDeliver';
 import { getCurrentDateTimeString } from '@/utils/datetime';
 

@@ -11,12 +11,14 @@ import {
   TextInput,
 } from '@mantine/core';
 import { CircleHelp } from 'lucide-react';
+
+import { normalize } from '@/utils/stringHelpers';
+
 import { usePlatformPriority } from './hooks/usePlatformPriority';
-import { SearchParams } from './types';
-import { normalize } from './utils';
+import { PlatformTemplatesDict, SearchParams } from './types';
 
 interface SearchFormProps {
-  templates: { [platform: string]: any[] };
+  templates: PlatformTemplatesDict;
   searchParams: SearchParams;
   isAndCondition: boolean;
   isFuzzyEnabled: boolean;

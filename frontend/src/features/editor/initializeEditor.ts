@@ -1,4 +1,5 @@
 import { loader } from '@monaco-editor/react';
+import * as primitiveMonaco from 'monaco-editor';
 
 import { getCompletionItemProviderSuggestions } from '@/features/editor/definitions/CompletionItemProvider';
 import { languageConfiguration } from '@/features/editor/definitions/LanguageConfiguration';
@@ -17,7 +18,10 @@ export const initializeTextFSMEditor = () => {
       monaco.languages.setLanguageConfiguration(languageId, languageConfiguration);
       monaco.languages.setMonarchTokensProvider(languageId, monarchTokensProvider);
       monaco.languages.registerCompletionItemProvider(languageId, {
-        provideCompletionItems: (model: any, position: any) => {
+        provideCompletionItems: (
+          model: primitiveMonaco.editor.ITextModel,
+          position: primitiveMonaco.Position
+        ) => {
           return { suggestions: getCompletionItemProviderSuggestions(model, position) };
         },
       });

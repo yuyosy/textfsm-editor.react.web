@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Anchor,
   Blockquote,
@@ -8,21 +10,16 @@ import {
   Text,
 } from '@mantine/core';
 import { Info, SquareArrowOutUpRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-type StorageUsageSectionProps = {};
 
 const calculateLocalStorageUsage = () => {
   let total = 0;
-  for (let key in localStorage) {
-    if (localStorage.hasOwnProperty(key)) {
-      total += localStorage[key].length + key.length;
-    }
-  }
+  Object.keys(localStorage).forEach(key => {
+    total += localStorage[key].length + key.length;
+  });
   return total / (1024 * 1024);
 };
 
-export const StorageUsageSection = ({}: StorageUsageSectionProps) => {
+export const StorageUsageSection = () => {
   const storageLimit = 5;
   const [storageUsage, setStorageUsage] = useState(0);
 

@@ -26,8 +26,8 @@ export const useFileSave = (): [
   const handle = (fileName: string, data: DataType) => {
     try {
       saveFile(fileName, data);
-    } catch (err: any) {
-      setError(err);
+    } catch (err) {
+      setError(err as Error);
     }
   };
 
