@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/yuyosy/textfsm-editor.react.web" target="_blank" rel="noopener noreferrer">
+    <img width="180" src="pictures/icon.svg" alt="Vite logo">
+  </a>
+</p>
+
 # TextFSM Editor
 
 A web-based editor for TextFSM templates with real-time parsing capabilities. This tool helps network engineers and developers create and test TextFSM templates efficiently with immediate feedback.
