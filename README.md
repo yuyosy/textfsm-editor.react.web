@@ -6,11 +6,16 @@
 
 # TextFSM Editor
 
-A web-based editor for TextFSM templates with real-time parsing capabilities. This tool helps network engineers and developers create and test TextFSM templates efficiently with immediate feedback.
+A web-based editor for TextFSM templates with real-time parsing capabilities. This tool enables network engineers and developers to efficiently create and test TextFSM templates with instant feedback.
 
-> ! This project is under development.
+日本語版こちら: [Japanese README](README.ja.md)
 
-> ! This documentation is a work in progress. It may be incomplete or inaccurate.
+> [!NOTE]
+>
+> This project is currently under development.
+> Some parts of the code may be inefficient.
+> Security considerations may be insufficient.
+> This documentation is a work in progress and may be incomplete or inaccurate.
 
 ![screenshot1](pictures/editor.png)
 
@@ -87,13 +92,11 @@ textfsm-editor.react.web/
 Open the `textfsm-editor.react.web.code-workspace` file with VSCode to open the workspace.
 
 ## Getting Started
-
-- Use the primitive environment
-  - Use Node.js and Python without Docker.
-  - Refer to the installation instructions for the primitive environment. [Getting Started with the Primitive Environment](#getting-started-with-the-primitive-environment)
-- Use Docker Compose
-  - Refer to the installation instructions for Docker Compose. [Getting Started with Docker Compose](#getting-started-with-docker-compose)
-
+- Using the Primitive Environment
+  - Run Node.js and Python without Docker.
+  - Follow the installation instructions for the primitive environment: [Getting Started with the Primitive Environment](#getting-started-with-the-primitive-environment)
+- Using Docker Compose
+  - Follow the installation instructions for Docker Compose: [Getting Started with Docker Compose](#getting-started-with-docker-compose)
 
 ### Notice
 
