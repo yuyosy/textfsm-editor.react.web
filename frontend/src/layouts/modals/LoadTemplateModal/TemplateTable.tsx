@@ -40,7 +40,6 @@ export const TemplateTable = ({ templates, onSelect }: TemplateTableProps) => {
         noRecordsText="No templates found."
         borderRadius="sm"
         striped
-        highlightOnHover
         idAccessor="label"
         scrollAreaProps={{ type: 'always', offsetScrollbars: 'y' }}
         records={filteredTemplates}

@@ -30,7 +30,6 @@ export const TemplateTable = ({
       noRecordsText="Select a platform to view templates"
       borderRadius="sm"
       striped
-      highlightOnHover
       idAccessor={item => item.template + item.platform + item.command_raw}
       fetching={loading}
       records={templates}
