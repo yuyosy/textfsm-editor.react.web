@@ -1,0 +1,67 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noTemplateCurlyInString": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "indentStyle": "space"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space"
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "single",
+      "indentStyle": "space"
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              { "type": false, "source": ["node:*"] },
+              ":BLANK_LINE:",
+              { "type": false, "source": ["react*", "react/**"] },
+              ":BLANK_LINE:",
+              { "type": false, "source": ":PACKAGE:" },
+              ":BLANK_LINE:",
+              { "type": false, "source": "@/**" },
+              { "type": false, "source": ":PATH:" },
+              { "type": false },
+              ":BLANK_LINE:",
+              { "type": true }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
