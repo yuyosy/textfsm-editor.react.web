@@ -6,7 +6,8 @@ import { useTemplateModifications } from './hooks/useTemplateModifications';
 import { TemplateActions } from './TemplateActions';
 import { TemplateTable } from './TemplateTable';
 
-import type { ChangesState, ModalContentProps } from './types';
+import type { ModalContentProps } from '../types';
+import type { ChangesState } from './types';
 
 const getModificationSummary = (
   modifications: ChangesState,

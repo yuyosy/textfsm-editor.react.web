@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { Modal } from '@mantine/core';
 import { useFocusWithin } from '@mantine/hooks';
 import { useAtom } from 'jotai';
@@ -15,7 +17,8 @@ import { SaveTemplateModalContent } from './SaveTemplateModal/ModalContent';
 
 export const ModalController = () => {
   const [controlModal, setControlModalAtom] = useAtom(controlModalAtom);
-  const { ref: focusRef, focused } = useFocusWithin();
+  const focusRef = useRef<HTMLDivElement>(null);
+  const { focused } = useFocusWithin();
   const close = () =>
     setControlModalAtom({ opened: false, type: 'not-active' });
 

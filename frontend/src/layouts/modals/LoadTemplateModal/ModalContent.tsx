@@ -10,7 +10,7 @@ import {
 import { useLoadTemplate } from './hooks/useLoadTemplate';
 import { TemplateTable } from './TemplateTable';
 
-import type { ModalContentProps } from './types';
+import type { ModalContentProps } from '../types';
 
 export const LoadTemplateModalContent = ({
   close,

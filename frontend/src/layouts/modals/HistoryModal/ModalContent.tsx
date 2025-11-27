@@ -10,7 +10,7 @@ import {
 import { HistoryDataTable } from './HistoryDataTable';
 
 import type { HistoryAutoSaveItem } from '@/types';
-import type { ModalContentProps } from './types';
+import type { ModalContentProps } from '../types';
 
 export const HistoryModalContent = ({ focusRef, close }: ModalContentProps) => {
   const setTemplateEditorValue = useSetAtom(templateEditorValueAtom);

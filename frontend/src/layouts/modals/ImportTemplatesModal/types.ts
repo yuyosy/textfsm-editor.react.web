@@ -1,10 +1,4 @@
-import type { RefObject } from 'react';
 import type { TemplateInfo } from '../types';
-
-export type ModalContentProps = {
-  close: () => void;
-  focusRef: RefObject<HTMLDivElement>;
-};
 
 export type ImportedTemplateInfo = {
   fileName: string;

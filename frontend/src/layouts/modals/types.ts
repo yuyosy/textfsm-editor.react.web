@@ -1,3 +1,5 @@
+import type { RefObject } from 'react';
+
 export interface TemplateInfo {
   label: string;
   value: string;
@@ -40,3 +42,8 @@ export interface TemplateTag {
   description: string;
   color: string;
 }
+
+export type ModalContentProps = {
+  close: () => void;
+  focusRef: RefObject<HTMLDivElement | null>;
+};

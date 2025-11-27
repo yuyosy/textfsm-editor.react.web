@@ -14,8 +14,8 @@ import { ImportSelectionSection } from './ImportSelectionSection';
 import { TemplateListSection } from './TemplateListSection';
 
 import type { FileRejection } from '@mantine/dropzone';
-import type { TemplateInfo, TemplateTag } from '../types';
-import type { LoadedJsonData, ModalContentProps } from './types';
+import type { ModalContentProps, TemplateInfo, TemplateTag } from '../types';
+import type { LoadedJsonData } from './types';
 
 export const ImportTemplatesModalContent = ({
   close,

@@ -9,7 +9,7 @@ import {
 import { OverwriteTemplate } from './OverwriteTemplate';
 import { SaveAsNewTemplate } from './SaveAsNewTemplate';
 
-import type { ModalContentProps } from './types';
+import type { ModalContentProps } from '../types';
 
 export const SaveTemplateModalContent = ({
   close,

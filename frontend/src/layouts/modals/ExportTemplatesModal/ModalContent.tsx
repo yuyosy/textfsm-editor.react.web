@@ -1,4 +1,4 @@
-import { type MutableRefObject, useState } from 'react';
+import { useState } from 'react';
 
 import { Modal, Stack, Stepper, Text } from '@mantine/core';
 
@@ -6,10 +6,7 @@ import { ExportTemplatesSection } from './ExportTemplatesSection';
 import { useExportTemplates } from './hooks/useExportTemplates';
 import { SelectTemplatesSection } from './SelectTemplatesSection';
 
-type ModalContentProps = {
-  close: () => void;
-  focusRef: MutableRefObject<HTMLDivElement>;
-};
+import type { ModalContentProps } from '../types';
 
 export const ExportTemplatesModalContent = ({
   close,

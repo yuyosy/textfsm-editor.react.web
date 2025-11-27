@@ -4,7 +4,7 @@ import { AboutSection } from './AboutSection';
 import { ReferencesSection } from './ReferencesSection';
 import { RelatedLinksSection } from './RelatedLinksSection';
 
-import type { ModalContentProps } from './types';
+import type { ModalContentProps } from '../types';
 
 export const AboutInfoModalContent = ({
   close,

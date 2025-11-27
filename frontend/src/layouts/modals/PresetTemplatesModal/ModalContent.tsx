@@ -10,11 +10,8 @@ import { SearchForm } from './SearchForm';
 import { TemplateTable } from './TemplateTable';
 import { getFuzzyFilteredTemplates, getRegexFilteredTemplates } from './utils';
 
-import type {
-  ModalContentProps,
-  SearchedTemplateInfo,
-  SearchParams,
-} from './types';
+import type { ModalContentProps } from '../types';
+import type { SearchedTemplateInfo, SearchParams } from './types';
 
 export const PresetTemplatesModalContent = ({
   close,
