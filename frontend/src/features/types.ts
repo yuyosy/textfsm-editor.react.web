@@ -3,7 +3,7 @@ interface TextFSMParseRequestData {
   data_string: string;
 }
 
-interface TextFSMParseAPIRequest {
+export interface TextFSMParseAPIRequest {
   data: TextFSMParseRequestData;
 }
 

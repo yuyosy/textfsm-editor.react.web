@@ -1,4 +1,6 @@
-import type ModalId from './modals/types';
+import type { JSX, RefObject } from 'react';
+import type { ImperativePanelHandle } from 'react-resizable-panels';
+import type { ModalId } from './modals/types';
 
 export type PanelLayoutType = 'both' | 'data' | 'template';
 
@@ -15,7 +17,7 @@ export interface DisclosureActions {
   readonly toggle: () => void;
 }
 
-interface NavItem {
+export interface NavItem {
   id: ModalId;
   label: string;
   icon: JSX.Element;

@@ -1,4 +1,5 @@
 import type { TextFSMParseAPIResponse } from '@/features/types';
+import type { StatusBadgeVariant } from './components/StatusBadge';
 
 export interface ResponseResult {
   ok: boolean;

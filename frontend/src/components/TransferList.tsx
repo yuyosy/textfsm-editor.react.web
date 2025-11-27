@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 
 import {
   ActionIcon,
@@ -168,11 +168,13 @@ export const TransferList = ({
       result[transferFrom] = transferFromData;
       result[transferTo] = transferToData;
 
-      // データが変更された時にコールバックを呼び出し
-      onChange?.(result[0], result[1]);
-
       return result as [string[], string[]];
     });
+
+  // データが変更されたときにコールバックを呼び出し
+  useEffect(() => {
+    onChange?.(data[0], data[1]);
+  }, [data, onChange]);
 
   return (
     <Grid>

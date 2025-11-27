@@ -182,7 +182,7 @@ export const TemplateTagSection = () => {
                 size="xs"
                 variant="outline"
                 onClick={addTag}
-                disabled={newTagName == '' ? true : false}
+                disabled={newTagName === ''}
               >
                 Add Tag
               </Button>

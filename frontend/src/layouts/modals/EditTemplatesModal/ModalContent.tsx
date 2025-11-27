@@ -33,7 +33,7 @@ const getModificationSummary = (
         `Update tags for ${modifications.tagUpdateCount} item${modifications.tagUpdateCount === 1 ? '' : 's'}`,
       );
     }
-    return changes.join(' & ') + '.';
+    return `${changes.join(' & ')}.`;
   }
   return 'No changes.';
 };

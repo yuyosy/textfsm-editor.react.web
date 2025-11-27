@@ -28,7 +28,7 @@ interface StatusBadgeProps {
 }
 
 export const StatusBadge = ({ variant }: StatusBadgeProps) => {
-  const style = badgeStyles[variant] || badgeStyles['info'];
+  const style = badgeStyles[variant] || badgeStyles.info;
   return (
     <Badge
       size="xs"

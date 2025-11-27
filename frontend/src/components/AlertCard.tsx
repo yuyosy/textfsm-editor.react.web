@@ -26,7 +26,7 @@ export const AlertCard = ({
       }
       color={color}
       p={10}
-      withCloseButton={onClose ? true : false}
+      withCloseButton={!!onClose}
       onClose={onClose}
     >
       {message}

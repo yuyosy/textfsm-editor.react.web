@@ -74,73 +74,71 @@ export const AppMain = () => {
   };
 
   return (
-    <>
-      <AppShell.Main bg="transparent">
-        <Stack gap={0} pt={40} style={{ height: '100dvh' }}>
-          <AppMainToolBar
-            {...{
-              panelRefs: panelRefs,
-              mainPanelLyout: mainPanelLyout,
-              setMainPanelLyout: setMainPanelLyout,
-              openedNotificationPanel: openedNotificationPanel,
-              notificationPanelActions: notificationPanelActions,
-              openedResultViewPanel: openedResultViewPanel,
-              resultViewPanelActions: resultViewPanelActions,
-            }}
-          />
-          <Paper
-            h="100%"
-            m={8}
-            radius="md"
-            shadow="xs"
-            style={{ overflow: 'hidden' }}
-          >
-            <PanelGroup direction="horizontal" autoSaveId="top">
-              <Panel
-                defaultSize={80}
-                collapsedSize={0}
-                minSize={10}
-                collapsible={true}
-              >
-                <PanelGroup direction="vertical" autoSaveId="main">
-                  <Panel
-                    id="main-panel"
-                    order={1}
-                    defaultSize={70}
-                    collapsedSize={0}
-                    minSize={10}
-                    collapsible={true}
-                  >
-                    <PanelGroup direction="horizontal" autoSaveId="editor">
-                      <RawTextEditorPanel
-                        panelRef={panelRefs.data}
-                        onResizeHandler={syncDataPanelSegmentedControlsOnResize}
-                      />
-                      <ResizeHandle />
-                      <TemplateEditorPanel
-                        panelRef={panelRefs.template}
-                        onResizeHandler={
-                          syncTemplatePanelSegmentedControlsOnResize
-                        }
-                      />
-                    </PanelGroup>
-                  </Panel>
-                  <ResizeHandle />
-                  <ResultViewPanel
-                    panelRef={panelRefs.results}
-                    onResizeHandler={syncResultViewPanelStateChipOnResize}
-                  />
-                </PanelGroup>
-              </Panel>
-              <ResizeHandle />
-              <NotificationPanel
-                panelRef={panelRefs.notification}
-                onResizeHandler={syncNotificationPanelStateChipOnResize}
-              />
-            </PanelGroup>
-          </Paper>
-        </Stack>
-      </AppShell.Main>
-    </>
+    <AppShell.Main bg="transparent">
+      <Stack gap={0} pt={40} style={{ height: '100dvh' }}>
+        <AppMainToolBar
+          {...{
+            panelRefs: panelRefs,
+            mainPanelLyout: mainPanelLyout,
+            setMainPanelLyout: setMainPanelLyout,
+            openedNotificationPanel: openedNotificationPanel,
+            notificationPanelActions: notificationPanelActions,
+            openedResultViewPanel: openedResultViewPanel,
+            resultViewPanelActions: resultViewPanelActions,
+          }}
+        />
+        <Paper
+          h="100%"
+          m={8}
+          radius="md"
+          shadow="xs"
+          style={{ overflow: 'hidden' }}
+        >
+          <PanelGroup direction="horizontal" autoSaveId="top">
+            <Panel
+              defaultSize={80}
+              collapsedSize={0}
+              minSize={10}
+              collapsible={true}
+            >
+              <PanelGroup direction="vertical" autoSaveId="main">
+                <Panel
+                  id="main-panel"
+                  order={1}
+                  defaultSize={70}
+                  collapsedSize={0}
+                  minSize={10}
+                  collapsible={true}
+                >
+                  <PanelGroup direction="horizontal" autoSaveId="editor">
+                    <RawTextEditorPanel
+                      panelRef={panelRefs.data}
+                      onResizeHandler={syncDataPanelSegmentedControlsOnResize}
+                    />
+                    <ResizeHandle />
+                    <TemplateEditorPanel
+                      panelRef={panelRefs.template}
+                      onResizeHandler={
+                        syncTemplatePanelSegmentedControlsOnResize
+                      }
+                    />
+                  </PanelGroup>
+                </Panel>
+                <ResizeHandle />
+                <ResultViewPanel
+                  panelRef={panelRefs.results}
+                  onResizeHandler={syncResultViewPanelStateChipOnResize}
+                />
+              </PanelGroup>
+            </Panel>
+            <ResizeHandle />
+            <NotificationPanel
+              panelRef={panelRefs.notification}
+              onResizeHandler={syncNotificationPanelStateChipOnResize}
+            />
+          </PanelGroup>
+        </Paper>
+      </Stack>
+    </AppShell.Main>
   );
 };

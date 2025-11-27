@@ -120,7 +120,7 @@ export const DropzoneSection = ({
               });
               return (
                 <Notification
-                  key={'error_' + item.file.name}
+                  key={`error_${item.file.name}`}
                   title={item.file.name}
                   color="red"
                   onClose={() => removeRejectedFile(index)}
