@@ -3,10 +3,9 @@ import { useAtom } from 'jotai';
 
 import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
-
-import { TemplateInfo } from '../types';
-
 import { useSaveNewTemplate } from './hooks/useSaveNewTemplate';
+
+import type { TemplateInfo } from '../types';
 
 interface SaveAsNewTemplateProps {
   close: () => void;
@@ -27,7 +26,11 @@ export const SaveAsNewTemplate = ({
     isNameDuplicate,
     setTemplateField,
     saveTemplateToStorage,
-  } = useSaveNewTemplate(savedTemplates, setSavedTemplates, currentEditorContent);
+  } = useSaveNewTemplate(
+    savedTemplates,
+    setSavedTemplates,
+    currentEditorContent,
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTemplateField('label', e.currentTarget.value);

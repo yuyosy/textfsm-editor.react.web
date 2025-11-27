@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { Button, Chip, Divider, Group, Switch, Text } from '@mantine/core';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Send } from 'lucide-react';
@@ -7,10 +5,11 @@ import { Send } from 'lucide-react';
 import { addNotificationAtom } from '@/features/state/atoms';
 import { autoRequestEnabledAtom } from '@/features/state/storageAtoms';
 import { useSendRequest } from '@/hooks/useSendRequest';
-
 import { PanelSelector } from './PanelSelector';
 import { handlePanelToggle } from './panelStateUtils';
-import { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
+
+import type { Dispatch, SetStateAction } from 'react';
+import type { DisclosureActions, PanelLayoutType, PanelRefs } from './types';
 
 const PanelToggleChip = ({
   opened: panel,
@@ -22,7 +21,12 @@ const PanelToggleChip = ({
   handlePanelToggle: (checked: boolean) => void;
 }) => {
   return (
-    <Chip variant="outline" size="xs" checked={panel} onChange={handlePanelToggle}>
+    <Chip
+      variant="outline"
+      size="xs"
+      checked={panel}
+      onChange={handlePanelToggle}
+    >
       {label}
     </Chip>
   );
@@ -68,19 +72,30 @@ export const AppMainToolBar = ({
           dataPanelImperativeHandleRef={panelRefs.data}
           templatePanelImperativeHandleRef={panelRefs.template}
         />
-        <Divider orientation="vertical" color="var(--mantine-color-default-border)" />
+        <Divider
+          orientation="vertical"
+          color="var(--mantine-color-default-border)"
+        />
         <PanelToggleChip
           opened={openedNotificationPanel}
           label="NotificationPanel"
           handlePanelToggle={(checked: boolean) => {
-            handlePanelToggle(checked, panelRefs.notification, notificationPanelActions);
+            handlePanelToggle(
+              checked,
+              panelRefs.notification,
+              notificationPanelActions,
+            );
           }}
         />
         <PanelToggleChip
           opened={openedResultViewPanel}
           label="ResultViewPanel"
           handlePanelToggle={(checked: boolean) => {
-            handlePanelToggle(checked, panelRefs.results, resultViewPanelActions);
+            handlePanelToggle(
+              checked,
+              panelRefs.results,
+              resultViewPanelActions,
+            );
           }}
         />
       </Group>
@@ -94,14 +109,19 @@ export const AppMainToolBar = ({
         >
           Send
         </Button>
-        <Divider orientation="vertical" color="var(--mantine-color-default-border)" />
+        <Divider
+          orientation="vertical"
+          color="var(--mantine-color-default-border)"
+        />
         <Text size="sm">AutoParse</Text>
         <Switch
           labelPosition="left"
           onLabel="ON"
           offLabel="OFF"
           checked={editorAutoRequest}
-          onChange={event => setEditorAutoRequest(event.currentTarget.checked)}
+          onChange={(event) =>
+            setEditorAutoRequest(event.currentTarget.checked)
+          }
         />
       </Group>
     </Group>

@@ -7,7 +7,11 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { Dropzone, FileRejection, FileWithPath } from '@mantine/dropzone';
+import {
+  Dropzone,
+  type FileRejection,
+  type FileWithPath,
+} from '@mantine/dropzone';
 import { FileJson, Upload, X } from 'lucide-react';
 
 interface DropzoneSectionProps {
@@ -26,18 +30,22 @@ export const DropzoneSection = ({
   setRejectedFiles,
 }: DropzoneSectionProps) => {
   const handleFilesDrop = (files: FileWithPath[]) => {
-    const existingFileNames = new Set(selectedJsonFiles.map(item => item.name));
+    const existingFileNames = new Set(
+      selectedJsonFiles.map((item) => item.name),
+    );
     setSelectedJsonFiles([
       ...selectedJsonFiles,
-      ...files.filter(item => !existingFileNames.has(item.name)),
+      ...files.filter((item) => !existingFileNames.has(item.name)),
     ]);
   };
 
   const handleFilesReject = (files: FileRejection[]) => {
-    const existingFileNames = new Set(rejectedFiles.map(item => item.file.name));
+    const existingFileNames = new Set(
+      rejectedFiles.map((item) => item.file.name),
+    );
     setRejectedFiles([
       ...rejectedFiles,
-      ...files.filter(item => !existingFileNames.has(item.file.name)),
+      ...files.filter((item) => !existingFileNames.has(item.file.name)),
     ]);
   };
 
@@ -84,7 +92,11 @@ export const DropzoneSection = ({
             <Text inline>Drag JSON files here or click to here</Text>
           </Box>
         </Group>
-        <Divider label="Selected Files" labelPosition="center" variant="dashed" />
+        <Divider
+          label="Selected Files"
+          labelPosition="center"
+          variant="dashed"
+        />
         <ScrollArea h={250}>
           <Stack gap="xs">
             {selectedJsonFiles.map((item: File, index) => {

@@ -12,18 +12,20 @@ import type { editor } from 'monaco-editor';
 
 export const TemplateEditor = () => {
   const { colorScheme } = useMantineColorScheme();
-  const [templateEditorValue, setTemplateEditorValue] = useAtom(templateEditorValueAtom);
+  const [templateEditorValue, setTemplateEditorValue] = useAtom(
+    templateEditorValueAtom,
+  );
   const templateEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const saveTemplateToSessionStorage = debounce((value: string) => {
     setTemplateEditorValue(value);
   }, 500);
 
-  const handleTemplateEditorDidMount: OnMount = editor => {
+  const handleTemplateEditorDidMount: OnMount = (editor) => {
     templateEditorRef.current = editor;
     templateEditorRef.current.setValue(templateEditorValue);
   };
-  const handleTemplateEditorChange: OnChange = value => {
+  const handleTemplateEditorChange: OnChange = (value) => {
     if (value !== undefined) {
       saveTemplateToSessionStorage(value);
     }

@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 export const getCompletionItemProviderSuggestions = (
   model: monaco.editor.ITextModel,
-  position: monaco.Position
+  position: monaco.Position,
 ) => {
   const word = model.getWordUntilPosition(position);
   const range = {
@@ -19,7 +19,8 @@ export const getCompletionItemProviderSuggestions = (
         'One or more "Value" lines are used to describe each column that will be in the resulting table. These Value lines must all appear before any state definitions and must be contiguous lines, separated only by comments.',
       kind: monaco.languages.CompletionItemKind.Value,
       insertText: 'Value ${1:variable} (${2:regex})',
-      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      insertTextRules:
+        monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range: range,
     },
     {
@@ -74,7 +75,8 @@ export const getCompletionItemProviderSuggestions = (
         'Each state definition consists of a list of one or more rules. The FSM reads a line from the input buffer and tests it against each rule, in turn, starting from the top of the current state. If a rule matches the line, then the action is carried out and the process repeats (from the top of the state again) with the next line.',
       kind: monaco.languages.CompletionItemKind.Value,
       insertText: '^${1:regex} -> ${2:action}',
-      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      insertTextRules:
+        monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range: range,
     },
     {
@@ -99,13 +101,15 @@ export const getCompletionItemProviderSuggestions = (
         'Value descriptors are in the format ${ValueName} and indicate value assignment.',
       kind: monaco.languages.CompletionItemKind.Variable,
       insertText: '${${1:variable}}',
-      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      insertTextRules:
+        monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range: range,
     },
     {
       label: '->',
       detail: '^regex -> [action|transition]',
-      documentation: 'Following a regexp, actions may be described, delimited by "->".',
+      documentation:
+        'Following a regexp, actions may be described, delimited by "->".',
       kind: monaco.languages.CompletionItemKind.Operator,
       insertText: '->',
       range: range,

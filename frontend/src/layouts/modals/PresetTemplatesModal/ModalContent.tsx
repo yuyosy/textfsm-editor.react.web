@@ -8,13 +8,23 @@ import { useFetchTemplates } from './hooks/useFetchTemplates';
 import { useLoadPresetTemplate } from './hooks/useLoadPresetTemplate';
 import { SearchForm } from './SearchForm';
 import { TemplateTable } from './TemplateTable';
-import { ModalContentProps, SearchedTemplateInfo, SearchParams } from './types';
 import { getFuzzyFilteredTemplates, getRegexFilteredTemplates } from './utils';
 
-export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+import type {
+  ModalContentProps,
+  SearchedTemplateInfo,
+  SearchParams,
+} from './types';
+
+export const PresetTemplatesModalContent = ({
+  close,
+  focusRef,
+}: ModalContentProps) => {
   const { templates, loading } = useFetchTemplates();
   const { loadTemplate } = useLoadPresetTemplate();
-  const [selectedRecords, setSelectedRecords] = useState<SearchedTemplateInfo[]>([]);
+  const [selectedRecords, setSelectedRecords] = useState<
+    SearchedTemplateInfo[]
+  >([]);
   const [isAndCondition, setIsAndCondition] = useState(true);
   const [isFuzzyEnabled, setIsFuzzyEnabled] = useState(true);
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
@@ -27,8 +37,11 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   });
   const [debounced] = useDebouncedValue(searchParams, 300);
 
-  const handleSearchParamsChange = (field: keyof SearchParams, value: string) => {
-    setSearchParams(prev => ({ ...prev, [field]: value }));
+  const handleSearchParamsChange = (
+    field: keyof SearchParams,
+    value: string,
+  ) => {
+    setSearchParams((prev) => ({ ...prev, [field]: value }));
   };
 
   const handlePlatformChange = (platform: string | null) => {
@@ -49,7 +62,7 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
         keys: ['template'],
         threshold: 0.6,
       }),
-    [templates]
+    [templates],
   );
 
   const regexFilteredTemplates = useMemo(() => {
@@ -57,7 +70,7 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       templates,
       searchParams,
       isAndCondition,
-      selectedPlatform
+      selectedPlatform,
     );
   }, [templates, searchParams, isAndCondition, selectedPlatform]);
 
@@ -69,7 +82,7 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       fuse,
       searchParams.command,
       regexFilteredTemplates,
-      selectedPlatform
+      selectedPlatform,
     );
   }, [
     fuse,
@@ -133,7 +146,11 @@ export const PresetTemplatesModalContent = ({ close, focusRef }: ModalContentPro
             loading={loading}
             onSelectTemplate={handleSelectTemplate}
           />
-          <TextInput label="Selected Template" value={selectedTemplate} readOnly />
+          <TextInput
+            label="Selected Template"
+            value={selectedTemplate}
+            readOnly
+          />
         </Stack>
         <Group justify="space-between" mt="lg">
           <Button variant="default" size="xs" onClick={close}>

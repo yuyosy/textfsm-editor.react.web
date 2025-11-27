@@ -1,4 +1,5 @@
 import { Alert, Text, Tooltip } from '@mantine/core';
+
 type Props = {
   mainTitle: string;
   timestamp: string;
@@ -7,7 +8,13 @@ type Props = {
   onClose?: () => void;
 };
 
-export const AlertCard = ({ mainTitle, timestamp, color, message, onClose }: Props) => {
+export const AlertCard = ({
+  mainTitle,
+  timestamp,
+  color,
+  message,
+  onClose,
+}: Props) => {
   return (
     <Alert
       title={

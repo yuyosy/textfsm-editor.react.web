@@ -1,4 +1,4 @@
-import { TextFSMParseAPIResponse } from '@/features/types';
+import type { TextFSMParseAPIResponse } from '@/features/types';
 
 export interface ResponseResult {
   ok: boolean;

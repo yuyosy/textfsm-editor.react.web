@@ -15,10 +15,10 @@ export const apiFetch = async (
   config: RequestInit = {},
   entrypoint: string = apiUrl,
   timeout: number = 5000,
-  responseType: ResponseType = 'json'
+  responseType: ResponseType = 'json',
 ): Promise<any> => {
   const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new APIRequestError('Request timed out')), timeout)
+    setTimeout(() => reject(new APIRequestError('Request timed out')), timeout),
   );
 
   try {
@@ -42,7 +42,8 @@ export const apiFetch = async (
         throw new APIRequestError('Unsupported response type');
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
     return Promise.reject(new APIRequestError(message));
   }
 };
@@ -57,20 +58,20 @@ type APIOptions = {
 export const api = {
   get: (
     url: string,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
+    { config, entrypoint, timeout, responseType }: APIOptions = {},
   ): Promise<any> => {
     return apiFetch(
       url,
       { ...config, method: 'GET' },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
   post: (
     url: string,
     body: object | null,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
+    { config, entrypoint, timeout, responseType }: APIOptions = {},
   ): Promise<any> => {
     return apiFetch(
       url,
@@ -81,13 +82,13 @@ export const api = {
       },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
   put: (
     url: string,
     body: object | null,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
+    { config, entrypoint, timeout, responseType }: APIOptions = {},
   ): Promise<any> => {
     return apiFetch(
       url,
@@ -98,19 +99,19 @@ export const api = {
       },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
   delete: (
     url: string,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
+    { config, entrypoint, timeout, responseType }: APIOptions = {},
   ): Promise<any> => {
     return apiFetch(
       url,
       { ...config, method: 'DELETE' },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
 };

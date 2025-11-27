@@ -20,21 +20,31 @@ export const initializeTextFSMEditor = () => {
   };
 
   loader.config({ monaco });
-  loader.init().then(monaco => {
+  loader.init().then((monaco) => {
     monaco.editor.defineTheme('theme-dark', themeDark);
     monaco.editor.defineTheme('theme-light', themeLight);
 
     const languageId = 'textfsm';
-    if (!monaco.languages.getLanguages().some(lang => lang.id === languageId)) {
+    if (
+      !monaco.languages.getLanguages().some((lang) => lang.id === languageId)
+    ) {
       monaco.languages.register({ id: languageId });
-      monaco.languages.setLanguageConfiguration(languageId, languageConfiguration);
-      monaco.languages.setMonarchTokensProvider(languageId, monarchTokensProvider);
+      monaco.languages.setLanguageConfiguration(
+        languageId,
+        languageConfiguration,
+      );
+      monaco.languages.setMonarchTokensProvider(
+        languageId,
+        monarchTokensProvider,
+      );
       monaco.languages.registerCompletionItemProvider(languageId, {
         provideCompletionItems: (
           model: monaco.editor.ITextModel,
-          position: monaco.Position
+          position: monaco.Position,
         ) => {
-          return { suggestions: getCompletionItemProviderSuggestions(model, position) };
+          return {
+            suggestions: getCompletionItemProviderSuggestions(model, position),
+          };
         },
       });
     }

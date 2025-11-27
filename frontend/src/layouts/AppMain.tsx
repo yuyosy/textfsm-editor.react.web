@@ -1,24 +1,32 @@
 import { useRef, useState } from 'react';
+import {
+  type ImperativePanelHandle,
+  Panel,
+  PanelGroup,
+} from 'react-resizable-panels';
 
 import { AppShell, Paper, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useSetAtom } from 'jotai';
-import { ImperativePanelHandle, Panel, PanelGroup } from 'react-resizable-panels';
 
 import ResizeHandle from '@/components/resizable-panels/ResizeHandle';
 import { addNotificationAtom } from '@/features/state/atoms';
 import { useAutoRequest } from '@/hooks/useSendRequest';
-import { PanelLayoutType, PanelRefs } from '@/layouts/types';
-
 import { AppMainToolBar } from './AppMainToolBar';
+import {
+  setChipPanelState,
+  setSegmentedControlPanelState,
+} from './panelStateUtils';
 import { NotificationPanel } from './panels/NotificationPanel';
 import { RawTextEditorPanel } from './panels/RawTextEditorPanel';
 import { ResultViewPanel } from './panels/ResultViewPanel';
 import { TemplateEditorPanel } from './panels/TemplateEditorPanel';
-import { setChipPanelState, setSegmentedControlPanelState } from './panelStateUtils';
+
+import type { PanelLayoutType, PanelRefs } from '@/layouts/types';
 
 export const AppMain = () => {
-  const [openedNotificationPanel, notificationPanelActions] = useDisclosure(false);
+  const [openedNotificationPanel, notificationPanelActions] =
+    useDisclosure(false);
   const [openedResultViewPanel, resultViewPanelActions] = useDisclosure(false);
 
   const [mainPanelLyout, setMainPanelLyout] = useState<PanelLayoutType>('both');
@@ -39,7 +47,7 @@ export const AppMain = () => {
       'template',
       panelRefs.data,
       mainPanelLyout,
-      setMainPanelLyout
+      setMainPanelLyout,
     );
   };
   const syncTemplatePanelSegmentedControlsOnResize = () => {
@@ -47,18 +55,22 @@ export const AppMain = () => {
       'data',
       panelRefs.template,
       mainPanelLyout,
-      setMainPanelLyout
+      setMainPanelLyout,
     );
   };
   const syncNotificationPanelStateChipOnResize = () => {
     setChipPanelState(
       openedNotificationPanel,
       panelRefs.notification,
-      notificationPanelActions
+      notificationPanelActions,
     );
   };
   const syncResultViewPanelStateChipOnResize = () => {
-    setChipPanelState(openedResultViewPanel, panelRefs.results, resultViewPanelActions);
+    setChipPanelState(
+      openedResultViewPanel,
+      panelRefs.results,
+      resultViewPanelActions,
+    );
   };
 
   return (
@@ -76,9 +88,20 @@ export const AppMain = () => {
               resultViewPanelActions: resultViewPanelActions,
             }}
           />
-          <Paper h="100%" m={8} radius="md" shadow="xs" style={{ overflow: 'hidden' }}>
+          <Paper
+            h="100%"
+            m={8}
+            radius="md"
+            shadow="xs"
+            style={{ overflow: 'hidden' }}
+          >
             <PanelGroup direction="horizontal" autoSaveId="top">
-              <Panel defaultSize={80} collapsedSize={0} minSize={10} collapsible={true}>
+              <Panel
+                defaultSize={80}
+                collapsedSize={0}
+                minSize={10}
+                collapsible={true}
+              >
                 <PanelGroup direction="vertical" autoSaveId="main">
                   <Panel
                     id="main-panel"
@@ -96,7 +119,9 @@ export const AppMain = () => {
                       <ResizeHandle />
                       <TemplateEditorPanel
                         panelRef={panelRefs.template}
-                        onResizeHandler={syncTemplatePanelSegmentedControlsOnResize}
+                        onResizeHandler={
+                          syncTemplatePanelSegmentedControlsOnResize
+                        }
                       />
                     </PanelGroup>
                   </Panel>

@@ -6,7 +6,8 @@ import { DataTable } from 'mantine-datatable';
 
 import { StatusBadge } from '@/components/StatusBadge';
 import { historyAutoSaveItemsAtom } from '@/features/state/storageAtoms';
-import { HistoryAutoSaveItem } from '@/types';
+
+import type { HistoryAutoSaveItem } from '@/types';
 
 interface HistoryDataTableProps {
   onSelect: (record: HistoryAutoSaveItem) => void;
@@ -16,11 +17,15 @@ export const HistoryDataTable = ({ onSelect }: HistoryDataTableProps) => {
   const records = useAtomValue(historyAutoSaveItemsAtom);
   const [pageSize, setPageSize] = useState(pageSizes[0]);
   const [page, setPage] = useState(1);
-  const [visibleRecords, setVisibleRecords] = useState(records.slice(0, pageSize));
+  const [visibleRecords, setVisibleRecords] = useState(
+    records.slice(0, pageSize),
+  );
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    setVisibleRecords(records.slice((newPage - 1) * pageSize, newPage * pageSize));
+    setVisibleRecords(
+      records.slice((newPage - 1) * pageSize, newPage * pageSize),
+    );
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
@@ -52,12 +57,12 @@ export const HistoryDataTable = ({ onSelect }: HistoryDataTableProps) => {
         {
           accessor: 'status',
           title: 'Status',
-          render: record => <StatusBadge variant={record.status} />,
+          render: (record) => <StatusBadge variant={record.status} />,
         },
         {
           accessor: 'data',
           title: 'Data',
-          render: record => (
+          render: (record) => (
             <Group gap={6}>
               <Popover width={280} shadow="md" arrowSize={14} withArrow>
                 <Popover.Target>
@@ -101,7 +106,7 @@ export const HistoryDataTable = ({ onSelect }: HistoryDataTableProps) => {
         {
           accessor: 'action',
           title: 'Action',
-          render: record => (
+          render: (record) => (
             <Button
               variant="default"
               size="xs"

@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 
-import { HistoryAutoSaveItem, HistoryAutoSaveItemInfo } from '@/types';
-
 import {
   historyAutoSaveCountAtom,
   historyAutoSaveEnabledAtom,
   historyAutoSaveItemsAtom,
 } from './storageAtoms';
+
+import type { HistoryAutoSaveItem, HistoryAutoSaveItemInfo } from '@/types';
 
 // Atom to add a new history auto-save item
 export const addHistoryAutoSaveItemAtom = atom(
@@ -18,15 +18,20 @@ export const addHistoryAutoSaveItemAtom = atom(
       timestamp: new Date().toISOString(),
     };
     set(historyAutoSaveItemsAtom, [newItem, ...historyAutoSaveItems]);
-  }
+  },
 );
 
 // Atom to remove a history auto-save item by index
-export const removeHistoryAutoSaveItemAtom = atom(null, (get, set, index: number) => {
-  const historyAutoSaveItems = get(historyAutoSaveItemsAtom);
-  const newHistoryAutoSaveItems = historyAutoSaveItems.filter((_, i) => i !== index);
-  set(historyAutoSaveItemsAtom, newHistoryAutoSaveItems);
-});
+export const removeHistoryAutoSaveItemAtom = atom(
+  null,
+  (get, set, index: number) => {
+    const historyAutoSaveItems = get(historyAutoSaveItemsAtom);
+    const newHistoryAutoSaveItems = historyAutoSaveItems.filter(
+      (_, i) => i !== index,
+    );
+    set(historyAutoSaveItemsAtom, newHistoryAutoSaveItems);
+  },
+);
 
 // Atom to clear all history auto-save items
 export const clearHistoryAutoSaveItemAtom = atom(null, (_, set) => {
@@ -50,5 +55,5 @@ export const historyAutoSaveHandler = atom(
     if (items.length > maxCount) {
       set(historyAutoSaveItemsAtom, items.slice(0, maxCount));
     }
-  }
+  },
 );

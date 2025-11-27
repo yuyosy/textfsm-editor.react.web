@@ -7,7 +7,7 @@ import { DataTable } from 'mantine-datatable';
 import { TagBadge } from '@/components/TagBadege';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
 
-import { TemplateInfo } from '../types';
+import type { TemplateInfo } from '../types';
 
 type TemplateTableProps = {
   templates: TemplateInfo[];
@@ -22,8 +22,8 @@ export const TemplateTable = ({ templates, onSelect }: TemplateTableProps) => {
     onSelect(templateId);
   };
 
-  const filteredTemplates = templates.filter(template =>
-    template.label.toLowerCase().includes(search.toLowerCase())
+  const filteredTemplates = templates.filter((template) =>
+    template.label.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -31,7 +31,7 @@ export const TemplateTable = ({ templates, onSelect }: TemplateTableProps) => {
       <TextInput
         placeholder="Search templates..."
         value={search}
-        onChange={e => setSearch(e.currentTarget.value)}
+        onChange={(e) => setSearch(e.currentTarget.value)}
       />
       <DataTable
         height={300}
@@ -47,13 +47,14 @@ export const TemplateTable = ({ templates, onSelect }: TemplateTableProps) => {
           {
             accessor: 'label',
             title: 'Template Name',
-            render: record => (
+            render: (record) => (
               <Flex direction="column" gap={4}>
                 <Text>{record.label}</Text>
                 {record.tags ? (
                   <Group gap={4}>
-                    {record.tags.map(tagName => {
-                      const tag = tags[tags.findIndex(tag => tag.name === tagName)];
+                    {record.tags.map((tagName) => {
+                      const tag =
+                        tags[tags.findIndex((tag) => tag.name === tagName)];
                       return tag ? (
                         <TagBadge key={tagName} size="sm" {...tag} />
                       ) : (
@@ -78,7 +79,7 @@ export const TemplateTable = ({ templates, onSelect }: TemplateTableProps) => {
             accessor: 'action',
             title: 'Action',
             width: 90,
-            render: record => (
+            render: (record) => (
               <Button
                 variant="default"
                 size="xs"

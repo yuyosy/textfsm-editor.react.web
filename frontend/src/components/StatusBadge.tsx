@@ -1,4 +1,4 @@
-import { Badge, ColorSwatch, MantineColor } from '@mantine/core';
+import { Badge, ColorSwatch, type MantineColor } from '@mantine/core';
 
 export type StatusBadgeVariant =
   | 'init'
@@ -34,7 +34,9 @@ export const StatusBadge = ({ variant }: StatusBadgeProps) => {
       size="xs"
       variant="light"
       color={style.styleColor}
-      leftSection={<ColorSwatch size={8} color={style.markColor} withShadow={false} />}
+      leftSection={
+        <ColorSwatch size={8} color={style.markColor} withShadow={false} />
+      }
       styles={{
         root: {
           border: `solid 1px ${style.markColor}66`,

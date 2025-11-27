@@ -13,7 +13,11 @@ export const ReferencesSection = () => {
                 TextFSM
               </Table.Th>
               <Table.Td>
-                <Anchor href="https://github.com/google/textfsm" target="_blank" fz={14}>
+                <Anchor
+                  href="https://github.com/google/textfsm"
+                  target="_blank"
+                  fz={14}
+                >
                   <Flex align="center" gap="sm">
                     GitHub - Google/textfsm
                     <SquareArrowOutUpRight size={16} />

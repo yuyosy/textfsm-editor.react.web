@@ -2,13 +2,15 @@ import { ActionIcon, Divider, Stack, Text, Tooltip } from '@mantine/core';
 import { FileJson } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
 
-import { LoadedJsonData } from './types';
+import type { LoadedJsonData } from './types';
 
 interface TemplateListSectionProps {
   processedJsonData: LoadedJsonData[];
 }
 
-export const TemplateListSection = ({ processedJsonData }: TemplateListSectionProps) => {
+export const TemplateListSection = ({
+  processedJsonData,
+}: TemplateListSectionProps) => {
   return (
     <Stack p={8}>
       <Divider my="xs" />
@@ -17,7 +19,7 @@ export const TemplateListSection = ({ processedJsonData }: TemplateListSectionPr
         columns={[
           {
             accessor: 'label',
-            render: item => (
+            render: (item) => (
               <Stack gap={0}>
                 <Text size="sm">{item.label}</Text>
                 {item.label !== item.labelOrigin && (
@@ -31,7 +33,7 @@ export const TemplateListSection = ({ processedJsonData }: TemplateListSectionPr
           {
             accessor: 'sourceFile',
             textAlign: 'center',
-            render: item => {
+            render: (item) => {
               return (
                 <Tooltip label={item.fileName} position="bottom">
                   <ActionIcon variant="default">
@@ -43,7 +45,7 @@ export const TemplateListSection = ({ processedJsonData }: TemplateListSectionPr
           },
           {
             accessor: 'state',
-            render: item => {
+            render: (item) => {
               const status = [];
               if (item.isDuplicate) status.push('Duplicate');
               if (item.isAlreadySaved) status.push('Already Saved');
@@ -52,7 +54,7 @@ export const TemplateListSection = ({ processedJsonData }: TemplateListSectionPr
             },
           },
         ]}
-        idAccessor={item => item.fileName + item.label}
+        idAccessor={(item) => item.fileName + item.label}
       />
     </Stack>
   );

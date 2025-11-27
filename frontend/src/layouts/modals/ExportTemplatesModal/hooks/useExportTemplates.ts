@@ -6,9 +6,11 @@ import { savedTemplateListAtom } from '@/features/state/storageAtoms';
 
 export const useExportTemplates = () => {
   const savedTemplates = useAtomValue(savedTemplateListAtom);
-  const [selectedTemplateNames, setSelectedTemplateNames] = useState<string[]>([]);
+  const [selectedTemplateNames, setSelectedTemplateNames] = useState<string[]>(
+    [],
+  );
 
-  const initialLeftData = savedTemplates.map(template => template.label);
+  const initialLeftData = savedTemplates.map((template) => template.label);
   const initialRightData: string[] = [];
 
   const handleTransferChange = (_leftData: string[], rightData: string[]) => {

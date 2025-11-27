@@ -1,9 +1,13 @@
 import { atomWithStorage } from 'jotai/utils';
 
-import { PlatformPriority, TemplateInfo, TemplateTag } from '@/layouts/modals/types';
-import { HistoryAutoSaveItem } from '@/types';
-
 import { localStorage, sessionStorage } from './syncStorage';
+
+import type {
+  PlatformPriority,
+  TemplateInfo,
+  TemplateTag,
+} from '@/layouts/modals/types';
+import type { HistoryAutoSaveItem } from '@/types';
 
 export const savedTemplateListAtom = atomWithStorage<TemplateInfo[]>(
   'editor-template-list',
@@ -11,7 +15,7 @@ export const savedTemplateListAtom = atomWithStorage<TemplateInfo[]>(
   localStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const parseRequestDelayAtom = atomWithStorage<number>(
@@ -20,7 +24,7 @@ export const parseRequestDelayAtom = atomWithStorage<number>(
   localStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const autoRequestEnabledAtom = atomWithStorage<boolean>(
@@ -29,7 +33,7 @@ export const autoRequestEnabledAtom = atomWithStorage<boolean>(
   localStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const platformPrioritiesAtom = atomWithStorage<PlatformPriority[]>(
@@ -38,7 +42,7 @@ export const platformPrioritiesAtom = atomWithStorage<PlatformPriority[]>(
   localStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const rawTextEditorValueAtom = atomWithStorage<string>(
@@ -47,7 +51,7 @@ export const rawTextEditorValueAtom = atomWithStorage<string>(
   sessionStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const templateEditorValueAtom = atomWithStorage<string>(
@@ -56,7 +60,7 @@ export const templateEditorValueAtom = atomWithStorage<string>(
   sessionStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const templateTagsAtom = atomWithStorage<TemplateTag[]>(
@@ -65,28 +69,28 @@ export const templateTagsAtom = atomWithStorage<TemplateTag[]>(
   localStorage(),
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const historyAutoSaveEnabledAtom = atomWithStorage<boolean>(
   'options-history-auto-save-enabled',
   true,
   localStorage(),
-  { getOnInit: true }
+  { getOnInit: true },
 );
 
 export const historyAutoSaveCountAtom = atomWithStorage<number>(
   'options-history-auto-save-count',
   5,
   localStorage(),
-  { getOnInit: true }
+  { getOnInit: true },
 );
 
 export const historyAutoSaveItemsAtom = atomWithStorage<HistoryAutoSaveItem[]>(
   'options-history-auto-save-items',
   [],
   localStorage(),
-  { getOnInit: true }
+  { getOnInit: true },
 );
 
 // Removed history auto-save action atoms, they are extracted to historyAutoSaveActions.ts

@@ -1,21 +1,26 @@
 import { useRef, useState } from 'react';
 
 import { Button, Group, Modal, Stack, Stepper, Text } from '@mantine/core';
-import { FileRejection } from '@mantine/dropzone';
 import { useAtom, useSetAtom } from 'jotai';
 
 import { addNotificationAtom } from '@/features/state/atoms';
-import { savedTemplateListAtom, templateTagsAtom } from '@/features/state/storageAtoms';
-
-import { TemplateInfo, TemplateTag } from '../types';
-
+import {
+  savedTemplateListAtom,
+  templateTagsAtom,
+} from '@/features/state/storageAtoms';
 import { DropzoneSection } from './DropzoneSection';
 import { useParseJsonTemplates } from './hooks/useParseJsonTemplates';
 import { ImportSelectionSection } from './ImportSelectionSection';
 import { TemplateListSection } from './TemplateListSection';
-import { LoadedJsonData, ModalContentProps } from './types';
 
-export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+import type { FileRejection } from '@mantine/dropzone';
+import type { TemplateInfo, TemplateTag } from '../types';
+import type { LoadedJsonData, ModalContentProps } from './types';
+
+export const ImportTemplatesModalContent = ({
+  close,
+  focusRef,
+}: ModalContentProps) => {
   const addNotification = useSetAtom(addNotificationAtom);
   const [templateList, setTemplateList] = useAtom(savedTemplateListAtom);
   const [tags, setTags] = useAtom(templateTagsAtom);
@@ -24,13 +29,17 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   const [activeStep, setActiveStep] = useState(0);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [availableTemplates, setAvailableTemplates] = useState<string[]>([]);
-  const [processedJsonData, setProcessedJsonData] = useState<LoadedJsonData[]>([]);
+  const [processedJsonData, setProcessedJsonData] = useState<LoadedJsonData[]>(
+    [],
+  );
   const openRef = useRef<() => void>(() => {});
 
   const initialRightData: string[] = [];
 
-  const nextStep = () => setActiveStep(current => (current < 3 ? current + 1 : current));
-  const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
+  const nextStep = () =>
+    setActiveStep((current) => (current < 3 ? current + 1 : current));
+  const prevStep = () =>
+    setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const { parseJsonTemplates } = useParseJsonTemplates();
 
@@ -40,7 +49,9 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
   };
   const proceedToSelectionStep = () => {
     setAvailableTemplates(
-      processedJsonData.filter(item => !item.hasFormatError).map(item => item.label)
+      processedJsonData
+        .filter((item) => !item.hasFormatError)
+        .map((item) => item.label),
     );
     nextStep();
   };
@@ -55,7 +66,7 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
     const newTags: TemplateTag[] = [];
     for (const data of processedJsonData) {
       for (const tagName of data.templateInfoData?.tags || []) {
-        if (tags.findIndex(item => item.name === tagName) === -1) {
+        if (tags.findIndex((item) => item.name === tagName) === -1) {
           newTags.push({
             name: tagName,
             description: `import from ${data.fileName}`,
@@ -70,10 +81,14 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
       ...templateList,
       ...processedJsonData
         .filter(
-          item =>
-            selectedTemplates.includes(item.label) && item.templateInfoData !== null
+          (item) =>
+            selectedTemplates.includes(item.label) &&
+            item.templateInfoData !== null,
         )
-        .map(item => ({ ...item.templateInfoData, label: item.label }) as TemplateInfo),
+        .map(
+          (item) =>
+            ({ ...item.templateInfoData, label: item.label }) as TemplateInfo,
+        ),
     ];
 
     setTemplateList(newTemplateList);
@@ -134,7 +149,11 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   Close
                 </Button>
                 <Group>
-                  <Button variant="default" size="xs" onClick={returnToPreviousStep}>
+                  <Button
+                    variant="default"
+                    size="xs"
+                    onClick={returnToPreviousStep}
+                  >
                     Back
                   </Button>
                   <Button size="xs" onClick={proceedToSelectionStep}>
@@ -154,7 +173,11 @@ export const ImportTemplatesModalContent = ({ close, focusRef }: ModalContentPro
                   Close
                 </Button>
                 <Group>
-                  <Button variant="default" size="xs" onClick={returnToPreviousStep}>
+                  <Button
+                    variant="default"
+                    size="xs"
+                    onClick={returnToPreviousStep}
+                  >
                     Back
                   </Button>
                   <Button

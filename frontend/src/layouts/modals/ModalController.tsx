@@ -3,7 +3,6 @@ import { useFocusWithin } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 
 import { controlModalAtom } from '@/features/state/atoms';
-
 import { AboutInfoModalContent } from './AboutInfoModal/ModalContent';
 import { EditTemplatesModalContent } from './EditTemplatesModal/ModalContent';
 import { ExportTemplatesModalContent } from './ExportTemplatesModal/ModalContent';
@@ -17,7 +16,8 @@ import { SaveTemplateModalContent } from './SaveTemplateModal/ModalContent';
 export const ModalController = () => {
   const [controlModal, setControlModalAtom] = useAtom(controlModalAtom);
   const { ref: focusRef, focused } = useFocusWithin();
-  const close = () => setControlModalAtom({ opened: false, type: 'not-active' });
+  const close = () =>
+    setControlModalAtom({ opened: false, type: 'not-active' });
 
   return (
     <Modal.Root

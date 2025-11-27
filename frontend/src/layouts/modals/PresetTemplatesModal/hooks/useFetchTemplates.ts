@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { api } from '@/features/api';
 
-import { NtcTemplateIndex, PlatformTemplatesDict } from '../types';
+import type { NtcTemplateIndex, PlatformTemplatesDict } from '../types';
 
 export const useFetchTemplates = () => {
   const [templates, setTemplates] = useState<PlatformTemplatesDict>({});
@@ -12,17 +12,22 @@ export const useFetchTemplates = () => {
     const fetchTemplates = async () => {
       setLoading(true);
       try {
-        const response = (await api.get('/api/ntc-templates')) as NtcTemplateIndex;
+        const response = (await api.get(
+          '/api/ntc-templates',
+        )) as NtcTemplateIndex;
         if (!response.template_list) {
           throw new Error('Invalid response format');
         }
-        const groupedTemplates = response.template_list.reduce((acc, template) => {
-          if (!acc[template.platform]) {
-            acc[template.platform] = [];
-          }
-          acc[template.platform].push(template);
-          return acc;
-        }, {} as PlatformTemplatesDict);
+        const groupedTemplates = response.template_list.reduce(
+          (acc, template) => {
+            if (!acc[template.platform]) {
+              acc[template.platform] = [];
+            }
+            acc[template.platform].push(template);
+            return acc;
+          },
+          {} as PlatformTemplatesDict,
+        );
 
         setTemplates(groupedTemplates);
       } catch (error) {

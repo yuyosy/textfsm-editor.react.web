@@ -1,14 +1,13 @@
 import {
   AppShell,
-  MantineProvider,
   colorsTuple,
   createTheme,
+  MantineProvider,
   virtualColor,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
-
 import { AppHeader } from './AppHeader';
 import { AppMain } from './AppMain';
 import { AppNavbar } from './AppNav';
@@ -39,24 +38,22 @@ export const App = () => {
   const navbarWidth = opened ? 300 : 60;
 
   return (
-    <>
-      <MantineProvider theme={theme} defaultColorScheme="dark">
-        <AppShell
-          layout="alt"
-          withBorder={false}
-          navbar={{
-            width: navbarWidth,
-            breakpoint: 'sm',
-            collapsed: { mobile: !opened },
-          }}
-          bg="base-background"
-        >
-          <AppHeader opened={opened} toggle={toggle} />
-          <AppNavbar opened={opened} toggle={toggle} />
-          <AppMain />
-          {/* <AppFooter /> */}
-        </AppShell>
-      </MantineProvider>
-    </>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
+      <AppShell
+        layout="alt"
+        withBorder={false}
+        navbar={{
+          width: navbarWidth,
+          breakpoint: 'sm',
+          collapsed: { mobile: !opened },
+        }}
+        bg="base-background"
+      >
+        <AppHeader opened={opened} toggle={toggle} />
+        <AppNavbar opened={opened} toggle={toggle} />
+        <AppMain />
+        {/* <AppFooter /> */}
+      </AppShell>
+    </MantineProvider>
   );
 };

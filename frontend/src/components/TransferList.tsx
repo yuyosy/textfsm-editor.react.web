@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 
 import {
   ActionIcon,
@@ -41,20 +41,22 @@ const RenderList = ({
   const [search, setSearch] = useState('');
   const combobox = useCombobox();
 
-  const filteredOptions = options.filter(option =>
-    option.toLowerCase().includes(search.toLowerCase())
+  const filteredOptions = options.filter((option) =>
+    option.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleValueSelect = (val: string) => {
-    setValue(current =>
-      current.includes(val) ? current.filter(v => v !== val) : [...current, val]
+    setValue((current) =>
+      current.includes(val)
+        ? current.filter((v) => v !== val)
+        : [...current, val],
     );
   };
 
   const handleSelectAll = (event: ChangeEvent<HTMLInputElement>) => {
     const checked = event.currentTarget.checked;
     if (checked) {
-      setValue(filteredOptions.map(option => option));
+      setValue(filteredOptions.map((option) => option));
     } else {
       setValue([]);
     }
@@ -68,9 +70,10 @@ const RenderList = ({
   // チェックボックスの状態を計算
   const isAllSelected =
     filteredOptions.length > 0 && value.length === filteredOptions.length;
-  const isIndeterminate = value.length > 0 && value.length < filteredOptions.length;
+  const isIndeterminate =
+    value.length > 0 && value.length < filteredOptions.length;
 
-  const items = filteredOptions.map(item => (
+  const items = filteredOptions.map((item) => (
     <Combobox.Option
       value={item}
       key={item}
@@ -106,7 +109,7 @@ const RenderList = ({
                 w="100%"
                 placeholder={searchPlaceholder}
                 value={search}
-                onChange={event => {
+                onChange={(event) => {
                   setSearch(event.currentTarget.value);
                   combobox.updateSelectedOptionIndex();
                 }}
@@ -154,10 +157,10 @@ export const TransferList = ({
   ]);
 
   const handleTransfer = (transferFrom: number, options: string[]) =>
-    setData(current => {
+    setData((current) => {
       const transferTo = transferFrom === 0 ? 1 : 0;
       const transferFromData = current[transferFrom].filter(
-        item => !options.includes(item)
+        (item) => !options.includes(item),
       );
       const transferToData = [...current[transferTo], ...options];
 
@@ -177,7 +180,7 @@ export const TransferList = ({
         <RenderList
           type="forward"
           options={data[0]}
-          onTransfer={options => handleTransfer(0, options)}
+          onTransfer={(options) => handleTransfer(0, options)}
           searchPlaceholder={leftSearchPlaceholder}
         />
       </Grid.Col>
@@ -185,7 +188,7 @@ export const TransferList = ({
         <RenderList
           type="backward"
           options={data[1]}
-          onTransfer={options => handleTransfer(1, options)}
+          onTransfer={(options) => handleTransfer(1, options)}
           searchPlaceholder={rightSearchPlaceholder}
         />
       </Grid.Col>

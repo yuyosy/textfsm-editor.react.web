@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import {
   ActionIcon,
@@ -14,7 +14,6 @@ import {
 import { useAtom, useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { BellOff, Eraser } from 'lucide-react';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { AlertCard } from '@/components/AlertCard';
 import {
@@ -22,7 +21,9 @@ import {
   notificationsAtom,
   removeNotificationAtom,
 } from '@/features/state/atoms';
-import { Notification } from '@/types';
+
+import type { RefObject } from 'react';
+import type { Notification } from '@/types';
 
 interface NotificationPanelProps {
   panelRef: RefObject<ImperativePanelHandle>;
@@ -67,7 +68,11 @@ export const NotificationPanel = ({
         <Group px={10} py={8} justify="space-between">
           <Text fw={700}>Notifications</Text>
           <Tooltip label="Clear all" withArrow position="bottom">
-            <ActionIcon variant="subtle" color="gray" onClick={clearNotifications}>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              onClick={clearNotifications}
+            >
               <Eraser size={22} />
             </ActionIcon>
           </Tooltip>
@@ -86,7 +91,7 @@ export const NotificationPanel = ({
         ) : (
           <ScrollArea h="100%">
             <Stack p={10} pr={16}>
-              {notifications.map(notification => (
+              {notifications.map((notification) => (
                 <AlertCard
                   key={notification.id}
                   mainTitle={notification.title}

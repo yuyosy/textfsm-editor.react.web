@@ -15,23 +15,24 @@ import {
   rawTextEditorValueAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
-import { NotificationItemInfo } from '@/types';
+
+import type { NotificationItemInfo } from '@/types';
 
 export const useSendRequest = () => {
   const readRawText = useAtomCallback(
-    useCallback(get => {
+    useCallback((get) => {
       return get(rawTextEditorValueAtom);
-    }, [])
+    }, []),
   );
   const readTemplate = useAtomCallback(
-    useCallback(get => {
+    useCallback((get) => {
       return get(templateEditorValueAtom);
-    }, [])
+    }, []),
   );
   const readParseRequestDelay = useAtomCallback(
-    useCallback(get => {
+    useCallback((get) => {
       return get(parseRequestDelayAtom);
-    }, [])
+    }, []),
   );
 
   const setResponseState = useSetAtom(responseStateAtom);
@@ -48,7 +49,7 @@ export const useSendRequest = () => {
       const response = await sendTextFSMParseRequest(
         readRawText(),
         template,
-        immediate ? 0 : readParseRequestDelay()
+        immediate ? 0 : readParseRequestDelay(),
       );
       setResponseState(response.ok ? 'success' : 'error');
       setResultViewValue(response);
@@ -94,7 +95,8 @@ export const useSendRequest = () => {
       setResultViewValue(errorResult);
       const errorReason =
         error instanceof Error ? error.constructor.name : 'UnknownError';
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       notification = {
         type: 'error',
         title: errorReason,
@@ -110,7 +112,7 @@ export const useSendRequest = () => {
 };
 
 export const useAutoRequest = (
-  onNotification?: (notification: NotificationItemInfo) => void
+  onNotification?: (notification: NotificationItemInfo) => void,
 ) => {
   const autoRequestEnabled = useAtomValue(autoRequestEnabledAtom);
   const rawTextValue = useAtomValue(rawTextEditorValueAtom);
@@ -120,18 +122,18 @@ export const useAutoRequest = (
   const lastValuesRef = useRef({ rawText: '', template: '' });
 
   const readEditorValues = useAtomCallback(
-    useCallback(get => {
+    useCallback((get) => {
       return {
         rawText: get(rawTextEditorValueAtom),
         template: get(templateEditorValueAtom),
       };
-    }, [])
+    }, []),
   );
 
   const readParseRequestDelay = useAtomCallback(
-    useCallback(get => {
+    useCallback((get) => {
       return get(parseRequestDelayAtom);
-    }, [])
+    }, []),
   );
 
   useEffect(() => {

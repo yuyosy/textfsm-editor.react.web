@@ -1,4 +1,4 @@
-import ModalId from './modals/types';
+import type ModalId from './modals/types';
 
 export type PanelLayoutType = 'both' | 'data' | 'template';
 

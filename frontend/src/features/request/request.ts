@@ -1,12 +1,12 @@
 export const request = async (
   requestUrl: RequestInfo | URL,
-  requestBody?: RequestInit | undefined
+  requestBody?: RequestInit | undefined,
 ) => {
   try {
     const response = await fetch(requestUrl, requestBody);
     if (!response.ok) {
       throw new Error(
-        `An error has occured: ${response.status} - ${response.statusText}`
+        `An error has occured: ${response.status} - ${response.statusText}`,
       );
     }
     return await response.json();

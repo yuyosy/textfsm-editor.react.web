@@ -1,11 +1,10 @@
-import { RefObject } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CodeHighlight } from '@mantine/code-highlight';
 import { Group, ScrollArea, Stack, Tabs, Text } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { Braces, Table } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { FileDownloadButton } from '@/components/FileDownloadButton';
@@ -14,17 +13,25 @@ import { resultViewValueAtom } from '@/features/state/atoms';
 import { useDataDeliver } from '@/hooks/useDataDeliver';
 import { getCurrentDateTimeString } from '@/utils/datetime';
 
+import type { RefObject } from 'react';
+
 interface ResultViewPanelProps {
   panelRef: RefObject<ImperativePanelHandle>;
   onResizeHandler: () => void;
 }
-export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelProps) => {
+export const ResultViewPanel = ({
+  panelRef,
+  onResizeHandler,
+}: ResultViewPanelProps) => {
   const resultViewValue = useAtomValue(resultViewValueAtom);
 
   const header = resultViewValue?.data?.header || [];
   const results = resultViewValue?.data?.results || [];
 
-  const { tsvDataDeliver, jsonDataDeliver } = useDataDeliver({ header, results });
+  const { tsvDataDeliver, jsonDataDeliver } = useDataDeliver({
+    header,
+    results,
+  });
 
   return (
     <Panel
@@ -65,7 +72,7 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
               </Group>
             </Group>
             <DataTable
-              columns={header.map(value => ({ accessor: value }))}
+              columns={header.map((value) => ({ accessor: value }))}
               records={results.map((item, index) => {
                 const entries = Object.entries(item).map(([key, val]) => [
                   key,

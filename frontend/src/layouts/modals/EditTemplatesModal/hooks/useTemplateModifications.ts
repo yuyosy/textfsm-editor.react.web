@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 
 import { useListState } from '@mantine/hooks';
 
-import { TemplateInfo } from '../../types';
-import { ChangesState } from '../types';
+import type { TemplateInfo } from '../../types';
+import type { ChangesState } from '../types';
 
 const deepCopyTemplates = (templates: TemplateInfo[]): TemplateInfo[] => {
-  return templates.map(template => ({
+  return templates.map((template) => ({
     ...template,
     tags: [...(template.tags || [])],
   }));
@@ -19,14 +19,15 @@ type EditingTemplateInfo = {
 
 export const useTemplateModifications = (
   initialTemplates: TemplateInfo[],
-  setSavedTemplates: (templates: TemplateInfo[]) => void
+  setSavedTemplates: (templates: TemplateInfo[]) => void,
 ) => {
-  const [editingTemplates, editingTemplatesHandlers] = useListState<EditingTemplateInfo>(
-    deepCopyTemplates(initialTemplates).map(template => ({
-      original: template,
-      current: template,
-    }))
-  );
+  const [editingTemplates, editingTemplatesHandlers] =
+    useListState<EditingTemplateInfo>(
+      deepCopyTemplates(initialTemplates).map((template) => ({
+        original: template,
+        current: template,
+      })),
+    );
 
   const [modifications, setModifications] = useState<ChangesState>({
     orderChanged: false,
@@ -42,7 +43,7 @@ export const useTemplateModifications = (
       modifications.orderChanged ||
         modifications.deleteCount > 0 ||
         modifications.renameCount > 0 ||
-        modifications.tagUpdateCount > 0
+        modifications.tagUpdateCount > 0,
     );
   }, [modifications]);
 
@@ -53,7 +54,7 @@ export const useTemplateModifications = (
       }
       return count;
     }, 0);
-    setModifications(prevState => ({
+    setModifications((prevState) => ({
       ...prevState,
       renameCount,
     }));
@@ -61,9 +62,9 @@ export const useTemplateModifications = (
 
   const updateModification = <K extends keyof ChangesState>(
     key: K,
-    value: ChangesState[K]
+    value: ChangesState[K],
   ) => {
-    setModifications(prevState => ({
+    setModifications((prevState) => ({
       ...prevState,
       [key]: value,
     }));
@@ -71,10 +72,10 @@ export const useTemplateModifications = (
 
   const resetTemplateList = () => {
     editingTemplatesHandlers.setState(
-      deepCopyTemplates(initialTemplates).map(template => ({
+      deepCopyTemplates(initialTemplates).map((template) => ({
         original: template,
         current: template,
-      }))
+      })),
     );
     resetModifications();
   };
@@ -118,7 +119,7 @@ export const useTemplateModifications = (
   };
 
   const saveChanges = () => {
-    setSavedTemplates(editingTemplates.map(template => template.current));
+    setSavedTemplates(editingTemplates.map((template) => template.current));
     resetModifications();
   };
 
@@ -136,7 +137,7 @@ export const useTemplateModifications = (
   };
 
   return {
-    editingTemplates: editingTemplates.map(template => template.current),
+    editingTemplates: editingTemplates.map((template) => template.current),
     modifications,
     hasModifications,
     moveTemplateUp,

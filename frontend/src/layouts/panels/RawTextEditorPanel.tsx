@@ -1,16 +1,16 @@
-import { RefObject } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { Group, Stack, Text } from '@mantine/core';
 import { useAtomValue } from 'jotai';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { FileDownloadButton } from '@/components/FileDownloadButton';
 import { editorDataText } from '@/features/fileNames';
 import { rawTextEditorValueAtom } from '@/features/state/storageAtoms';
 import { getCurrentDateTimeString } from '@/utils/datetime';
-
 import { RawTextEditor } from './RawTextEditor';
+
+import type { RefObject } from 'react';
 
 const DownloadButton = () => {
   const value = useAtomValue(rawTextEditorValueAtom);

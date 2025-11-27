@@ -1,8 +1,7 @@
-import Fuse from 'fuse.js';
-
 import { regexTest } from '@/utils/regexTest';
 
-import {
+import type Fuse from 'fuse.js';
+import type {
   NtcTemplateInfo,
   PlatformTemplatesDict,
   SearchedTemplateInfo,
@@ -14,7 +13,7 @@ export const getRegexFilteredTemplates = (
   templates: PlatformTemplatesDict,
   searchParams: SearchParams,
   isAndCondition: boolean,
-  selectedPlatform: string | null
+  selectedPlatform: string | null,
 ): SearchedTemplateInfo[] => {
   if (selectedPlatform === null) {
     return [];
@@ -24,7 +23,9 @@ export const getRegexFilteredTemplates = (
       const conditions: boolean[] = [];
       if (searchParams.template !== '') {
         conditions.push(
-          template.toLowerCase().includes(searchParams.template.trim().toLowerCase())
+          template
+            .toLowerCase()
+            .includes(searchParams.template.trim().toLowerCase()),
         );
       }
       if (searchParams.command !== '') {
@@ -32,15 +33,15 @@ export const getRegexFilteredTemplates = (
           command_raw
             .toLowerCase()
             .includes(searchParams.command.trim().toLowerCase()) ||
-            regexTest(command_regex, searchParams.command)
+            regexTest(command_regex, searchParams.command),
         );
       }
 
       return isAndCondition
-        ? conditions.every(value => value === true)
-        : conditions.some(value => value === true);
+        ? conditions.every((value) => value === true)
+        : conditions.some((value) => value === true);
     })
-    .map(item => ({
+    .map((item) => ({
       ...item,
       matchType: searchParams.command === '' ? 'all' : 'regex',
     }));
@@ -51,19 +52,19 @@ export const getFuzzyFilteredTemplates = (
   fuse: Fuse<NtcTemplateInfo>,
   searchValue: string,
   regexFilteredTemplates: SearchedTemplateInfo[],
-  selectedPlatform: string | null
+  selectedPlatform: string | null,
 ): SearchedTemplateInfo[] => {
   return fuse
     .search(searchValue)
-    .map(result => result.item)
+    .map((result) => result.item)
     .filter(
-      item =>
+      (item) =>
         item.platform === selectedPlatform &&
         !regexFilteredTemplates.some(
-          regexItem =>
+          (regexItem) =>
             regexItem.template === item.template &&
-            regexItem.command_raw === item.command_raw
-        )
+            regexItem.command_raw === item.command_raw,
+        ),
     )
-    .map(item => ({ ...item, matchType: 'fuzzy' }));
+    .map((item) => ({ ...item, matchType: 'fuzzy' }));
 };

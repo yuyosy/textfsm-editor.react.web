@@ -1,11 +1,12 @@
 import { api } from '@/features/api';
 import { debounce } from '@/features/request/debounce';
-import { TextFSMParseAPIResponse } from '@/features/types';
-import { ResultItem } from '@/types';
+
+import type { TextFSMParseAPIResponse } from '@/features/types';
+import type { ResultItem } from '@/types';
 
 export const requestTextFSMParse = async (
   dataValue: string,
-  templateValue: string
+  templateValue: string,
 ): Promise<TextFSMParseAPIResponse> => {
   const config = {
     headers: {
@@ -21,7 +22,7 @@ export const requestTextFSMParse = async (
         template_string: templateValue,
       },
     },
-    { config: config }
+    { config: config },
   ) as Promise<TextFSMParseAPIResponse>;
 };
 
@@ -41,7 +42,8 @@ export const createErrorResultItem = (error: unknown): ResultItem => {
     errors: [
       {
         status: '',
-        reason: error instanceof Error ? error.constructor.name : 'UnknownError',
+        reason:
+          error instanceof Error ? error.constructor.name : 'UnknownError',
         message: error instanceof Error ? error.message : String(error),
       },
     ],
@@ -51,7 +53,7 @@ export const createErrorResultItem = (error: unknown): ResultItem => {
 export const sendTextFSMParseRequest = async (
   dataValue: string,
   templateValue: string,
-  delay?: number
+  delay?: number,
 ): Promise<ResultItem> => {
   await debounce(delay);
   try {

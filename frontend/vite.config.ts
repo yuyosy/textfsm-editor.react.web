@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
       __API_ENTRYPOINT__: JSON.stringify(
         mode === 'production'
           ? env.VITE_API_ENTRYPOINT_PROD || '/'
-          : env.VITE_API_ENTRYPOINT_DEV || 'http://localhost:8000'
+          : env.VITE_API_ENTRYPOINT_DEV || 'http://localhost:8000',
       ),
     },
     // Using Vite on WSL2

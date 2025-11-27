@@ -5,7 +5,7 @@ type DataType = Blob | ArrayBuffer | string;
 export const downloadFile = (
   content: DataType,
   filename: string,
-  mimeType: string = 'text/plain'
+  mimeType: string = 'text/plain',
 ) => {
   const blob =
     typeof content === 'string'

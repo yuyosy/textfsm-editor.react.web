@@ -9,7 +9,11 @@ interface CopyValueButtonProps {
 export const CopyValueButton = ({ value }: CopyValueButtonProps) => {
   const clipboard = useClipboard({ timeout: 1000 });
   return (
-    <Tooltip label={clipboard.copied ? 'Copied' : 'Copy'} withArrow position="bottom">
+    <Tooltip
+      label={clipboard.copied ? 'Copied' : 'Copy'}
+      withArrow
+      position="bottom"
+    >
       <ActionIcon
         variant="subtle"
         color={clipboard.copied ? 'teal' : 'gray'}

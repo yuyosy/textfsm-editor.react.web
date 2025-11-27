@@ -1,4 +1,4 @@
-import { MutableRefObject, useState } from 'react';
+import { type MutableRefObject, useState } from 'react';
 
 import { Modal, Stack, Stepper, Text } from '@mantine/core';
 
@@ -11,12 +11,17 @@ type ModalContentProps = {
   focusRef: MutableRefObject<HTMLDivElement>;
 };
 
-export const ExportTemplatesModalContent = ({ close, focusRef }: ModalContentProps) => {
+export const ExportTemplatesModalContent = ({
+  close,
+  focusRef,
+}: ModalContentProps) => {
   const [activeStep, setActiveStep] = useState(0);
   const exportTemplates = useExportTemplates();
 
-  const nextStep = () => setActiveStep(current => (current < 2 ? current + 1 : current));
-  const prevStep = () => setActiveStep(current => (current > 0 ? current - 1 : current));
+  const nextStep = () =>
+    setActiveStep((current) => (current < 2 ? current + 1 : current));
+  const prevStep = () =>
+    setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const proceedToNextStep = () => {
     nextStep();

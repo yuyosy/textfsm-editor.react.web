@@ -18,8 +18,8 @@ export const ImportSelectionSection = ({
       <Divider my="sm" />
       <List size="xs">
         <List.Item>
-          Templates with the same name as those already saved cannot be imported and will
-          be excluded from the list.
+          Templates with the same name as those already saved cannot be imported
+          and will be excluded from the list.
         </List.Item>
       </List>
       <TransferList

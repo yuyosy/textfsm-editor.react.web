@@ -1,6 +1,5 @@
-import { RefObject } from 'react';
-
-import { TemplateInfo } from '../types';
+import type { RefObject } from 'react';
+import type { TemplateInfo } from '../types';
 
 export type ModalContentProps = {
   close: () => void;

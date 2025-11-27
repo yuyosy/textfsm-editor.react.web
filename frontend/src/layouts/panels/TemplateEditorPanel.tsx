@@ -1,8 +1,7 @@
-import { RefObject } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { Group, Stack, Text } from '@mantine/core';
 import { useAtomValue } from 'jotai';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { FileDownloadButton } from '@/components/FileDownloadButton';
@@ -11,8 +10,9 @@ import { editorTemplateText } from '@/features/fileNames';
 import { responseStateAtom } from '@/features/state/atoms';
 import { templateEditorValueAtom } from '@/features/state/storageAtoms';
 import { getCurrentDateTimeString } from '@/utils/datetime';
-
 import { TemplateEditor } from './TemplateEditor';
+
+import type { RefObject } from 'react';
 
 const ResponseState = () => {
   const responseState = useAtomValue(responseStateAtom);
