@@ -8,7 +8,7 @@
 
 A web-based editor for TextFSM templates with real-time parsing capabilities. This tool enables network engineers and developers to efficiently create and test TextFSM templates with instant feedback.
 
-日本語版こちら: [Japanese README](README.ja.md)
+日本語版はこちら: [Japanese README](README.ja.md)
 
 > [!NOTE]
 >
@@ -92,11 +92,11 @@ textfsm-editor.react.web/
 Open the `textfsm-editor.react.web.code-workspace` file with VSCode to open the workspace.
 
 ## Getting Started
-- Using the Primitive Environment
-  - Run Node.js and Python without Docker.
-  - Follow the installation instructions for the primitive environment: [Getting Started with the Primitive Environment](#getting-started-with-the-primitive-environment)
-- Using Docker Compose
-  - Follow the installation instructions for Docker Compose: [Getting Started with Docker Compose](#getting-started-with-docker-compose)
+- Basic Environment (Node.js + Python)
+  - Run Node.js and Python directly without Docker.
+  - See: [Getting Started (Basic Environment)](#getting-started-basic-environment)
+- Docker Compose
+  - See: [Getting Started with Docker Compose](#getting-started-with-docker-compose)
 
 ### Notice
 
@@ -104,7 +104,7 @@ This software loads Monaco Editor (Microsoft) from jsDelivr, an external CDN.
 - https://www.jsdelivr.com/package/npm/monaco-editor
 
 
-### Getting Started with the Primitive Environment
+### Getting Started (Basic Environment)
 
 #### Prerequisites
 
@@ -145,22 +145,20 @@ The frontend and backend must be run separately. It is recommended to open them 
 1. Run Frontend
 
 ```bash
-# run command in the project root directory
 cd frontend
 npm run dev
 ```
 
-Tips: If you want to change the port number at startup, use the --port option.
+**Tip:** If you want to change the port number at startup, use the `--port` option.
 
 2. Run Backend
 
 ```bash
-# run command in the project root directory
 cd backend
 uv run uvicorn src.main:app --reload
 ```
 
-Tips: If you want to change the port number at startup, use the --port option.
+**Tip:** If you want to change the port number at startup, use the `--port` option.
 
 3. Access the services
    - Frontend Service: `http://localhost:5173`
@@ -168,7 +166,44 @@ Tips: If you want to change the port number at startup, use the --port option.
 
 #### Production
 
-TODO
+> [!WARNING]
+>
+> This production configuration is intended for personal use or internal tools.
+> It may not provide sufficient security or performance for public-facing applications.
+> For production deployments exposed to the internet, consider additional measures such as:
+> - Reverse proxy with SSL/TLS termination (e.g., Nginx, Caddy, Traefik)
+> - Rate limiting and DDoS protection
+> - Web Application Firewall (WAF)
+
+1. Build and deploy frontend to backend
+
+```bash
+cd frontend
+npm run build:deploy
+```
+
+This command builds the frontend and copies the output to `backend/public/static/`.
+
+2. Run Backend in production mode
+
+```bash
+cd backend
+MODE=production uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
+```
+
+3. Access the service
+   - Service: `http://localhost:8000`
+
+##### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MODE` | `development` | Set to `production` for production mode |
+| `LOG_LEVEL` | `INFO` | Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
+| `DOCS_ENABLED` | `true` | Enable/disable API documentation (`/docs`) |
+| `ALLOWED_HOSTS` | `localhost:5173,localhost:8000,localhost` | Comma-separated list of allowed hosts |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated list of allowed CORS origins |
+| `ENABLE_HTTPS_REDIRECT` | `false` | Enable HTTPS redirect (set `true` when using reverse proxy with SSL) |
 
 ### Getting Started with Docker Compose
 
@@ -199,14 +234,39 @@ docker compose build
 docker compose --profile dev up --build --watch
 ```
 
-#### Production (Experimental)
+2. Access the services
+   - Frontend Service: `http://localhost:5173`
+   - Backend Service: `http://localhost:8000`
 
-TODO:
+#### Production
 
-1. Start containers
+> [!WARNING]
+>
+> This production configuration is intended for personal use or internal tools.
+> It may not provide sufficient security or performance for public-facing applications.
+> For production deployments exposed to the internet, consider additional measures such as:
+> - SSL/TLS termination
+> - Rate limiting and DDoS protection
+> - Web Application Firewall (WAF)
+> - Regular security audits
+
+Two production configurations are available:
+
+##### Option 1: Backend serves static files
+
 ```bash
 docker compose --profile prod up --build
 ```
+
+- Access: `http://localhost:8000`
+
+##### Option 2: Nginx + Backend API (recommended for high traffic)
+
+```bash
+docker compose --profile prod-nginx up --build
+```
+
+- Access: `http://localhost:80`
 
 
 ## Contributing
