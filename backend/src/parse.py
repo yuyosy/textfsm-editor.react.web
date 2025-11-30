@@ -1,7 +1,6 @@
 from io import StringIO
-from typing import Any
-from pydantic import BaseModel
-from textfsm import TextFSM, TextFSMTemplateError, TextFSMError
+
+from textfsm import TextFSM, TextFSMError, TextFSMTemplateError
 
 from src.api_types import TextFSMParseError, TextFSMParseInput, TextFSMParseResult
 from src.result import Err, Ok, Result
