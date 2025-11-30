@@ -56,7 +56,7 @@ export const rawTextEditorValueAtom = atomWithStorage<string>(
 
 export const templateEditorValueAtom = atomWithStorage<string>(
   'template-editor-value',
-  '# Type your template herssse',
+  '# Type your template here',
   sessionStorage(),
   {
     getOnInit: true,
@@ -89,6 +89,13 @@ export const historyAutoSaveCountAtom = atomWithStorage<number>(
 export const historyAutoSaveItemsAtom = atomWithStorage<HistoryAutoSaveItem[]>(
   'options-history-auto-save-items',
   [],
+  localStorage(),
+  { getOnInit: true },
+);
+
+export const historyPageSizeAtom = atomWithStorage<number>(
+  'options-history-page-size',
+  10,
   localStorage(),
   { getOnInit: true },
 );

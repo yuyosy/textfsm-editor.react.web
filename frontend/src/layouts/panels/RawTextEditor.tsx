@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useMantineColorScheme } from '@mantine/core';
 import { useAtom } from 'jotai';
@@ -26,10 +26,18 @@ export const RawTextEditor = () => {
     rawTextEditorRef.current.setValue(rawTextEditorValue);
   };
   const handleRawTextEditorChange: OnChange = (value) => {
-    if (value) {
+    if (value !== undefined) {
       saveRawTextToSessionStorage(value);
     }
   };
+
+  useEffect(() => {
+    if (rawTextEditorRef.current) {
+      if (rawTextEditorRef.current.getValue() !== rawTextEditorValue) {
+        rawTextEditorRef.current.setValue(rawTextEditorValue);
+      }
+    }
+  }, [rawTextEditorValue]);
 
   return (
     <Editor

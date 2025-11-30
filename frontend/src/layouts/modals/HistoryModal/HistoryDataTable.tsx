@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
 import { Button, Code, Group, Popover } from '@mantine/core';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { DataTable } from 'mantine-datatable';
 
 import { StatusBadge } from '@/components/StatusBadge';
-import { historyAutoSaveItemsAtom } from '@/features/state/storageAtoms';
+import {
+  historyAutoSaveItemsAtom,
+  historyPageSizeAtom,
+} from '@/features/state/storageAtoms';
 
 import type { HistoryAutoSaveItem } from '@/types';
 
@@ -15,7 +18,7 @@ interface HistoryDataTableProps {
 const pageSizes = [10, 25, 50, 100];
 export const HistoryDataTable = ({ onSelect }: HistoryDataTableProps) => {
   const records = useAtomValue(historyAutoSaveItemsAtom);
-  const [pageSize, setPageSize] = useState(pageSizes[0]);
+  const [pageSize, setPageSize] = useAtom(historyPageSizeAtom);
   const [page, setPage] = useState(1);
   const [visibleRecords, setVisibleRecords] = useState(
     records.slice(0, pageSize),
