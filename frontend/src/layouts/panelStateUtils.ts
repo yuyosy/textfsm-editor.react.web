@@ -7,7 +7,7 @@ export const setSegmentedControlPanelState = (
   panelImperativeHandleRef: RefObject<{
     isCollapsed: () => boolean;
     isExpanded: () => boolean;
-  }>,
+  } | null>,
   currentPanelLyout: PanelLayoutType,
   setMainPanelLyout: (value: PanelLayoutType) => void,
 ) => {
@@ -27,7 +27,7 @@ export const setSegmentedControlPanelState = (
 
 export const setChipPanelState = (
   isOpen: boolean,
-  ref: RefObject<ImperativePanelHandle>,
+  ref: RefObject<ImperativePanelHandle | null>,
   actions: DisclosureActions,
 ) => {
   if (isOpen && ref?.current?.isCollapsed()) {
@@ -40,7 +40,7 @@ export const setChipPanelState = (
 
 export const handlePanelToggle = (
   toExpand: boolean,
-  ref: RefObject<ImperativePanelHandle>,
+  ref: RefObject<ImperativePanelHandle | null>,
   actions: DisclosureActions,
 ) => {
   const panel = ref.current;

@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           entryFileNames: 'assets/[name].js',
-          chunkFileNames: 'assets/[sname].js',
+          chunkFileNames: 'assets/[name].js',
           assetFileNames: 'assets/[name].[ext]',
         },
       },
@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
       __APP_VERSION__: JSON.stringify(version),
       __API_ENTRYPOINT__: JSON.stringify(
         mode === 'production'
-          ? env.VITE_API_ENTRYPOINT_PROD || '/'
+          ? env.VITE_API_ENTRYPOINT_PROD || ''
           : env.VITE_API_ENTRYPOINT_DEV || 'http://localhost:8000',
       ),
     },

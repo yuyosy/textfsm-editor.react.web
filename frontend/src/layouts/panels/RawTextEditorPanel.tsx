@@ -28,7 +28,7 @@ const CopyButton = () => {
 };
 
 interface RawTextEditorPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
 

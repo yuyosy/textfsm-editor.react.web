@@ -5,10 +5,10 @@ import type { ModalId } from './modals/types';
 export type PanelLayoutType = 'both' | 'data' | 'template';
 
 export interface PanelRefs {
-  data: RefObject<ImperativePanelHandle>;
-  template: RefObject<ImperativePanelHandle>;
-  notification: RefObject<ImperativePanelHandle>;
-  results: RefObject<ImperativePanelHandle>;
+  data: RefObject<ImperativePanelHandle | null>;
+  template: RefObject<ImperativePanelHandle | null>;
+  notification: RefObject<ImperativePanelHandle | null>;
+  results: RefObject<ImperativePanelHandle | null>;
 }
 
 export interface DisclosureActions {

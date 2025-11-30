@@ -7,7 +7,7 @@ export interface TextFSMParseAPIRequest {
   data: TextFSMParseRequestData;
 }
 
-type Result = { [key: string]: unknown };
+export type Result = { [key: string]: unknown };
 
 export interface TextFSMParseResult {
   message: string;

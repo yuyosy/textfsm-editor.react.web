@@ -15,7 +15,7 @@ import { useDataDeliver } from '@/hooks/useDataDeliver';
 import { getCurrentDateTimeString } from '@/utils/datetime';
 
 interface ResultViewPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
 export const ResultViewPanel = ({

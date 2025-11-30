@@ -35,7 +35,7 @@ const CopyButton = () => {
 };
 
 interface TemplateEditorPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
 

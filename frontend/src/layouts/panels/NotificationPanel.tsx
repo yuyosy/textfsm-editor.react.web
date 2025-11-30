@@ -26,7 +26,7 @@ import type { RefObject } from 'react';
 import type { Notification } from '@/types';
 
 interface NotificationPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
 

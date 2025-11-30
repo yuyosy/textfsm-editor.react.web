@@ -8,8 +8,8 @@ import type { PanelLayoutType } from './types';
 interface PanelSelectorProps {
   mainPanelLyout: PanelLayoutType;
   setMainPanelLyout: (value: PanelLayoutType) => void;
-  dataPanelImperativeHandleRef: RefObject<ImperativePanelHandle>;
-  templatePanelImperativeHandleRef: RefObject<ImperativePanelHandle>;
+  dataPanelImperativeHandleRef: RefObject<ImperativePanelHandle | null>;
+  templatePanelImperativeHandleRef: RefObject<ImperativePanelHandle | null>;
 }
 
 export const PanelSelector = ({
