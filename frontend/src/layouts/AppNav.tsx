@@ -34,9 +34,9 @@ export const AppNavbar = ({ opened, toggle }: NavbarProps) => {
                 hiddenFrom="sm"
                 size="sm"
               />
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <Tooltip
-                  key={index}
+                  key={item.id}
                   label={item.label}
                   position="right"
                   events={{ hover: !opened, focus: true, touch: false }}

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
 import Fuse from 'fuse.js';
 
 import { useFetchTemplates } from './hooks/useFetchTemplates';
@@ -32,7 +31,6 @@ export const PresetTemplatesModalContent = ({
     platform: '',
     command: '',
   });
-  const [debounced] = useDebouncedValue(searchParams, 300);
 
   const handleSearchParamsChange = (
     field: keyof SearchParams,
@@ -99,14 +97,7 @@ export const PresetTemplatesModalContent = ({
     } else {
       setSelectedRecords([]);
     }
-  }, [
-    isAndCondition,
-    debounced,
-    templates,
-    searchParams,
-    regexFilteredTemplates,
-    fuzzyFilteredTemplates,
-  ]);
+  }, [regexFilteredTemplates, fuzzyFilteredTemplates]);
 
   const handleSelectTemplate = (template: string) => {
     setSelectedTemplate(template);

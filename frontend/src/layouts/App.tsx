@@ -1,4 +1,8 @@
 import {
+  CodeHighlightAdapterProvider,
+  createShikiAdapter,
+} from '@mantine/code-highlight';
+import {
   AppShell,
   colorsTuple,
   createTheme,
@@ -25,6 +29,17 @@ const theme = createTheme({
   },
 });
 
+const loadShiki = async () => {
+  const { createHighlighter } = await import('shiki');
+  const shiki = await createHighlighter({
+    langs: ['json'],
+    themes: ['light-plus', 'andromeeda'],
+  });
+
+  return shiki;
+};
+const shikiAdapter = createShikiAdapter(loadShiki);
+
 export const App = () => {
   // refer to : https://mantine.dev/guides/dark-theme/#save-to-localstorage-and-add-keyboard-shortcut
   // const [colorScheme, setColorScheme] = useLocalStorage<MantineColorScheme>({
@@ -39,21 +54,23 @@ export const App = () => {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <AppShell
-        layout="alt"
-        withBorder={false}
-        navbar={{
-          width: navbarWidth,
-          breakpoint: 'sm',
-          collapsed: { mobile: !opened },
-        }}
-        bg="base-background"
-      >
-        <AppHeader opened={opened} toggle={toggle} />
-        <AppNavbar opened={opened} toggle={toggle} />
-        <AppMain />
-        {/* <AppFooter /> */}
-      </AppShell>
+      <CodeHighlightAdapterProvider adapter={shikiAdapter}>
+        <AppShell
+          layout="alt"
+          withBorder={false}
+          navbar={{
+            width: navbarWidth,
+            breakpoint: 'sm',
+            collapsed: { mobile: !opened },
+          }}
+          bg="base-background"
+        >
+          <AppHeader opened={opened} toggle={toggle} />
+          <AppNavbar opened={opened} toggle={toggle} />
+          <AppMain />
+          {/* <AppFooter /> */}
+        </AppShell>
+      </CodeHighlightAdapterProvider>
     </MantineProvider>
   );
 };

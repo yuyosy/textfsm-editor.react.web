@@ -64,14 +64,15 @@ export const NotificationPanel = ({
       ref={panelRef}
       onResize={onResizeHandler}
     >
-      <Stack gap={0} h="100%">
-        <Group px={10} py={8} justify="space-between">
+      <Stack gap={0} h="100%" style={{ overflow: 'hidden' }}>
+        <Group px={10} py={8} justify="space-between" style={{ flexShrink: 0 }}>
           <Text fw={700}>Notifications</Text>
           <Tooltip label="Clear all" withArrow position="bottom">
             <ActionIcon
               variant="subtle"
               color="gray"
               onClick={clearNotifications}
+              aria-label="Clear all notifications"
             >
               <Eraser size={22} />
             </ActionIcon>
@@ -89,8 +90,12 @@ export const NotificationPanel = ({
             </Flex>
           </Center>
         ) : (
-          <ScrollArea h="100%">
-            <Stack p={10} pr={16}>
+          <ScrollArea
+            style={{ flex: 1, minHeight: 0 }}
+            type="auto"
+            scrollbarSize={8}
+          >
+            <Stack p={10} pr={16} gap="xs">
               {notifications.map((notification) => (
                 <AlertCard
                   key={notification.id}

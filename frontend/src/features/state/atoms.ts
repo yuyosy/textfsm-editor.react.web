@@ -38,7 +38,6 @@ export const removeNotificationAtom = atom(
   null,
   (get, set, notificationId: string) => {
     const notifications = get(notificationsAtom);
-    console.log(notifications);
     set(
       notificationsAtom,
       notifications.filter((n) => n.id !== notificationId),

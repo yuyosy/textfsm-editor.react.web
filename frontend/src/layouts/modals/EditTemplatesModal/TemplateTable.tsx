@@ -137,7 +137,6 @@ export const TemplateTable = ({
               ref={inputRef}
               onBlur={(event) => {
                 const value = event.currentTarget.value;
-                console.log(value, item.label);
                 if (value !== item.label) {
                   renameTemplate(index, value);
                 }
