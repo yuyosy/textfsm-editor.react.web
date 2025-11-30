@@ -53,9 +53,15 @@ COPY public/ntc-templates-info.json /app/public/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
+# Set production environment variables
+ENV MODE=production
+ENV LOG_LEVEL=WARNING
+ENV DOCS_ENABLED=false
+
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# Run the FastAPI application by default
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the FastAPI application with production settings
+# Using multiple workers for better performance
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--proxy-headers", "--forwarded-allow-ips", "*"]
 
