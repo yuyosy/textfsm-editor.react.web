@@ -89,7 +89,7 @@ export const DropzoneSection = ({
             <FileJson size={32} strokeWidth={1.2} />
           </Dropzone.Idle>
           <Box>
-            <Text inline>Drag JSON files here or click to here</Text>
+            <Text inline>Drag JSON files here or click to select</Text>
           </Box>
         </Group>
         <Divider

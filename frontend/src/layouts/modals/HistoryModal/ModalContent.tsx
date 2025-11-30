@@ -54,7 +54,7 @@ export const HistoryModalContent = ({ focusRef, close }: ModalContentProps) => {
           </Stack>
           <HistoryDataTable onSelect={handleSelectHistory} />
           <TextInput
-            label="Selected Template"
+            label="Selected History"
             value={selectedHistory?.timestamp || ''}
             readOnly
           />

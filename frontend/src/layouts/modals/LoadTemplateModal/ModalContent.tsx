@@ -44,8 +44,8 @@ export const LoadTemplateModalContent = ({
       <Modal.Body>
         <Stack ref={focusRef}>
           <Text size="sm" c="dimmed">
-            Loads the template, note that it will overwrite the values entered
-            in the Template area.
+            Load a template. Note that this will overwrite the current content
+            in the Template editor.
           </Text>
           <TemplateTable
             templates={availableTemplates}

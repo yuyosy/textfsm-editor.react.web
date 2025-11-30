@@ -28,8 +28,8 @@ export const PlatformPrioritySection = () => {
         Select your favorite platforms and set their priority.
       </Text>
       <Text size="xs" c="dimmed">
-        The default value is 0, and higher values take precedence. In the case
-        of the same priority, it will be in ascending order.
+        The default value is 0, and higher values take precedence. Items with
+        the same priority are sorted in ascending order.
       </Text>
       <DataTable
         height={320}

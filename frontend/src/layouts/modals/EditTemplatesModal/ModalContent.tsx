@@ -76,8 +76,8 @@ export const EditTemplatesModalContent = ({
             want to move.
           </Text>
           <Text size="sm" c="dimmed">
-            The changes such as sorting or deleting will not be reflected until
-            the Apply button is pressed.
+            Changes such as reordering or deleting will not take effect until
+            you click Apply.
           </Text>
           <TemplateTable
             editingTemplates={editingTemplates}
