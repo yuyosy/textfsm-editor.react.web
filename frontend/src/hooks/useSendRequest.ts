@@ -114,73 +114,60 @@ export const useSendRequest = () => {
 export const useAutoRequest = (
   onNotification?: (notification: NotificationItemInfo) => void,
 ) => {
-  const autoRequestEnabled = useAtomValue(autoRequestEnabledAtom);
-  const rawTextValue = useAtomValue(rawTextEditorValueAtom);
-  const templateValue = useAtomValue(templateEditorValueAtom);
+  useAtomValue(rawTextEditorValueAtom);
+  useAtomValue(templateEditorValueAtom);
   const sendRequest = useSendRequest();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastValuesRef = useRef({ rawText: '', template: '' });
 
-  const readEditorValues = useAtomCallback(
-    useCallback((get) => {
-      return {
-        rawText: get(rawTextEditorValueAtom),
-        template: get(templateEditorValueAtom),
-      };
-    }, []),
-  );
+  const processAutoRequest = useAtomCallback(
+    useCallback(
+      (get) => {
+        if (!get(autoRequestEnabledAtom)) {
+          return;
+        }
 
-  const readParseRequestDelay = useAtomCallback(
-    useCallback((get) => {
-      return get(parseRequestDelayAtom);
-    }, []),
+        const currentValues = {
+          rawText: get(rawTextEditorValueAtom),
+          template: get(templateEditorValueAtom),
+        };
+
+        if (
+          currentValues.rawText === lastValuesRef.current.rawText &&
+          currentValues.template === lastValuesRef.current.template
+        ) {
+          return;
+        }
+
+        lastValuesRef.current = currentValues;
+
+        if (currentValues.template === '') {
+          return;
+        }
+
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = setTimeout(async () => {
+          const result = await sendRequest(true);
+          if (result.notification && onNotification) {
+            onNotification(result.notification);
+          }
+          timeoutRef.current = null;
+        }, get(parseRequestDelayAtom));
+      },
+      [sendRequest, onNotification],
+    ),
   );
 
   useEffect(() => {
-    if (!autoRequestEnabled) {
-      return;
-    }
-
-    const currentValues = readEditorValues();
-
-    if (
-      currentValues.rawText === lastValuesRef.current.rawText &&
-      currentValues.template === lastValuesRef.current.template
-    ) {
-      return;
-    }
-
-    lastValuesRef.current = currentValues;
-
-    if (currentValues.template === '') {
-      return;
-    }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(async () => {
-      const result = await sendRequest(true);
-      // Call external notification handler if provided
-      if (result.notification && onNotification) {
-        onNotification(result.notification);
-      }
-      timeoutRef.current = null;
-    }, readParseRequestDelay());
+    processAutoRequest();
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [
-    autoRequestEnabled,
-    rawTextValue,
-    templateValue,
-    sendRequest,
-    readParseRequestDelay,
-    readEditorValues,
-    onNotification,
-  ]);
+  }, [processAutoRequest]);
 };

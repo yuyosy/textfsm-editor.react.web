@@ -1,4 +1,11 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+import {
+  type ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import {
   ActionIcon,
@@ -31,118 +38,137 @@ interface TransferListProps {
   onChange?: (leftData: string[], rightData: string[]) => void;
 }
 
-const RenderList = ({
-  options,
-  onTransfer,
-  type,
-  searchPlaceholder = 'Search items...',
-}: RenderListProps) => {
-  const [value, setValue] = useState<string[]>([]);
-  const [search, setSearch] = useState('');
-  const combobox = useCombobox();
+const RenderList = memo<RenderListProps>(
+  ({
+    options,
+    onTransfer,
+    type,
+    searchPlaceholder = 'Search items...',
+  }: RenderListProps) => {
+    const [value, setValue] = useState<string[]>([]);
+    const [search, setSearch] = useState('');
+    const combobox = useCombobox();
 
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const handleValueSelect = (val: string) => {
-    setValue((current) =>
-      current.includes(val)
-        ? current.filter((v) => v !== val)
-        : [...current, val],
+    // パフォーマンス最適化: フィルタリング結果をメモ化
+    const filteredOptions = useMemo(
+      () =>
+        options.filter((option) =>
+          option.toLowerCase().includes(search.toLowerCase()),
+        ),
+      [options, search],
     );
-  };
 
-  const handleSelectAll = (event: ChangeEvent<HTMLInputElement>) => {
-    const checked = event.currentTarget.checked;
-    if (checked) {
-      setValue(filteredOptions.map((option) => option));
-    } else {
+    const handleValueSelect = useCallback((val: string) => {
+      setValue((current) =>
+        current.includes(val)
+          ? current.filter((v) => v !== val)
+          : [...current, val],
+      );
+    }, []);
+
+    const handleSelectAll = useCallback(
+      (event: ChangeEvent<HTMLInputElement>) => {
+        const checked = event.currentTarget.checked;
+        if (checked) {
+          setValue(filteredOptions.map((option) => option));
+        } else {
+          setValue([]);
+        }
+      },
+      [filteredOptions],
+    );
+
+    const handleTransfer = useCallback(() => {
+      onTransfer(value);
       setValue([]);
-    }
-  };
+    }, [value, onTransfer]);
 
-  const handleTransfer = () => {
-    onTransfer(value);
-    setValue([]);
-  };
+    // チェックボックスの状態を計算
+    const isAllSelected =
+      filteredOptions.length > 0 && value.length === filteredOptions.length;
+    const isIndeterminate =
+      value.length > 0 && value.length < filteredOptions.length;
 
-  // チェックボックスの状態を計算
-  const isAllSelected =
-    filteredOptions.length > 0 && value.length === filteredOptions.length;
-  const isIndeterminate =
-    value.length > 0 && value.length < filteredOptions.length;
-
-  const items = filteredOptions.map((item) => (
-    <Combobox.Option
-      value={item}
-      key={item}
-      active={value.includes(item)}
-      onMouseOver={() => combobox.resetSelectedOption()}
-    >
-      <Group gap="sm" wrap="nowrap">
-        <Checkbox
-          checked={value.includes(item)}
-          onChange={() => {}}
-          aria-hidden
-          tabIndex={-1}
-          style={{ pointerEvents: 'none' }}
-        />
-        <Text fz={14} truncate="end">
-          {item}
-        </Text>
-      </Group>
-    </Combobox.Option>
-  ));
-
-  return (
-    <Stack gap={4}>
-      <Combobox store={combobox} onOptionSubmit={handleValueSelect}>
-        <Combobox.EventsTarget>
-          <Stack gap="xs">
-            <Flex
-              wrap="nowrap"
-              gap={4}
-              direction={type === 'forward' ? 'row' : 'row-reverse'}
-            >
-              <TextInput
-                w="100%"
-                placeholder={searchPlaceholder}
-                value={search}
-                onChange={(event) => {
-                  setSearch(event.currentTarget.value);
-                  combobox.updateSelectedOptionIndex();
-                }}
+    // パフォーマンス最適化: リストアイテムをメモ化
+    const items = useMemo(
+      () =>
+        filteredOptions.map((item) => (
+          <Combobox.Option
+            value={item}
+            key={item}
+            active={value.includes(item)}
+            onMouseOver={() => combobox.resetSelectedOption()}
+          >
+            <Group gap="sm" wrap="nowrap">
+              <Checkbox
+                checked={value.includes(item)}
+                onChange={() => {}}
+                aria-hidden
+                tabIndex={-1}
+                style={{ pointerEvents: 'none' }}
               />
-              <ActionIcon variant="default" size={36} onClick={handleTransfer}>
-                {type === 'forward' ? <ChevronRight /> : <ChevronLeft />}
-              </ActionIcon>
-            </Flex>
-            <Checkbox
-              checked={isAllSelected}
-              indeterminate={isIndeterminate}
-              onChange={handleSelectAll}
-              label="Select All"
-            />
-          </Stack>
-        </Combobox.EventsTarget>
-        <Combobox.Options
-          h={250}
-          bd="solid calc(0.0625rem * var(--mantine-scale)) var(--mantine-color-default-border)"
-          styles={{ options: { borderRadius: 5 } }}
-        >
-          <ScrollArea p={4} h={250} type="auto" offsetScrollbars="y">
-            {items.length > 0 ? (
-              items
-            ) : (
-              <Combobox.Empty>Nothing found....</Combobox.Empty>
-            )}
-          </ScrollArea>
-        </Combobox.Options>
-      </Combobox>
-    </Stack>
-  );
-};
+              <Text fz={14} truncate="end">
+                {item}
+              </Text>
+            </Group>
+          </Combobox.Option>
+        )),
+      [filteredOptions, value, combobox],
+    );
+
+    return (
+      <Stack gap={4}>
+        <Combobox store={combobox} onOptionSubmit={handleValueSelect}>
+          <Combobox.EventsTarget>
+            <Stack gap="xs">
+              <Flex
+                wrap="nowrap"
+                gap={4}
+                direction={type === 'forward' ? 'row' : 'row-reverse'}
+              >
+                <TextInput
+                  w="100%"
+                  placeholder={searchPlaceholder}
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.currentTarget.value);
+                    combobox.updateSelectedOptionIndex();
+                  }}
+                />
+                <ActionIcon
+                  variant="default"
+                  size={36}
+                  onClick={handleTransfer}
+                >
+                  {type === 'forward' ? <ChevronRight /> : <ChevronLeft />}
+                </ActionIcon>
+              </Flex>
+              <Checkbox
+                checked={isAllSelected}
+                indeterminate={isIndeterminate}
+                onChange={handleSelectAll}
+                label="Select All"
+              />
+            </Stack>
+          </Combobox.EventsTarget>
+          <Combobox.Options
+            h={250}
+            bd="solid calc(0.0625rem * var(--mantine-scale)) var(--mantine-color-default-border)"
+            styles={{ options: { borderRadius: 5 } }}
+          >
+            <ScrollArea p={4} h={250} type="auto" offsetScrollbars="y">
+              {items.length > 0 ? (
+                items
+              ) : (
+                <Combobox.Empty>Nothing found....</Combobox.Empty>
+              )}
+            </ScrollArea>
+          </Combobox.Options>
+        </Combobox>
+      </Stack>
+    );
+  },
+);
 
 export const TransferList = ({
   initialLeftData,
@@ -156,20 +182,23 @@ export const TransferList = ({
     initialRightData,
   ]);
 
-  const handleTransfer = (transferFrom: number, options: string[]) =>
-    setData((current) => {
-      const transferTo = transferFrom === 0 ? 1 : 0;
-      const transferFromData = current[transferFrom].filter(
-        (item) => !options.includes(item),
-      );
-      const transferToData = [...current[transferTo], ...options];
+  const handleTransfer = useCallback(
+    (transferFrom: number, options: string[]) =>
+      setData((current) => {
+        const transferTo = transferFrom === 0 ? 1 : 0;
+        const transferFromData = current[transferFrom].filter(
+          (item) => !options.includes(item),
+        );
+        const transferToData = [...current[transferTo], ...options];
 
-      const result = [];
-      result[transferFrom] = transferFromData;
-      result[transferTo] = transferToData;
+        const result = [];
+        result[transferFrom] = transferFromData;
+        result[transferTo] = transferToData;
 
-      return result as [string[], string[]];
-    });
+        return result as [string[], string[]];
+      }),
+    [],
+  );
 
   // データが変更されたときにコールバックを呼び出し
   useEffect(() => {
