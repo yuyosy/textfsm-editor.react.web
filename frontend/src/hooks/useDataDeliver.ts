@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Result } from '@/features/types';
+import type { Result } from '@/features/types';
 
 type DataDeliverParams = {
   header: string[];
@@ -12,8 +12,10 @@ export const useDataDeliver = ({ header, results }: DataDeliverParams) => {
     if (header && results) {
       const headerString = header.join('\t');
       const rowsString = results
-        .map(row =>
-          header.map(key => String(row[key] ?? '').replace(/\t/g, ' ')).join('\t')
+        .map((row) =>
+          header
+            .map((key) => String(row[key] ?? '').replace(/\t/g, ' '))
+            .join('\t'),
         )
         .join('\n');
       return `${headerString}\n${rowsString}`;

@@ -7,18 +7,24 @@ import {
   savedTemplateListAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
-
 import { useLoadTemplate } from './hooks/useLoadTemplate';
 import { TemplateTable } from './TemplateTable';
-import { ModalContentProps } from './types';
 
-export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps) => {
+import type { ModalContentProps } from '../types';
+
+export const LoadTemplateModalContent = ({
+  close,
+  focusRef,
+}: ModalContentProps) => {
   const availableTemplates = useAtomValue(savedTemplateListAtom);
   const setEditorContent = useSetAtom(templateEditorValueAtom);
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
 
-  const loadSelectedTemplate = useLoadTemplate(availableTemplates, setEditorContent);
+  const loadSelectedTemplate = useLoadTemplate(
+    availableTemplates,
+    setEditorContent,
+  );
 
   const handleLoadTemplate = () => {
     if (selectedTemplate) {
@@ -38,11 +44,18 @@ export const LoadTemplateModalContent = ({ close, focusRef }: ModalContentProps)
       <Modal.Body>
         <Stack ref={focusRef}>
           <Text size="sm" c="dimmed">
-            Loads the template, note that it will overwrite the values entered in the
-            Template area.
+            Load a template. Note that this will overwrite the current content
+            in the Template editor.
           </Text>
-          <TemplateTable templates={availableTemplates} onSelect={setSelectedTemplate} />
-          <TextInput label="Selected Template" value={selectedTemplate} readOnly />
+          <TemplateTable
+            templates={availableTemplates}
+            onSelect={setSelectedTemplate}
+          />
+          <TextInput
+            label="Selected Template"
+            value={selectedTemplate}
+            readOnly
+          />
         </Stack>
         <Group justify="space-between" mt="lg">
           <Button variant="default" size="xs" onClick={close}>

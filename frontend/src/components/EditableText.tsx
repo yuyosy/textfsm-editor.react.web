@@ -42,11 +42,13 @@ export const EditableText = ({ text, setText }: EditableTextProps) => {
       {isEditing ? (
         <TextInput
           value={newText}
-          onChange={event => setNewText(event.currentTarget.value)}
+          onChange={(event) => setNewText(event.currentTarget.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           autoFocus
-          styles={{ input: { height: 28, minHeight: 28, fontSize: 16, padding: 2 } }}
+          styles={{
+            input: { height: 28, minHeight: 28, fontSize: 16, padding: 2 },
+          }}
         />
       ) : (
         <Text onClick={handleClick} px={3}>

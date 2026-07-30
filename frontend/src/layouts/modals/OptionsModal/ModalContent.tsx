@@ -1,12 +1,19 @@
 import { Button, Group, Modal, ScrollArea, Stack, Tabs } from '@mantine/core';
-import { FileClock, Package, PencilLine, PencilRuler, Tags } from 'lucide-react';
+import {
+  FileClock,
+  Package,
+  PencilLine,
+  PencilRuler,
+  Tags,
+} from 'lucide-react';
 
 import { HistoryAutoSaveSection } from './HistoryAutoSaveSection';
 import { ParseDelaySection } from './ParseDelaySection';
 import { PlatformPrioritySection } from './PlatformPrioritySection';
 import { StorageUsageSection } from './StorageUsageSection';
 import { TemplateTagSection } from './TemplateTagSection';
-import { ModalContentProps } from './types';
+
+import type { ModalContentProps } from '../types';
 
 export const OptionsModalContent = ({ focusRef, close }: ModalContentProps) => {
   return (

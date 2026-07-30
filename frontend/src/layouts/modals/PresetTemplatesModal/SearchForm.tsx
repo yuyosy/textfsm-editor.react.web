@@ -13,9 +13,9 @@ import {
 import { CircleHelp } from 'lucide-react';
 
 import { normalize } from '@/utils/stringHelpers';
-
 import { usePlatformPriority } from './hooks/usePlatformPriority';
-import { PlatformTemplatesDict, SearchParams } from './types';
+
+import type { PlatformTemplatesDict, SearchParams } from './types';
 
 interface SearchFormProps {
   templates: PlatformTemplatesDict;
@@ -45,14 +45,14 @@ export const SearchForm = ({
   const groupedPlatforms = Object.keys(templates).reduce(
     (acc, platform) => {
       const priority =
-        platformPriorities.find(p => p.platform === platform)?.priority || 0;
+        platformPriorities.find((p) => p.platform === platform)?.priority || 0;
       if (!acc[priority]) {
         acc[priority] = [];
       }
       acc[priority].push(platform);
       return acc;
     },
-    {} as { [priority: number]: string[] }
+    {} as { [priority: number]: string[] },
   );
 
   const sortedGroups = Object.keys(groupedPlatforms)
@@ -64,9 +64,9 @@ export const SearchForm = ({
       <Select
         label="Select Platform"
         placeholder="Pick one"
-        data={sortedGroups.map(priority => ({
+        data={sortedGroups.map((priority) => ({
           group: `Priority ${priority}`,
-          items: groupedPlatforms[priority].map(platform => ({
+          items: groupedPlatforms[priority].map((platform) => ({
             value: platform,
             label: normalize(platform),
           })),
@@ -82,7 +82,7 @@ export const SearchForm = ({
         label="Template Name"
         placeholder="Search by template name"
         value={searchParams.template}
-        onChange={e => handleSearchParamsChange('template', e.target.value)}
+        onChange={(e) => handleSearchParamsChange('template', e.target.value)}
         rightSection={
           <CloseButton
             size="sm"
@@ -94,7 +94,7 @@ export const SearchForm = ({
         label="Command"
         placeholder="Search by command"
         value={searchParams.command}
-        onChange={e => handleSearchParamsChange('command', e.target.value)}
+        onChange={(e) => handleSearchParamsChange('command', e.target.value)}
         rightSection={
           <CloseButton
             size="sm"
@@ -107,13 +107,13 @@ export const SearchForm = ({
           size="xs"
           label="Use AND condition for filters"
           checked={isAndCondition}
-          onChange={e => handleAndConditionChange(e.currentTarget.checked)}
+          onChange={(e) => handleAndConditionChange(e.currentTarget.checked)}
         />
         <Switch
           size="xs"
           label="Enable Fuzzy Match"
           checked={isFuzzyEnabled}
-          onChange={e => handleFuzzyEnabledChange(e.currentTarget.checked)}
+          onChange={(e) => handleFuzzyEnabledChange(e.currentTarget.checked)}
         />{' '}
         <HoverCard width={280} shadow="md">
           <HoverCard.Target>

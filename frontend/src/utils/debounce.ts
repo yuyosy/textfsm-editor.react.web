@@ -2,7 +2,7 @@ type Callback<T extends unknown[]> = (...args: T) => void;
 
 export const debounce = <T extends unknown[]>(
   func: Callback<T>,
-  delay: number
+  delay: number,
 ): Callback<T> => {
   let timeoutId: ReturnType<typeof setTimeout>;
 

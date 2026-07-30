@@ -1,16 +1,15 @@
-import { RefObject } from 'react';
-
 import { Flex, SegmentedControl } from '@mantine/core';
 import { Columns2, PanelLeftClose, PanelRightClose } from 'lucide-react';
-import { ImperativePanelHandle } from 'react-resizable-panels';
 
-import { PanelLayoutType } from './types';
+import type { RefObject } from 'react';
+import type { ImperativePanelHandle } from 'react-resizable-panels';
+import type { PanelLayoutType } from './types';
 
 interface PanelSelectorProps {
   mainPanelLyout: PanelLayoutType;
   setMainPanelLyout: (value: PanelLayoutType) => void;
-  dataPanelImperativeHandleRef: RefObject<ImperativePanelHandle>;
-  templatePanelImperativeHandleRef: RefObject<ImperativePanelHandle>;
+  dataPanelImperativeHandleRef: RefObject<ImperativePanelHandle | null>;
+  templatePanelImperativeHandleRef: RefObject<ImperativePanelHandle | null>;
 }
 
 export const PanelSelector = ({
@@ -24,7 +23,7 @@ export const PanelSelector = ({
       size="xs"
       color="var(--mantine-primary-color-filled)"
       value={mainPanelLyout}
-      onChange={value => {
+      onChange={(value) => {
         if (value === 'both') {
           dataPanelImperativeHandleRef?.current?.expand();
           templatePanelImperativeHandleRef?.current?.expand();

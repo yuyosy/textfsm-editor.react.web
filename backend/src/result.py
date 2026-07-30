@@ -1,28 +1,40 @@
-from typing import Generic, Optional, TypeVar
-
+from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 E = TypeVar("E")
 
 
-class Result(Generic[T, E]):
-    @property
-    def value(self) -> Optional[T]:
-        raise NotImplementedError("Subclasses should implement this!")
+class Result(ABC, Generic[T, E]):
+    """Abstract base class for Result type (Ok or Err)."""
 
     @property
-    def error(self) -> Optional[E]:
-        raise NotImplementedError("Subclasses should implement this!")
+    @abstractmethod
+    def value(self) -> T | None:
+        """Return the success value, or None if this is an Err."""
+        ...
 
+    @property
+    @abstractmethod
+    def error(self) -> E | None:
+        """Return the error value, or None if this is an Ok."""
+        ...
+
+    @abstractmethod
     def is_ok(self) -> bool:
-        raise NotImplementedError
+        """Return True if this is an Ok result."""
+        ...
 
+    @abstractmethod
     def is_err(self) -> bool:
-        raise NotImplementedError
+        """Return True if this is an Err result."""
+        ...
 
 
 class Ok(Result[T, E]):
-    def __init__(self, value: T):
+    """Represents a successful result containing a value."""
+
+    def __init__(self, value: T) -> None:
         self._value = value
 
     @property
@@ -39,9 +51,14 @@ class Ok(Result[T, E]):
     def is_err(self) -> bool:
         return False
 
+    def __repr__(self) -> str:
+        return f"Ok({self._value!r})"
+
 
 class Err(Result[T, E]):
-    def __init__(self, error: E):
+    """Represents a failed result containing an error."""
+
+    def __init__(self, error: E) -> None:
         self._error = error
 
     @property
@@ -57,3 +74,6 @@ class Err(Result[T, E]):
 
     def is_err(self) -> bool:
         return True
+
+    def __repr__(self) -> str:
+        return f"Err({self._error!r})"

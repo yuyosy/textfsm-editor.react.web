@@ -26,7 +26,7 @@ export const ParseDelaySection = () => {
           { value: 4000, label: '4,000' },
           { value: 5000, label: '5,000ms' },
         ]}
-        label={value => `${value}ms`}
+        label={(value) => `${value}ms`}
         mx={32}
         my={12}
       />

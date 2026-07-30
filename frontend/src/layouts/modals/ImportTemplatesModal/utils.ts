@@ -1,10 +1,9 @@
-import { TemplateInfo } from '../types';
-
-import { ImportedTemplateInfo, LoadedJsonData } from './types';
+import type { TemplateInfo } from '../types';
+import type { ImportedTemplateInfo, LoadedJsonData } from './types';
 
 export const validateAndProcessTemplates = (
   results: ImportedTemplateInfo[],
-  templateList: TemplateInfo[]
+  templateList: TemplateInfo[],
 ): LoadedJsonData[] => {
   const getLoadedJsonData = (
     item: ImportedTemplateInfo,
@@ -13,7 +12,7 @@ export const validateAndProcessTemplates = (
     templateInfoData: TemplateInfo | null,
     hasFormatError: boolean,
     isDuplicate: boolean,
-    isAlreadySaved: boolean
+    isAlreadySaved: boolean,
   ) => {
     return {
       fileName: item.fileName,
@@ -29,12 +28,12 @@ export const validateAndProcessTemplates = (
     return [];
   }
   const processedJsonData: LoadedJsonData[] = [];
-  const namesInTemplateList = new Set(templateList.map(item => item.label));
+  const namesInTemplateList = new Set(templateList.map((item) => item.label));
 
   const renameLabel = (label: string) => {
     let suffix = 1;
     while (
-      processedJsonData.some(item => item.label === label) ||
+      processedJsonData.some((item) => item.label === label) ||
       namesInTemplateList.has(label)
     ) {
       label = `${label}_${suffix}`;
@@ -46,18 +45,20 @@ export const validateAndProcessTemplates = (
   for (const item of results) {
     if (item.hasFormatError) {
       processedJsonData.push(
-        getLoadedJsonData(item, '-', '-', null, true, false, false)
+        getLoadedJsonData(item, '-', '-', null, true, false, false),
       );
     }
     if (!Array.isArray(item.templateInfo) || item.templateInfo === null) {
       processedJsonData.push(
-        getLoadedJsonData(item, '-', '-', null, false, false, false)
+        getLoadedJsonData(item, '-', '-', null, false, false, false),
       );
     }
 
     for (const data of item.templateInfo) {
       if (!data) continue;
-      const isDuplicate = processedJsonData.some(item => item.label === data.label);
+      const isDuplicate = processedJsonData.some(
+        (item) => item.label === data.label,
+      );
       const isAlreadySaved = namesInTemplateList.has(data.label);
       const hasFormatError = !('label' in data && 'value' in data);
       let label = data.label;
@@ -72,7 +73,7 @@ export const validateAndProcessTemplates = (
         data,
         hasFormatError,
         isDuplicate,
-        isAlreadySaved
+        isAlreadySaved,
       );
       processedJsonData.push(loadedJsonData);
     }
@@ -83,9 +84,9 @@ export const validateAndProcessTemplates = (
 export const parseJsonTemplates = async (
   selectedJsonFiles: File[],
   setProcessedJsonData: (data: LoadedJsonData[]) => void,
-  templateList: TemplateInfo[]
+  templateList: TemplateInfo[],
 ) => {
-  const promises = selectedJsonFiles.map(async item => {
+  const promises = selectedJsonFiles.map(async (item) => {
     try {
       const text = await item.text();
       return {

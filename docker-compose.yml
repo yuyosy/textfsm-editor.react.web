@@ -1,5 +1,7 @@
 services:
+  # ==========================
   # Development services
+  # ==========================
   frontend-dev:
     container_name: textfsm-editor-frontend-dev
     build:
@@ -33,19 +35,26 @@ services:
       target: development
     ports:
       - "${BACKEND_PORT_DEV:-8000}:8000"
+    environment:
+      - MODE=development
+      - LOG_LEVEL=DEBUG
+      - DOCS_ENABLED=true
     volumes:
       - ./backend/src:/app/src
     profiles:
       - dev
 
-  frontend-prod:
-    container_name: textfsm-editor-frontend-prod
+  # ==========================
+  # Production services (Backend serves static files)
+  # ==========================
+  frontend-build:
+    container_name: textfsm-editor-frontend-build
     build:
       context: frontend
       dockerfile: Dockerfile
-      target: build
+      target: static-export
     volumes:
-      - build-output:/app/dist
+      - static-files:/app/dist
     profiles:
       - prod
 
@@ -59,18 +68,77 @@ services:
       - "${BACKEND_PORT_PROD:-8000}:8000"
     environment:
       - MODE=production
+      - LOG_LEVEL=${LOG_LEVEL:-WARNING}
+      - DOCS_ENABLED=${DOCS_ENABLED:-false}
       - PUBLIC_DIR=/app/public
       - STATIC_DIR=/app/public/static
       - ENABLE_HTTPS_REDIRECT=${ENABLE_HTTPS_REDIRECT:-false}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost}
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
     volumes:
-      - build-output:/app/public/static
+      - static-files:/app/public/static
     depends_on:
-      - frontend-prod
+      frontend-build:
+        condition: service_completed_successfully
     profiles:
       - prod
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ==========================
+  # Production services (Nginx + Backend)
+  # ==========================
+  frontend-nginx:
+    container_name: textfsm-editor-frontend-nginx
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "${FRONTEND_PORT_PROD:-80}:80"
+    depends_on:
+      backend-api:
+        condition: service_healthy
+    profiles:
+      - prod-nginx
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  backend-api:
+    container_name: textfsm-editor-backend-api
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: production
+    expose:
+      - "8000"
+    environment:
+      - MODE=production
+      - LOG_LEVEL=${LOG_LEVEL:-WARNING}
+      - DOCS_ENABLED=${DOCS_ENABLED:-false}
+      - ENABLE_HTTPS_REDIRECT=false
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
+    profiles:
+      - prod-nginx
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 volumes:
-  build-output:
+  static-files:
 

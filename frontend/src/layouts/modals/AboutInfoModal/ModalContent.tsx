@@ -3,9 +3,13 @@ import { Button, Group, Modal, Stack } from '@mantine/core';
 import { AboutSection } from './AboutSection';
 import { ReferencesSection } from './ReferencesSection';
 import { RelatedLinksSection } from './RelatedLinksSection';
-import { ModalContentProps } from './types';
 
-export const AboutInfoModalContent = ({ close, focusRef }: ModalContentProps) => {
+import type { ModalContentProps } from '../types';
+
+export const AboutInfoModalContent = ({
+  close,
+  focusRef,
+}: ModalContentProps) => {
   return (
     <Modal.Content>
       <Modal.Header>

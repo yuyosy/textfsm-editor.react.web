@@ -22,7 +22,7 @@ import { TagBadge } from '@/components/TagBadege';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
 import { colors } from '@/utils/colors';
 
-import { TemplateTag } from '../types';
+import type { TemplateTag } from '../types';
 
 const getRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
@@ -42,7 +42,7 @@ export const TemplateTagSection = () => {
   const [editingTagColor, setEditingTagColor] = useState(getRandomColor());
 
   const addTag = () => {
-    if (tags.some(tag => tag.name === newTagName)) {
+    if (tags.some((tag) => tag.name === newTagName)) {
       setError('Tag name already exists');
       return;
     }
@@ -60,21 +60,21 @@ export const TemplateTagSection = () => {
     if (!originalTag) {
       return;
     }
-    const updatedTags = tags.map(tag =>
-      tag.name === originalTag.name ? updatedTag : tag
+    const updatedTags = tags.map((tag) =>
+      tag.name === originalTag.name ? updatedTag : tag,
     );
     setTags(updatedTags);
     resetEditingState();
   };
 
   const deleteTag = (name: string) => {
-    const updatedTags = tags.filter(tag => tag.name !== name);
+    const updatedTags = tags.filter((tag) => tag.name !== name);
     setTags(updatedTags);
   };
 
   const swapTag = (tag: TemplateTag, to: number) => {
     const cloned = [...tags];
-    const from = cloned.findIndex(item => item.name === tag.name);
+    const from = cloned.findIndex((item) => item.name === tag.name);
     if (from < 0) {
       return;
     }
@@ -104,7 +104,7 @@ export const TemplateTagSection = () => {
 
   const handleOnChangeAccordionSection = (value: string | null) => {
     if (value !== '$acttion:new' && value) {
-      startEditing(tags[tags.findIndex(tag => tag.name === value)]);
+      startEditing(tags[tags.findIndex((tag) => tag.name === value)]);
     }
     setAccordionSection(value);
   };
@@ -136,7 +136,7 @@ export const TemplateTagSection = () => {
               <SimpleGrid cols={2} spacing={8} verticalSpacing={8}>
                 <TextInput
                   value={newTagName}
-                  onChange={e => setNewTagName(e.currentTarget.value)}
+                  onChange={(e) => setNewTagName(e.currentTarget.value)}
                   label="Tag name"
                   placeholder="Tag name"
                   required
@@ -144,7 +144,7 @@ export const TemplateTagSection = () => {
                 />
                 <TextInput
                   value={newTagDescription}
-                  onChange={e => setNewTagDescription(e.currentTarget.value)}
+                  onChange={(e) => setNewTagDescription(e.currentTarget.value)}
                   label="Tag description"
                   placeholder="Tag description"
                 />
@@ -168,7 +168,12 @@ export const TemplateTagSection = () => {
                   }
                 />
                 <Flex align="center" pt={24}>
-                  <Badge color={newTagColor} variant="filled" tt="unset" autoContrast>
+                  <Badge
+                    color={newTagColor}
+                    variant="filled"
+                    tt="unset"
+                    autoContrast
+                  >
                     {newTagName === '' ? 'tag name here' : newTagName}
                   </Badge>
                 </Flex>
@@ -177,7 +182,7 @@ export const TemplateTagSection = () => {
                 size="xs"
                 variant="outline"
                 onClick={addTag}
-                disabled={newTagName == '' ? true : false}
+                disabled={newTagName === ''}
               >
                 Add Tag
               </Button>
@@ -202,8 +207,10 @@ export const TemplateTagSection = () => {
               <Stack>
                 <SimpleGrid cols={2} spacing={8} verticalSpacing={8}>
                   <TextInput
-                    value={editingTag?.name === tag.name ? editingTagName : tag.name}
-                    onChange={e => setEditingTagName(e.currentTarget.value)}
+                    value={
+                      editingTag?.name === tag.name ? editingTagName : tag.name
+                    }
+                    onChange={(e) => setEditingTagName(e.currentTarget.value)}
                     label="Tag name"
                     placeholder="Tag name"
                     required
@@ -215,7 +222,9 @@ export const TemplateTagSection = () => {
                         ? editingTagDescription
                         : tag.description
                     }
-                    onChange={e => setEditingTagDescription(e.currentTarget.value)}
+                    onChange={(e) =>
+                      setEditingTagDescription(e.currentTarget.value)
+                    }
                     label="Tag description"
                     placeholder="Tag description"
                   />
@@ -225,7 +234,11 @@ export const TemplateTagSection = () => {
                     swatches={colors}
                     swatchesPerRow={8}
                     size="xs"
-                    value={editingTag?.name === tag.name ? editingTagColor : tag.color}
+                    value={
+                      editingTag?.name === tag.name
+                        ? editingTagColor
+                        : tag.color
+                    }
                     onChange={setEditingTagColor}
                   />
                 </SimpleGrid>

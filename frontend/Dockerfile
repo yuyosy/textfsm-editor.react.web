@@ -34,7 +34,25 @@ RUN npm run build
 # ==========================
 # Production stage
 # ==========================
-FROM node:lts-buster-slim AS production
+FROM nginx:alpine AS production
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy build output from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+
+# ==========================
+# Static files stage (for backend integration)
+# ==========================
+FROM node:lts-buster-slim AS static-export
 WORKDIR /app
 # Copy build output to a dedicated directory for volume sharing
 COPY --from=build /app/dist ./dist

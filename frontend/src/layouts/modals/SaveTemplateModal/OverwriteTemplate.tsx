@@ -6,10 +6,9 @@ import { DataTable } from 'mantine-datatable';
 
 import { TagBadge } from '@/components/TagBadege';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
-
-import { TemplateInfo } from '../types';
-
 import { useOverwriteTemplate } from './hooks/useOverwriteTemplate';
+
+import type { TemplateInfo } from '../types';
 
 interface OverwriteTemplateProps {
   close: () => void;
@@ -27,14 +26,15 @@ export const OverwriteTemplate = ({
   const [search, setSearch] = useState('');
   const tags = useAtomValue(templateTagsAtom);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-  const { setExistingTemplateName, saveTemplateToStorage } = useOverwriteTemplate(
-    savedTemplates,
-    setSavedTemplates,
-    currentEditorContent
-  );
+  const { setExistingTemplateName, saveTemplateToStorage } =
+    useOverwriteTemplate(
+      savedTemplates,
+      setSavedTemplates,
+      currentEditorContent,
+    );
 
-  const filteredTemplates = savedTemplates.filter(template =>
-    template.label.toLowerCase().includes(search.toLowerCase())
+  const filteredTemplates = savedTemplates.filter((template) =>
+    template.label.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleSelectTemplate = (label: string) => {
@@ -54,7 +54,7 @@ export const OverwriteTemplate = ({
           label="Search Templates"
           placeholder="Search templates..."
           value={search}
-          onChange={e => setSearch(e.currentTarget.value)}
+          onChange={(e) => setSearch(e.currentTarget.value)}
         />
         <DataTable
           height={300}
@@ -71,13 +71,14 @@ export const OverwriteTemplate = ({
             {
               accessor: 'label',
               title: 'Template Name',
-              render: record => (
+              render: (record) => (
                 <Flex direction="column" gap={4}>
                   <Text>{record.label}</Text>
                   {record.tags ? (
                     <Group gap={4}>
-                      {record.tags.map(tagName => {
-                        const tag = tags[tags.findIndex(tag => tag.name === tagName)];
+                      {record.tags.map((tagName) => {
+                        const tag =
+                          tags[tags.findIndex((tag) => tag.name === tagName)];
                         return tag ? (
                           <TagBadge key={tagName} size="sm" {...tag} />
                         ) : (
@@ -102,7 +103,7 @@ export const OverwriteTemplate = ({
               accessor: 'action',
               title: 'Action',
               width: 80,
-              render: record => (
+              render: (record) => (
                 <Button
                   variant="default"
                   size="xs"
@@ -114,7 +115,11 @@ export const OverwriteTemplate = ({
             },
           ]}
         />
-        <TextInput label="Selected Template" value={selectedTemplate} readOnly />
+        <TextInput
+          label="Selected Template"
+          value={selectedTemplate}
+          readOnly
+        />
       </Stack>
       <Group justify="space-between" mt="lg">
         <Button variant="default" size="xs" onClick={close}>

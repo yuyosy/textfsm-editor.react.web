@@ -17,7 +17,7 @@ import { DataTable } from 'mantine-datatable';
 import { TagBadgeMultiSelect } from '@/components/TagBadgeMultiSelect';
 import { templateTagsAtom } from '@/features/state/storageAtoms';
 
-import { TemplateInfo } from '../types';
+import type { TemplateInfo } from '../types';
 
 type TemplateTableProps = {
   editingTemplates: TemplateInfo[];
@@ -57,7 +57,12 @@ const TagEditorPopover = ({
     >
       <Popover.Target>
         <Group>
-          <ActionIcon onClick={handlers.toggle} variant="light" color="green" size="sm">
+          <ActionIcon
+            onClick={handlers.toggle}
+            variant="light"
+            color="green"
+            size="sm"
+          >
             <Tags size={16} />
           </ActionIcon>
         </Group>
@@ -70,7 +75,7 @@ const TagEditorPopover = ({
         <TagBadgeMultiSelect
           label={`Selected: ${record.tags ? record.tags.length : 0}`}
           selectItems={tags}
-          onChange={selectedTags => handleTagChange(index, selectedTags)}
+          onChange={(selectedTags) => handleTagChange(index, selectedTags)}
           defaultValue={record.tags}
           withinPortal={false}
           clearable
@@ -130,14 +135,13 @@ export const TemplateTable = ({
             <TextInput
               defaultValue={item.label}
               ref={inputRef}
-              onBlur={event => {
+              onBlur={(event) => {
                 const value = event.currentTarget.value;
-                console.log(value, item.label);
                 if (value !== item.label) {
                   renameTemplate(index, value);
                 }
               }}
-              onKeyDown={event => {
+              onKeyDown={(event) => {
                 const value = event.currentTarget.value;
                 if (event.key === 'Enter') {
                   if (value !== item.label) {
@@ -154,7 +158,7 @@ export const TemplateTable = ({
         {
           accessor: 'tags',
           width: 80,
-          render: record => {
+          render: (record) => {
             const len = record.tags?.length || 0;
             return <Text>{len === 1 ? `1 tag` : `${len} tags`}</Text>;
           },

@@ -1,5 +1,3 @@
-import { RefObject } from 'react';
-
 export type MatchType = 'all' | 'regex' | 'fuzzy';
 
 export interface NtcTemplateInfo {
@@ -22,11 +20,6 @@ export interface SearchedTemplateInfo extends NtcTemplateInfo {
 export interface PlatformTemplatesDict {
   [platform: string]: NtcTemplateInfo[];
 }
-
-export type ModalContentProps = {
-  close: () => void;
-  focusRef: RefObject<HTMLDivElement>;
-};
 
 export interface SearchParams {
   template: string;

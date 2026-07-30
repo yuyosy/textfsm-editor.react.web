@@ -13,7 +13,7 @@ import { Info, SquareArrowOutUpRight } from 'lucide-react';
 
 const calculateLocalStorageUsage = () => {
   let total = 0;
-  Object.keys(localStorage).forEach(key => {
+  Object.keys(localStorage).forEach((key) => {
     total += localStorage[key].length + key.length;
   });
   return total / (1024 * 1024);
@@ -40,7 +40,13 @@ export const StorageUsageSection = () => {
       <Progress
         value={usagePercentage}
         size="xl"
-        color={usagePercentage > 90 ? 'red' : usagePercentage > 70 ? 'yellow' : 'blue'}
+        color={
+          usagePercentage > 90
+            ? 'red'
+            : usagePercentage > 70
+              ? 'yellow'
+              : 'blue'
+        }
         mx={32}
       />
       <Text size="xs" px={2} mx={32}>
@@ -69,10 +75,16 @@ export const StorageUsageSection = () => {
         />{' '}
         used
       </Text>
-      <Blockquote color="blue" icon={<Info size={14} />} iconSize={30} py={8} mx={8}>
+      <Blockquote
+        color="blue"
+        icon={<Info size={14} />}
+        iconSize={30}
+        py={8}
+        mx={8}
+      >
         <Text size="xs">
-          Data entered in the Data Editor and Template Editor is stored in SessionStorage
-          and retained until the tab is closed.
+          Data entered in the Data Editor and Template Editor is stored in
+          SessionStorage and retained until the tab is closed.
         </Text>
         <Anchor
           href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"

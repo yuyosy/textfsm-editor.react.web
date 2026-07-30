@@ -1,11 +1,11 @@
-import { RefObject } from 'react';
+import { type RefObject, useMemo } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CodeHighlight } from '@mantine/code-highlight';
-import { Group, ScrollArea, Stack, Tabs, Text } from '@mantine/core';
+import { Box, Group, ScrollArea, Stack, Tabs, Text } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { Braces, Table } from 'lucide-react';
 import { DataTable } from 'mantine-datatable';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { CopyValueButton } from '@/components/CopyValueButton';
 import { FileDownloadButton } from '@/components/FileDownloadButton';
@@ -15,16 +15,42 @@ import { useDataDeliver } from '@/hooks/useDataDeliver';
 import { getCurrentDateTimeString } from '@/utils/datetime';
 
 interface ResultViewPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
-export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelProps) => {
+export const ResultViewPanel = ({
+  panelRef,
+  onResizeHandler,
+}: ResultViewPanelProps) => {
   const resultViewValue = useAtomValue(resultViewValueAtom);
 
   const header = resultViewValue?.data?.header || [];
   const results = resultViewValue?.data?.results || [];
 
-  const { tsvDataDeliver, jsonDataDeliver } = useDataDeliver({ header, results });
+  const { tsvDataDeliver, jsonDataDeliver } = useDataDeliver({
+    header,
+    results,
+  });
+
+  // パフォーマンス最適化: テーブルデータをメモ化
+  const tableRecords = useMemo(
+    () =>
+      results.map((item, index) => {
+        const entries = Object.entries(item).map(([key, val]) => [
+          key,
+          Array.isArray(val) ? val.join(', ') : val,
+        ]);
+        entries.push(['$index', index]);
+        return Object.fromEntries(entries);
+      }),
+    [results],
+  );
+
+  // パフォーマンス最適化: カラム定義をメモ化
+  const tableColumns = useMemo(
+    () => header.map((value) => ({ accessor: value })),
+    [header],
+  );
 
   return (
     <Panel
@@ -52,9 +78,14 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
             JSON
           </Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="table">
-          <Stack gap={0} h="100%">
-            <Group px={10} py={4} justify="space-between">
+        <Tabs.Panel value="table" h="100%">
+          <Stack gap={0} h="100%" style={{ overflow: 'hidden' }}>
+            <Group
+              px={10}
+              py={4}
+              justify="space-between"
+              style={{ flexShrink: 0 }}
+            >
               <Text fw={700}>Table View</Text>
               <Group>
                 <FileDownloadButton
@@ -64,26 +95,36 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
                 <CopyValueButton value={tsvDataDeliver()} />
               </Group>
             </Group>
-            <DataTable
-              columns={header.map(value => ({ accessor: value }))}
-              records={results.map((item, index) => {
-                const entries = Object.entries(item).map(([key, val]) => [
-                  key,
-                  Array.isArray(val) ? val.join(', ') : val,
-                ]);
-                entries.push(['$index', index]);
-                return Object.fromEntries(entries);
-              })}
-              idAccessor="$index"
-              striped
-              withTableBorder
-              withColumnBorders
-            />
+            <Box style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+              <Box style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
+                <DataTable
+                  columns={tableColumns}
+                  records={tableRecords}
+                  idAccessor="$index"
+                  striped
+                  withTableBorder
+                  withColumnBorders
+                  scrollAreaProps={{
+                    type: 'never',
+                  }}
+                  styles={{
+                    table: {
+                      minWidth: 'max-content',
+                    },
+                  }}
+                />
+              </Box>
+            </Box>
           </Stack>
         </Tabs.Panel>
-        <Tabs.Panel value="json">
-          <Stack gap={0} h="100%">
-            <Group px={10} py={4} justify="space-between">
+        <Tabs.Panel value="json" h="100%">
+          <Stack gap={0} h="100%" style={{ overflow: 'hidden' }}>
+            <Group
+              px={10}
+              py={4}
+              justify="space-between"
+              style={{ flexShrink: 0 }}
+            >
               <Text fw={700}>JSON View</Text>
               <Group>
                 <FileDownloadButton
@@ -93,14 +134,22 @@ export const ResultViewPanel = ({ panelRef, onResizeHandler }: ResultViewPanelPr
                 <CopyValueButton value={jsonDataDeliver()} />
               </Group>
             </Group>
-            <ScrollArea h="100%">
-              <CodeHighlight
-                code={jsonDataDeliver()}
-                language="json"
-                h="100%"
-                withCopyButton={false}
-              />
-            </ScrollArea>
+            <Box style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+              <ScrollArea
+                style={{ position: 'absolute', inset: 0 }}
+                type="auto"
+                scrollbarSize={8}
+                offsetScrollbars
+              >
+                <Box p={8}>
+                  <CodeHighlight
+                    code={jsonDataDeliver()}
+                    language="json"
+                    withCopyButton={false}
+                  />
+                </Box>
+              </ScrollArea>
+            </Box>
           </Stack>
         </Tabs.Panel>
       </Tabs>

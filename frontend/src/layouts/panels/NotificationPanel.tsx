@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { type ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import {
   ActionIcon,
@@ -14,7 +14,6 @@ import {
 import { useAtom, useAtomValue } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { BellOff, Eraser } from 'lucide-react';
-import { ImperativePanelHandle, Panel } from 'react-resizable-panels';
 
 import { AlertCard } from '@/components/AlertCard';
 import {
@@ -22,10 +21,12 @@ import {
   notificationsAtom,
   removeNotificationAtom,
 } from '@/features/state/atoms';
-import { Notification } from '@/types';
+
+import type { RefObject } from 'react';
+import type { Notification } from '@/types';
 
 interface NotificationPanelProps {
-  panelRef: RefObject<ImperativePanelHandle>;
+  panelRef: RefObject<ImperativePanelHandle | null>;
   onResizeHandler: () => void;
 }
 
@@ -63,11 +64,16 @@ export const NotificationPanel = ({
       ref={panelRef}
       onResize={onResizeHandler}
     >
-      <Stack gap={0} h="100%">
-        <Group px={10} py={8} justify="space-between">
+      <Stack gap={0} h="100%" style={{ overflow: 'hidden' }}>
+        <Group px={10} py={8} justify="space-between" style={{ flexShrink: 0 }}>
           <Text fw={700}>Notifications</Text>
           <Tooltip label="Clear all" withArrow position="bottom">
-            <ActionIcon variant="subtle" color="gray" onClick={clearNotifications}>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              onClick={clearNotifications}
+              aria-label="Clear all notifications"
+            >
               <Eraser size={22} />
             </ActionIcon>
           </Tooltip>
@@ -84,9 +90,13 @@ export const NotificationPanel = ({
             </Flex>
           </Center>
         ) : (
-          <ScrollArea h="100%">
-            <Stack p={10} pr={16}>
-              {notifications.map(notification => (
+          <ScrollArea
+            style={{ flex: 1, minHeight: 0 }}
+            type="auto"
+            scrollbarSize={8}
+          >
+            <Stack p={10} pr={16} gap="xs">
+              {notifications.map((notification) => (
                 <AlertCard
                   key={notification.id}
                   mainTitle={notification.title}

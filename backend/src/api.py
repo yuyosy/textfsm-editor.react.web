@@ -1,4 +1,4 @@
-import os
+import re
 from pathlib import Path
 
 import ntc_templates
@@ -12,19 +12,23 @@ from src.api_types import (
     TextFSMParseAPIResponse,
     TextFSMParseInput,
 )
-from src.myLogger import myLogger
+from src.config import get_settings
+from src.my_logger import logger
 from src.parse import parse_text
 
 router = APIRouter()
 
+# Pre-compiled regex for template name validation
+# Only allow alphanumeric characters, underscores, hyphens, and dots
+TEMPLATE_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9_\-\.]+\.textfsm$")
+
 
 @router.post("/parse", response_model=TextFSMParseAPIResponse)
 async def parse(request: TextFSMParseAPIRequest):
-    MAX_TEMPLATE_LENGTH = int(os.getenv("MAX_TEMPLATE_LENGTH", "10000"))
-    MAX_DATA_LENGTH = int(os.getenv("MAX_DATA_LENGTH", "100000"))
+    settings = get_settings()
     if (
-        len(request.data.template_string) > MAX_TEMPLATE_LENGTH
-        or len(request.data.data_string) > MAX_DATA_LENGTH
+        len(request.data.template_string) > settings.max_template_length
+        or len(request.data.data_string) > settings.max_data_length
     ):
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
@@ -37,8 +41,11 @@ async def parse(request: TextFSMParseAPIRequest):
                 data_string=request.data.data_string,
             )
         )
+    except HTTPException:
+        # Re-raise HTTPException without wrapping
+        raise
     except Exception as err:
-        myLogger.error(f"Error parsing text: {err}")
+        logger.error(f"Error parsing text: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",
@@ -72,14 +79,16 @@ async def parse(request: TextFSMParseAPIRequest):
 
 @router.get("/ntc-templates", response_model=list[TemplateInfo])
 async def get_ntc_templates():
-    public_dir = Path(os.getenv("PUBLIC_DIR", "./public"))
+    settings = get_settings()
     try:
         return FileResponse(
-            public_dir.joinpath("ntc-templates-info.json"),
+            settings.public_dir.joinpath("ntc-templates-info.json"),
             media_type="application/json",
         )
+    except HTTPException:
+        raise
     except Exception as err:
-        myLogger.error(f"Error getting NTC templates: {err}")
+        logger.error(f"Error getting NTC templates: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",
@@ -88,15 +97,32 @@ async def get_ntc_templates():
 
 @router.get("/ntc-templates/{template_name}")
 async def get_ntc_template(template_name: str):
+    # Validate template name format to prevent path traversal
+    if not TEMPLATE_NAME_PATTERN.match(template_name):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid template name format",
+        )
+
+    # Additional check for path traversal attempts
+    if ".." in template_name or "/" in template_name or "\\" in template_name:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid template name",
+        )
+
     try:
         base_templates_path = (
             Path(ntc_templates.__file__).parent.joinpath("templates").resolve()
         )
         template_path = base_templates_path.joinpath(template_name).resolve()
-        if not str(template_path).startswith(str(base_templates_path)):
+
+        # Verify the resolved path is still within the base templates directory
+        if not template_path.is_relative_to(base_templates_path):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden path"
             )
+
         if not template_path.exists():
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -109,8 +135,10 @@ async def get_ntc_template(template_name: str):
             template_path,
             media_type="text/plain",
         )
+    except HTTPException:
+        raise
     except Exception as err:
-        myLogger.error(f"Error getting NTC template: {err}")
+        logger.error(f"Error getting NTC template: {err}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error",

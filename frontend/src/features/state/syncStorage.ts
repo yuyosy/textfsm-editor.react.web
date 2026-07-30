@@ -1,5 +1,6 @@
 import { createJSONStorage } from 'jotai/utils';
-import { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
+
+import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
 
 export const sessionStorage = <T>(): SyncStorage<T> | undefined => {
   if (typeof window !== 'undefined') {

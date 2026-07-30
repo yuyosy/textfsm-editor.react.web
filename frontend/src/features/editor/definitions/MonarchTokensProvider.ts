@@ -1,10 +1,10 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 export const monarchTokensProvider:
   | monaco.languages.IMonarchLanguage
   | monaco.Thenable<monaco.languages.IMonarchLanguage> = {
   defaultToken: '',
-  escapes: /\\(?:[dDwWsStrnvfb0\*\+\.\?\(\)\{\}\[\]\^\$\-\|\/\\])/,
+  escapes: /\\(?:[dDwWsStrnvfb0*+.?(){}[\]^$\-|/\\])/,
   valueOptions: ['Required', 'Fillup', 'Filldown', 'Key', 'List'],
   lineActions: ['Next', 'Continue', 'Error'],
   recordActions: ['NoRecord', 'Record', 'Clear', 'Clearall'],

@@ -5,12 +5,12 @@ import { useSetAtom } from 'jotai';
 
 import { addNotificationAtom } from '@/features/state/atoms';
 
-import { TemplateInfo } from '../../types';
+import type { TemplateInfo } from '../../types';
 
 export const useSaveNewTemplate = (
   savedTemplates: TemplateInfo[],
   setSavedTemplates: (templates: TemplateInfo[]) => void,
-  currentEditorContent: string
+  currentEditorContent: string,
 ) => {
   const addNotification = useSetAtom(addNotificationAtom);
   const [templateProperties, setTemplateProperties] = useState<TemplateInfo>({
@@ -19,11 +19,16 @@ export const useSaveNewTemplate = (
   });
   const [isNameDuplicate, setIsDuplicateName] = useState<boolean>(false);
 
-  const [debouncedTemplateName] = useDebouncedValue(templateProperties.label, 200);
+  const [debouncedTemplateName] = useDebouncedValue(
+    templateProperties.label,
+    200,
+  );
 
   useEffect(() => {
     setIsDuplicateName(
-      savedTemplates.some(template => template.label === debouncedTemplateName)
+      savedTemplates.some(
+        (template) => template.label === debouncedTemplateName,
+      ),
     );
   }, [debouncedTemplateName, savedTemplates]);
 
@@ -48,7 +53,10 @@ export const useSaveNewTemplate = (
     setIsDuplicateName(false);
   };
 
-  const setTemplateField = (field: keyof TemplateInfo, value: string | string[]) => {
+  const setTemplateField = (
+    field: keyof TemplateInfo,
+    value: string | string[],
+  ) => {
     setTemplateProperties({ ...templateProperties, [field]: value });
   };
 

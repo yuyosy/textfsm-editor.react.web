@@ -7,18 +7,17 @@ import {
   rawTextEditorValueAtom,
   templateEditorValueAtom,
 } from '@/features/state/storageAtoms';
-import { HistoryAutoSaveItem } from '@/types';
-
 import { HistoryDataTable } from './HistoryDataTable';
-import { ModalContentProps } from './types';
+
+import type { HistoryAutoSaveItem } from '@/types';
+import type { ModalContentProps } from '../types';
 
 export const HistoryModalContent = ({ focusRef, close }: ModalContentProps) => {
   const setTemplateEditorValue = useSetAtom(templateEditorValueAtom);
   const setRawTextEditorValue = useSetAtom(rawTextEditorValueAtom);
 
-  const [selectedHistory, setSelectedHistory] = useState<HistoryAutoSaveItem | null>(
-    null
-  );
+  const [selectedHistory, setSelectedHistory] =
+    useState<HistoryAutoSaveItem | null>(null);
 
   const handleSelectHistory = (historyItem: HistoryAutoSaveItem) => {
     setSelectedHistory(historyItem);
@@ -44,16 +43,18 @@ export const HistoryModalContent = ({ focusRef, close }: ModalContentProps) => {
         <Stack ref={focusRef} p={8}>
           <Stack gap={2}>
             <Text size="sm" c="dimmed">
-              When you send a parse request, the values of Data, Template, and Result are
-              temporarily stored. If the limit is reached, the oldest ones are removed.
+              When you send a parse request, the values of Data, Template, and
+              Result are temporarily stored. If the limit is reached, the oldest
+              ones are removed.
             </Text>
             <Text size="sm" c="dimmed">
-              You can enable/disable and change the retention limit in the Options.
+              You can enable/disable and change the retention limit in the
+              Options.
             </Text>
           </Stack>
           <HistoryDataTable onSelect={handleSelectHistory} />
           <TextInput
-            label="Selected Template"
+            label="Selected History"
             value={selectedHistory?.timestamp || ''}
             readOnly
           />

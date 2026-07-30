@@ -1,14 +1,17 @@
 import {
+  CodeHighlightAdapterProvider,
+  createShikiAdapter,
+} from '@mantine/code-highlight';
+import {
   AppShell,
-  MantineProvider,
   colorsTuple,
   createTheme,
+  MantineProvider,
   virtualColor,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { initializeTextFSMEditor } from '@/features/editor/initializeEditor';
-
 import { AppHeader } from './AppHeader';
 import { AppMain } from './AppMain';
 import { AppNavbar } from './AppNav';
@@ -26,6 +29,17 @@ const theme = createTheme({
   },
 });
 
+const loadShiki = async () => {
+  const { createHighlighter } = await import('shiki');
+  const shiki = await createHighlighter({
+    langs: ['json'],
+    themes: ['light-plus', 'andromeeda'],
+  });
+
+  return shiki;
+};
+const shikiAdapter = createShikiAdapter(loadShiki);
+
 export const App = () => {
   // refer to : https://mantine.dev/guides/dark-theme/#save-to-localstorage-and-add-keyboard-shortcut
   // const [colorScheme, setColorScheme] = useLocalStorage<MantineColorScheme>({
@@ -39,8 +53,8 @@ export const App = () => {
   const navbarWidth = opened ? 300 : 60;
 
   return (
-    <>
-      <MantineProvider theme={theme} defaultColorScheme="dark">
+    <MantineProvider theme={theme} defaultColorScheme="dark">
+      <CodeHighlightAdapterProvider adapter={shikiAdapter}>
         <AppShell
           layout="alt"
           withBorder={false}
@@ -56,7 +70,7 @@ export const App = () => {
           <AppMain />
           {/* <AppFooter /> */}
         </AppShell>
-      </MantineProvider>
-    </>
+      </CodeHighlightAdapterProvider>
+    </MantineProvider>
   );
 };

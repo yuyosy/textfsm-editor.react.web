@@ -1,4 +1,4 @@
-import { Badge, BadgeProps } from '@mantine/core';
+import { Badge, type BadgeProps } from '@mantine/core';
 
 export interface TagBadgeProps extends BadgeProps {
   name?: string;

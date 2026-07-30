@@ -10,15 +10,23 @@ class APIRequestError extends Error {
 
 type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
 
-export const apiFetch = async (
+type ResponseTypeMap = {
+  json: unknown;
+  text: string;
+  blob: Blob;
+  arrayBuffer: ArrayBuffer;
+  formData: FormData;
+};
+
+export const apiFetch = async <T extends ResponseType = 'json'>(
   url: string,
   config: RequestInit = {},
   entrypoint: string = apiUrl,
   timeout: number = 5000,
-  responseType: ResponseType = 'json'
-): Promise<any> => {
+  responseType: T = 'json' as T,
+): Promise<ResponseTypeMap[T]> => {
   const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new APIRequestError('Request timed out')), timeout)
+    setTimeout(() => reject(new APIRequestError('Request timed out')), timeout),
   );
 
   try {
@@ -29,50 +37,51 @@ export const apiFetch = async (
 
     switch (responseType) {
       case 'json':
-        return await response.json();
+        return (await response.json()) as ResponseTypeMap[T];
       case 'text':
-        return await response.text();
+        return (await response.text()) as ResponseTypeMap[T];
       case 'blob':
-        return await response.blob();
+        return (await response.blob()) as ResponseTypeMap[T];
       case 'arrayBuffer':
-        return await response.arrayBuffer();
+        return (await response.arrayBuffer()) as ResponseTypeMap[T];
       case 'formData':
-        return await response.formData();
+        return (await response.formData()) as ResponseTypeMap[T];
       default:
         throw new APIRequestError('Unsupported response type');
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
     return Promise.reject(new APIRequestError(message));
   }
 };
 
-type APIOptions = {
+type APIOptions<T extends ResponseType = 'json'> = {
   config?: RequestInit;
   entrypoint?: string;
   timeout?: number;
-  responseType?: ResponseType;
+  responseType?: T;
 };
 
 export const api = {
-  get: (
+  get: <T extends ResponseType = 'json'>(
     url: string,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
-  ): Promise<any> => {
-    return apiFetch(
+    { config, entrypoint, timeout, responseType }: APIOptions<T> = {},
+  ): Promise<ResponseTypeMap[T]> => {
+    return apiFetch<T>(
       url,
       { ...config, method: 'GET' },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
-  post: (
+  post: <T extends ResponseType = 'json'>(
     url: string,
     body: object | null,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
-  ): Promise<any> => {
-    return apiFetch(
+    { config, entrypoint, timeout, responseType }: APIOptions<T> = {},
+  ): Promise<ResponseTypeMap[T]> => {
+    return apiFetch<T>(
       url,
       {
         ...config,
@@ -81,15 +90,15 @@ export const api = {
       },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
-  put: (
+  put: <T extends ResponseType = 'json'>(
     url: string,
     body: object | null,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
-  ): Promise<any> => {
-    return apiFetch(
+    { config, entrypoint, timeout, responseType }: APIOptions<T> = {},
+  ): Promise<ResponseTypeMap[T]> => {
+    return apiFetch<T>(
       url,
       {
         ...config,
@@ -98,19 +107,19 @@ export const api = {
       },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
-  delete: (
+  delete: <T extends ResponseType = 'json'>(
     url: string,
-    { config, entrypoint, timeout, responseType }: APIOptions = {}
-  ): Promise<any> => {
-    return apiFetch(
+    { config, entrypoint, timeout, responseType }: APIOptions<T> = {},
+  ): Promise<ResponseTypeMap[T]> => {
+    return apiFetch<T>(
       url,
       { ...config, method: 'DELETE' },
       entrypoint,
       timeout,
-      responseType
+      responseType,
     );
   },
 };

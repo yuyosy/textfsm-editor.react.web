@@ -4,7 +4,7 @@ import {
   CheckIcon,
   CloseButton,
   Combobox,
-  ComboboxProps,
+  type ComboboxProps,
   Flex,
   Grid,
   Group,
@@ -16,9 +16,9 @@ import {
   useCombobox,
 } from '@mantine/core';
 
-import { TemplateTag } from '@/layouts/modals/types';
-
 import { TagBadge } from './TagBadege';
+
+import type { TemplateTag } from '@/layouts/modals/types';
 
 export interface TagBadgeMultiSelectProps extends ComboboxProps {
   label: string;
@@ -40,7 +40,7 @@ export const TagBadgeMultiSelect = ({
   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue);
 
   const findItem = (value: string): TemplateTag =>
-    selectItems[selectItems.findIndex(item => item.name === value)];
+    selectItems[selectItems.findIndex((item) => item.name === value)];
 
   const combobox = useCombobox({
     onDropdownClose: () => {
@@ -55,7 +55,7 @@ export const TagBadgeMultiSelect = ({
 
   const handleValueSelect = (val: string) => {
     const newSelectedValues = selectedValues.includes(val)
-      ? selectedValues.filter(v => v !== val)
+      ? selectedValues.filter((v) => v !== val)
       : [...selectedValues, val];
     setSelectedValues(newSelectedValues);
     if (onChange) {
@@ -64,14 +64,14 @@ export const TagBadgeMultiSelect = ({
   };
 
   const handleValueRemove = (val: string) => {
-    const newSelectedValues = selectedValues.filter(v => v !== val);
+    const newSelectedValues = selectedValues.filter((v) => v !== val);
     setSelectedValues(newSelectedValues);
     if (onChange) {
       onChange(newSelectedValues);
     }
   };
 
-  const selectedValueNodes = selectedValues.map(item => {
+  const selectedValueNodes = selectedValues.map((item) => {
     const tag = findItem(item);
     return (
       <TagBadge
@@ -100,7 +100,9 @@ export const TagBadgeMultiSelect = ({
 
   const groupSelectItems = (items: TemplateTag[], selectedValues: string[]) => {
     return items
-      .filter(item => item.name.toLowerCase().includes(search.toLowerCase().trim()))
+      .filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase().trim()),
+      )
       .reduce(
         (acc, item) => {
           if (selectedValues.includes(item.name)) {
@@ -113,15 +115,15 @@ export const TagBadgeMultiSelect = ({
         [
           { label: 'available', values: [] as typeof items },
           { label: 'selected', values: [] as typeof items },
-        ]
+        ],
       );
   };
 
   const groupedItems = groupSelectItems(selectItems, selectedValues);
 
-  const optionNodes = groupedItems.map(group => (
+  const optionNodes = groupedItems.map((group) => (
     <Combobox.Group key={group.label} label={group.label}>
-      {group.values.map(item => (
+      {group.values.map((item) => (
         <Combobox.Option
           key={item.name}
           value={item.name}
@@ -130,7 +132,9 @@ export const TagBadgeMultiSelect = ({
           <Grid align="center">
             <Grid.Col span="content">
               <Group gap="sm">
-                {selectedValues.includes(item.name) ? <CheckIcon size={12} /> : null}
+                {selectedValues.includes(item.name) ? (
+                  <CheckIcon size={12} />
+                ) : null}
                 <TagBadge {...item} />
               </Group>
             </Grid.Col>
@@ -146,7 +150,12 @@ export const TagBadgeMultiSelect = ({
   ));
 
   return (
-    <Combobox {...props} store={combobox} onOptionSubmit={handleValueSelect} offset={0}>
+    <Combobox
+      {...props}
+      store={combobox}
+      onOptionSubmit={handleValueSelect}
+      offset={0}
+    >
       <Combobox.DropdownTarget>
         <PillsInput
           pointer
@@ -156,7 +165,7 @@ export const TagBadgeMultiSelect = ({
             clearable && selectedValues.length > 0 ? (
               <CloseButton
                 size="sm"
-                onMouseDown={event => event.preventDefault()}
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {
                   setSelectedValues([]);
                   if (onChange) {
@@ -178,10 +187,12 @@ export const TagBadgeMultiSelect = ({
             <Combobox.EventsTarget>
               <PillsInput.Field
                 type="hidden"
-                onKeyDown={event => {
+                onKeyDown={(event) => {
                   if (event.key === 'Backspace') {
                     event.preventDefault();
-                    handleValueRemove(selectedValues[selectedValues.length - 1]);
+                    handleValueRemove(
+                      selectedValues[selectedValues.length - 1],
+                    );
                   }
                 }}
               />
@@ -193,7 +204,7 @@ export const TagBadgeMultiSelect = ({
       <Combobox.Dropdown>
         <Combobox.Search
           value={search}
-          onChange={event => setSearch(event.currentTarget.value)}
+          onChange={(event) => setSearch(event.currentTarget.value)}
           placeholder="Search items"
         />
         <Combobox.Options>

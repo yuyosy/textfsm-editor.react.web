@@ -1,17 +1,18 @@
 import { useCallback } from 'react';
 
-import { TemplateInfo } from '../../types';
-import { LoadedJsonData } from '../types';
 import { validateAndProcessTemplates } from '../utils';
+
+import type { TemplateInfo } from '../../types';
+import type { LoadedJsonData } from '../types';
 
 export const useParseJsonTemplates = () => {
   const parseJsonTemplates = useCallback(
     async (
       selectedJsonFiles: File[],
       setProcessedJsonData: (data: LoadedJsonData[]) => void,
-      templateList: TemplateInfo[]
+      templateList: TemplateInfo[],
     ) => {
-      const promises = selectedJsonFiles.map(async item => {
+      const promises = selectedJsonFiles.map(async (item) => {
         try {
           const text = await item.text();
           return {
@@ -31,7 +32,7 @@ export const useParseJsonTemplates = () => {
       const checkedData = validateAndProcessTemplates(results, templateList);
       setProcessedJsonData(checkedData);
     },
-    []
+    [],
   );
 
   return { parseJsonTemplates };

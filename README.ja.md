@@ -93,11 +93,11 @@ VSCodeで textfsm-editor.react.web.code-workspace ファイルを開いて、ワ
 
 ## 始め方
 
-- 基本的なNode.jsとPython環境で実行  
-  - Dockerを使わずに Node.js と Python を使用して実行する
-  - 初期環境設定手順については「[基本的なNode.jsとPython環境での始め方](#基本的なnodejsとpython環境での始め方)」を参照してください。
-- Docker Compose の利用  
-  - Docker Compose による起動方法については「[Docker Compose環境での始め方](#docker-compose環境での始め方)」を参照してください。
+- 基本環境 (Node.js + Python)
+  - Dockerを使わずに Node.js と Python で直接実行する
+  - 詳細: [基本環境での始め方](#基本環境での始め方)
+- Docker Compose
+  - 詳細: [Docker Compose環境での始め方](#docker-compose環境での始め方)
 
 
 ### 備考
@@ -106,7 +106,7 @@ VSCodeで textfsm-editor.react.web.code-workspace ファイルを開いて、ワ
 - https://www.jsdelivr.com/package/npm/monaco-editor
 
 
-## 基本的なNode.jsとPython環境での始め方
+## 基本環境での始め方
 
 ### 前提条件
 
@@ -127,7 +127,7 @@ cd textfsm-editor.react.web
 2. Frontend のセットアップ
 
 ```bash
-# run command in the project root directory
+# プロジェクトルートディレクトリでコマンドを実行
 cd frontend
 npm install
 ```
@@ -135,7 +135,7 @@ npm install
 3. Backend のセットアップ
 
 ```bash
-# run command in the project root directory
+# プロジェクトルートディレクトリでコマンドを実行
 cd backend
 uv sync
 ```
@@ -147,7 +147,6 @@ uv sync
 1. Frontend の起動
 
 ```bash
-# run command in the project root directory
 cd frontend
 npm run dev
 ```
@@ -157,7 +156,6 @@ npm run dev
 2. Backend の起動
 
 ```bash
-# run command in the project root directory
 cd backend
 uv run uvicorn src.main:app --reload
 ```
@@ -170,7 +168,44 @@ uv run uvicorn src.main:app --reload
 
 ### 本番環境
 
-TODO
+> [!WARNING]
+>
+> この本番環境構成は個人利用や内部ツール向けです。
+> インターネットに公開するアプリケーションとして十分なセキュリティやパフォーマンスを担保していない場合があります。
+> 公開環境へのデプロイには、以下のような追加の対策を検討してください:
+> - SSL/TLS 終端を行うリバースプロキシ (Nginx, Caddy, Traefik 等)
+> - レート制限と DDoS 対策
+> - Web アプリケーションファイアウォール (WAF)
+
+1. フロントエンドをビルドしてバックエンドにデプロイ
+
+```bash
+cd frontend
+npm run build:deploy
+```
+
+このコマンドでフロントエンドをビルドし、`backend/public/static/` に出力をコピーします。
+
+2. バックエンドを本番モードで起動
+
+```bash
+cd backend
+MODE=production uv run uvicorn src.main:app --host 0.0.0.0 --port 8000
+```
+
+3. サービスへのアクセス
+   - サービス: `http://localhost:8000`
+
+#### 環境変数
+
+| 変数名 | デフォルト値 | 説明 |
+|--------|-------------|------|
+| `MODE` | `development` | `production` で本番モード |
+| `LOG_LEVEL` | `INFO` | ログレベル (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
+| `DOCS_ENABLED` | `true` | APIドキュメント (`/docs`) の有効/無効 |
+| `ALLOWED_HOSTS` | `localhost:5173,localhost:8000,localhost` | 許可するホスト (カンマ区切り) |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | 許可するCORSオリジン (カンマ区切り) |
+| `ENABLE_HTTPS_REDIRECT` | `false` | HTTPSリダイレクトの有効/無効 (SSL付きリバースプロキシ使用時は `true`) |
 
 ## Docker Compose環境での始め方
 
@@ -202,23 +237,49 @@ docker compose build
 docker compose --profile dev up --build --watch
 ```
 
-### 本番環境（実験的）
+2. 各サービスへのアクセス
+   - フロントエンド: `http://localhost:5173`
+   - バックエンド: `http://localhost:8000`
 
-1. コンテナの起動
+### 本番環境
+
+> [!WARNING]
+>
+> この本番環境構成は個人利用や内部ツール向けです。
+> インターネットに公開するアプリケーションとして十分なセキュリティやパフォーマンスを担保していない場合があります。
+> 公開環境へのデプロイには、以下のような追加の対策を検討してください:
+> - SSL/TLS 終端
+> - レート制限と DDoS 対策
+> - Web アプリケーションファイアウォール (WAF)
+> - 定期的なセキュリティ監査
+
+2つの本番構成が利用可能です:
+
+#### オプション 1: バックエンドが静的ファイルを配信
 
 ```bash
 docker compose --profile prod up --build
 ```
 
+- アクセス: `http://localhost:8000`
+
+#### オプション 2: Nginx + バックエンドAPI（高トラフィック向け推奨）
+
+```bash
+docker compose --profile prod-nginx up --build
+```
+
+- アクセス: `http://localhost:80`
+
 ## Contributing
 
-大歓迎です! 気軽にプルリクエストを送信してください。
+コントリビューション大歓迎です！お気軽にプルリクエストをお送りください。
 
-1. リポジトリをフォークします
-2. 機能ブランチを作成します (`git checkout -b feature/AmazingFeature`)
-3. 変更をコミットします (`git commit -m 'Add some AmazingFeature'`)
-4. ブランチにプッシュします (`git push origin feature/AmazingFeature`)
-5. プルリクエストを開きます
+1. リポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/AmazingFeature`)
+3. 変更をコミット (`git commit -m 'Add some AmazingFeature'`)
+4. ブランチにプッシュ (`git push origin feature/AmazingFeature`)
+5. プルリクエストを作成
 
 ## License
 
